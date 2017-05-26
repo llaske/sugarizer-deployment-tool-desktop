@@ -31,7 +31,7 @@ class JADB {
 
             list.toObservable()
                     .subscribe()
-                    
+
 
         } catch (e: ConnectException){
             println("Error: connection refuse")
