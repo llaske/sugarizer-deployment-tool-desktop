@@ -17,8 +17,9 @@
                 GridPane.vgrow="ALWAYS"
                 GridPane.rowIndex="0">
             <columns>
-                <TableColumn text="Devices" />
-                <TableColumn text="C2" />
+                <TableColumn text="Name"/>
+                <TableColumn text="Status" />
+                <TableColumn text="Current Action" />
             </columns>
         </TableView>
     </children>

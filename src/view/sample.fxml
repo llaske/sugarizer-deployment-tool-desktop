@@ -29,6 +29,7 @@
             <children>
                 <Button fx:id="devices" maxWidth="Infinity" mnemonicParsing="false" text="Devices" GridPane.columnIndex="0" GridPane.rowIndex="0" />
                 <Button fx:id="inventory" maxWidth="Infinity" mnemonicParsing="false" text="Inventory" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Button fx:id="appManager" maxWidth="Infinity" mnemonicParsing="false" text="Application Manager" GridPane.columnIndex="0" GridPane.rowIndex="1" />
             </children>
         </GridPane>
         <BorderPane fx:id="container" GridPane.columnIndex="1" GridPane.columnSpan="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
