@@ -1,15 +1,10 @@
 package views
 
-import javafx.fxml.FXMLLoader
-import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.GridPane
-import javafx.scene.layout.Pane
-import tornadofx.FX
 import tornadofx.View
 import tornadofx.action
-import tornadofx.find
 import utils.JADB
 import java.io.IOException
 import javax.inject.Inject
@@ -53,7 +48,8 @@ class MainView : View() {
             with(application) { action {
                 if (jadb.numberDevice() > 0) {
                     println("Changing state")
-                    jadb.list[0].setAction("Doing something")
+
+                    jadb.changeAction(0, "Doing something")
                 }
             }}
 

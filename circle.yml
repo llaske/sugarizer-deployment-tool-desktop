@@ -1,3 +1,7 @@
 dependencies:
   override:
      - chmod +x gradlew
+  pre:
+     - adb start-server
+  post:
+  - adb kill-server

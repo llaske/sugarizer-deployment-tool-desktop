@@ -1,23 +1,25 @@
 package model
 
+import io.reactivex.Observable
 import javafx.beans.property.SimpleStringProperty
 import se.vidstige.jadb.JadbDevice
+import se.vidstige.jadb.RemoteFile
+import java.io.File
 
 class Device(device: JadbDevice) {
-    val name = SimpleStringProperty("", "name", device.serial)
-    val status = SimpleStringProperty("", "status", device.state.toString())
-    val action = SimpleStringProperty("", "action", "Nothing")
+    val jadbDevice: JadbDevice = device
+    val name =  SimpleStringProperty("name")
+    val status = SimpleStringProperty("status")
+    val action = SimpleStringProperty("action")
 
-    fun getName(): String {
-        return name.get()
+    init {
+        name.set(device.serial)
+        status.set(device.state.toString())
+        action.set("Nothing")
     }
 
-    fun getStatus(): String {
-        return if (status.get() == null) "Offline" else status.get()
-    }
-
-    fun getAction(): String {
-        return if (action.get() == null) "Nothing" else action.get()
+    fun getDevice(): JadbDevice {
+        return jadbDevice
     }
 
     fun setName(newName: String) {
@@ -30,5 +32,19 @@ class Device(device: JadbDevice) {
 
     fun setAction(newAction: String) {
         action.set(newAction)
+    }
+
+    fun nameProperty(): SimpleStringProperty { return name }
+    fun statusProperty(): SimpleStringProperty { return status }
+    fun actionProperty(): SimpleStringProperty { return action }
+
+    fun push(localFile: String, remoteFile: String) : Observable<String> {
+        return Observable.create { subscriber ->
+            run {
+                jadbDevice.push(File(localFile), RemoteFile(remoteFile))
+
+                subscriber.onComplete()
+            }
+        }
     }
 }

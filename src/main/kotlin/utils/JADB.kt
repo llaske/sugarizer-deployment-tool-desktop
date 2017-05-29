@@ -5,10 +5,8 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import model.Device
 import se.vidstige.jadb.JadbConnection
-import se.vidstige.jadb.JadbDevice
 import se.vidstige.jadb.JadbException
 import java.net.ConnectException
-import java.util.*
 
 class JADB {
     var list: ObservableList<Device> = FXCollections.observableArrayList()
@@ -30,9 +28,6 @@ class JADB {
             }
 
             list.toObservable()
-                    .subscribe()
-
-
         } catch (e: ConnectException){
             println("Error: connection refuse")
         }
@@ -44,5 +39,26 @@ class JADB {
 
     fun numberDevice(): Int {
         return list.size
+    }
+
+    fun changeAction(device: Device, action: String) {
+        if (list.contains(device)) {
+            changeAction(list.indexOf(device), action)
+        }
+    }
+
+    fun changeAction(name: String, action: String) {
+        for ((value, device) in list.withIndex()) {
+            if (device.name.get().equals(name)) {
+                changeAction(list[value], action)
+            }
+        }
+    }
+
+    fun changeAction(index: Int, action: String) {
+        if (list.size > index) {
+            println("Gone change action of device: " + list[index].name.get())
+            list[index].setAction(action)
+        }
     }
 }
