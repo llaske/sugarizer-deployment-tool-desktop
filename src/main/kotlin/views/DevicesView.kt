@@ -3,19 +3,19 @@ package views
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
+import javafx.fxml.FXMLLoader
+import javafx.scene.Parent
 import javafx.scene.control.TableColumn
 import javafx.scene.control.TableRow
 import javafx.scene.control.TableView
 import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.layout.GridPane
+import javafx.stage.Stage
 import javafx.util.Callback
 import model.Device
 import se.vidstige.jadb.JadbDevice
 import se.vidstige.jadb.RemoteFile
-import tornadofx.View
-import tornadofx.column
-import tornadofx.onDoubleClick
-import tornadofx.selectedItem
+import tornadofx.*
 import utils.JADB
 import java.io.File
 import java.util.*
@@ -49,10 +49,16 @@ class DevicesView : View() {
 
                 println("Double click on : " + device.name.get())
 
-                device.push("testfile.rnd", "/sdcard/testfile.rnd")
-                        .subscribeOn(Schedulers.newThread())
-                        .doOnComplete { println("File pushed") }
-                        .subscribe()
+//                device.push("testfile.rnd", "/sdcard/testfile.rnd")
+//                        .subscribeOn(Schedulers.newThread())
+//                        .doOnComplete { println("File pushed") }
+//                        .subscribe()
+
+                var details: View = DeviceDetailsView(device)
+                var stage: Stage = Stage()
+                stage.isFocused = true
+                stage.initOwner(modalStage)
+                details.openWindow()
 
                 //println(convertStreamToString(device.executeShell("rm sdcard/testfile.rnd")))
 

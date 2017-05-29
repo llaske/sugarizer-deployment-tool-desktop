@@ -4,7 +4,9 @@ import io.reactivex.rxkotlin.toObservable
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import model.Device
+import se.vidstige.jadb.DeviceDetectionListener
 import se.vidstige.jadb.JadbConnection
+import se.vidstige.jadb.JadbDevice
 import se.vidstige.jadb.JadbException
 import java.net.ConnectException
 
@@ -14,6 +16,15 @@ class JADB {
     init {
         try {
             val connection = JadbConnection()
+
+            connection.createDeviceWatcher(object : DeviceDetectionListener {
+                override fun onDetect(devices: MutableList<JadbDevice>?) {
+                }
+
+
+                override fun onException(e: Exception?) {
+                }
+            })
 
             connection.devices.forEach { device ->
                 run {
