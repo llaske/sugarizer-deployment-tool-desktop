@@ -3,23 +3,32 @@ package model
 import io.reactivex.Observable
 import javafx.beans.property.SimpleStringProperty
 import se.vidstige.jadb.JadbDevice
+import se.vidstige.jadb.JadbException
 import se.vidstige.jadb.RemoteFile
+import se.vidstige.jadb.managers.PackageManager
 import java.io.File
 
 class Device(device: JadbDevice) {
-    val jadbDevice: JadbDevice = device
+    var jadbDevice: JadbDevice = device
     val name =  SimpleStringProperty("name")
     val status = SimpleStringProperty("status")
     val action = SimpleStringProperty("action")
 
     init {
         name.set(device.serial)
-        status.set(device.state.toString())
         action.set("Nothing")
+
+        try {
+            status.set(device.state.toString())
+        } catch (e: JadbException) {
+            e.printStackTrace()
+        }
     }
 
-    fun getDevice(): JadbDevice {
-        return jadbDevice
+    fun getDevice(): JadbDevice { return jadbDevice }
+
+    fun setDevice(device: JadbDevice) {
+        jadbDevice = device
     }
 
     fun setName(newName: String) {
@@ -39,12 +48,34 @@ class Device(device: JadbDevice) {
     fun actionProperty(): SimpleStringProperty { return action }
 
     fun push(localFile: String, remoteFile: String) : Observable<String> {
-        return Observable.create { subscriber ->
-            run {
-                jadbDevice.push(File(localFile), RemoteFile(remoteFile))
+        return Observable.create {
+            jadbDevice.push(File(localFile), RemoteFile(remoteFile))
 
-                subscriber.onComplete()
-            }
+            it.onComplete()
+        }
+    }
+
+    fun pull(remoteFile: String, localFile: String) : Observable<String> {
+        return Observable.create {
+            jadbDevice.pull(RemoteFile(remoteFile), File(localFile))
+
+            it.onComplete()
+        }
+    }
+
+    fun installAPK(file: String) : Observable<String> {
+       return Observable.create {
+           PackageManager(jadbDevice).install(File(file))
+
+           it.onComplete()
+       }
+    }
+
+    fun remove(file: String) : Observable<String> {
+        return Observable.create {
+            PackageManager(jadbDevice).remove(RemoteFile(file))
+
+            it.onComplete()
         }
     }
 }

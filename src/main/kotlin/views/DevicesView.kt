@@ -1,24 +1,15 @@
 package views
 
-import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
-import javafx.fxml.FXMLLoader
-import javafx.scene.Parent
 import javafx.scene.control.TableColumn
-import javafx.scene.control.TableRow
 import javafx.scene.control.TableView
 import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.layout.GridPane
 import javafx.stage.Stage
-import javafx.util.Callback
 import model.Device
-import se.vidstige.jadb.JadbDevice
-import se.vidstige.jadb.RemoteFile
+import model.DeviceEvent
 import tornadofx.*
 import utils.JADB
-import java.io.File
-import java.util.*
 import javax.inject.Inject
 
 class DevicesView : View() {
@@ -42,7 +33,45 @@ class DevicesView : View() {
         columnAction.cellValueFactory = PropertyValueFactory<Device, String>("action")
 
         with(tableDevice) {
-            items = jadb.getDevices()
+            jadb.watcher()
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(Schedulers.io())
+                    .subscribe { deviceEvent ->
+                        run {
+                            when (deviceEvent.status) {
+                                DeviceEvent.Status.ADDED -> {
+                                    println("Added")
+                                    items.add(deviceEvent.device)
+                                }
+
+                                DeviceEvent.Status.REMOVED -> {
+                                    items.filter { it.name.get().equals(deviceEvent.device.name.get()) }
+                                            .forEach {
+                                                println("Removed")
+                                                items.remove(it)
+                                            }
+                                }
+                                else -> { }
+                            }
+                        }
+                    }
+
+            jadb.watchChanged()
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(Schedulers.io())
+                    .subscribe { deviceEvent ->
+                        run {
+                            println("onChanged")
+
+                            items.filter { it.jadbDevice.serial.equals(deviceEvent.device.jadbDevice.serial) }
+                                    .forEach {
+                                        it.setAction(deviceEvent.device.action.get())
+                                        it.setName(deviceEvent.device.name.get())
+                                        it.setStatus(deviceEvent.device.status.get())
+                                        it.setDevice(deviceEvent.device.jadbDevice)
+                                    }
+                        }
+                    }
 
             onDoubleClick {
                 var device: Device = selectedItem!!

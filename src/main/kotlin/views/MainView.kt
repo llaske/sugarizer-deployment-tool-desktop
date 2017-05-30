@@ -1,12 +1,17 @@
 package views
 
+import io.reactivex.Maybe
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import javafx.scene.control.Button
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.GridPane
+import javafx.stage.StageStyle
 import tornadofx.View
 import tornadofx.action
 import utils.JADB
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -39,6 +44,15 @@ class MainView : View() {
     init {
         title = "Sugarizer Deloyement Tool"
 
+        Observable.empty<Any>()
+                .observeOn(Schedulers.io())
+                .delay(3, TimeUnit.SECONDS)
+                .doOnComplete {
+
+                }
+                .subscribe()
+
+
         try {
             views.put(Views.DEVICES, DevicesView::class as KClass<View>)
             views.put(Views.INVENTORY, InventoryView::class as KClass<View>)
@@ -46,6 +60,7 @@ class MainView : View() {
             with(inventory) { action { load(Views.INVENTORY) } }
             with(devices) { action { load(Views.DEVICES) } }
             with(application) { action {
+                println("Pressed")
                 if (jadb.numberDevice() > 0) {
                     println("Changing state")
 

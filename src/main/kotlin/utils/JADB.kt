@@ -1,75 +1,110 @@
 package utils
 
+import io.reactivex.Observable
 import io.reactivex.rxkotlin.toObservable
+import io.reactivex.schedulers.Schedulers
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import model.Device
-import se.vidstige.jadb.DeviceDetectionListener
-import se.vidstige.jadb.JadbConnection
-import se.vidstige.jadb.JadbDevice
-import se.vidstige.jadb.JadbException
+import model.DeviceEvent
+import se.vidstige.jadb.*
 import java.net.ConnectException
 
 class JADB {
-    var list: ObservableList<Device> = FXCollections.observableArrayList()
+    var listJadb = mutableListOf<JadbDevice>()
+    var connection: JadbConnection = JadbConnection()
+
+    var onChangedObservable: Observable<DeviceEvent> = Observable.create {}
 
     init {
         try {
-            val connection = JadbConnection()
-
-            connection.createDeviceWatcher(object : DeviceDetectionListener {
-                override fun onDetect(devices: MutableList<JadbDevice>?) {
-                }
-
-
-                override fun onException(e: Exception?) {
-                }
-            })
-
             connection.devices.forEach { device ->
                 run {
                     try {
                         println("Name: " + device.serial)
                         println("State: " + device.state)
-                        list.add(Device(device))
                     } catch (e: JadbException) {
                         println("Error: device offline")
                     }
                 }
             }
-
-            list.toObservable()
         } catch (e: ConnectException){
             println("Error: connection refuse")
         }
     }
 
-    fun getDevices(): ObservableList<Device> {
-        return list
-    }
-
     fun numberDevice(): Int {
-        return list.size
+        return connection.devices.size
     }
 
-    fun changeAction(device: Device, action: String) {
-        if (list.contains(device)) {
-            changeAction(list.indexOf(device), action)
+    fun changeAction(device: JadbDevice, action: String) {
+        onChangedObservable.doOnNext {
+            var device = Device(device)
+
+            device.setAction(action)
+
+            DeviceEvent(DeviceEvent.Status.CHANGED, device)
         }
     }
 
     fun changeAction(name: String, action: String) {
-        for ((value, device) in list.withIndex()) {
-            if (device.name.get().equals(name)) {
-                changeAction(list[value], action)
-            }
-        }
+//        for ((value, device) in list.withIndex()) {
+//            if (device.name.get().equals(name)) {
+//                //changeAction(list[value], action)
+//            }
+//        }
     }
 
     fun changeAction(index: Int, action: String) {
-        if (list.size > index) {
-            println("Gone change action of device: " + list[index].name.get())
-            list[index].setAction(action)
+        println("Size: " + listJadb.size)
+        if (connection.devices.size > index) {
+            println("Gone change action of device: " + connection.devices[index].serial)
+            //list[index].setAction(action)
+            changeAction(connection.devices[index], action)
         }
+    }
+
+    fun watcher(): Observable<DeviceEvent> {
+        return Observable.create {
+            subscriber -> run {
+
+            try {
+                var watcher: DeviceWatcher = connection.createDeviceWatcher(object : DeviceDetectionListener {
+                    override fun onDetect(devices: MutableList<JadbDevice>?) {
+                        println("onDetect")
+
+                        if (devices != null) {
+                            listJadb.filter { !devices.contains(it) }
+                                    .forEach {
+                                        println("Size: " + listJadb.size)
+                                        listJadb.remove(it)
+                                        subscriber.onNext(DeviceEvent(DeviceEvent.Status.REMOVED, Device(it)))
+                                    }
+
+                            devices.filter { !listJadb.contains(it) }
+                                    .forEach {
+                                        listJadb.add(it)
+                                        subscriber.onNext(DeviceEvent(DeviceEvent.Status.ADDED, Device(it)))
+                                    }
+                        }
+                    }
+
+                    override fun onException(e: Exception?) {
+                        if (e != null) {
+                            println("onException: " + e.printStackTrace())
+                        }
+                    }
+                })
+
+                watcher.watch()
+            } catch (e: JadbException) {
+                println("Error: Connection refused (adb is started ?)")
+            }
+        }
+        }
+    }
+
+    fun watchChanged(): Observable<DeviceEvent> {
+        return onChangedObservable
     }
 }
