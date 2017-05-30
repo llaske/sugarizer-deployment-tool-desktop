@@ -5,8 +5,14 @@
       <profile default="true" name="Default" enabled="true" />
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="data_main" target="1.8" />
+      <module name="data_test" target="1.8" />
       <module name="deployment_main" target="1.8" />
       <module name="deployment_test" target="1.8" />
+      <module name="domain_main" target="1.8" />
+      <module name="domain_test" target="1.8" />
+      <module name="presentation_main" target="1.8" />
+      <module name="presentation_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

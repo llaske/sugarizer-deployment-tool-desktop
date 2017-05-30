@@ -28,7 +28,13 @@ compileKotlin {
     kotlinOptions.jvmTarget= "1.8"
 }
 
+plugins {
+    id "net.ltgt.apt" version "0.10"
+}
+
 dependencies {
+    compile project(":presentation")
+
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 
     compile 'no.tornado:tornadofx:1.7.5'
@@ -36,9 +42,8 @@ dependencies {
     compile 'io.reactivex:rxjavafx:2.0.2'
     compile 'io.reactivex.rxjava2:rxkotlin:2.0.3'
     compile 'io.reactivex.rxjava2:rxjava:2.0.3'
-    compile 'com.github.vidstige:jadb:v1.0.1'
 
-    //apt 'com.google.dagger:dagger-compiler:2.11'
+    apt 'com.google.dagger:dagger-compiler:2.11'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
