@@ -12,4 +12,3 @@ machine:
 test:
   override:
     - ./gradlew archiveZip
-    - cp sugarizer-deployment-tool/build/distributions/project-0.1.zip $CIRCLE_ARTIFACTS

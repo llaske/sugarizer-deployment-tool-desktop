@@ -32,6 +32,12 @@ compileKotlin {
     kotlinOptions.jvmTarget= "1.8"
 }
 
+manifest {
+    attributes 'Implementation-Title': 'Gradle Jar File Example',
+    'Implementation-Version': version,
+    'Main-Class': 'com.sugarizer.Main'
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 
