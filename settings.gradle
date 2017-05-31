@@ -1,6 +1,2 @@
 rootProject.name = 'deployment'
-include 'domain'
-include 'presentation'
-include 'data'
-include 'presentation'
 

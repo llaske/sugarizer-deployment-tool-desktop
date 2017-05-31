@@ -2,15 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/data_main.iml" filepath="$PROJECT_DIR$/.idea/modules/data/data_main.iml" group="data" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/data_test.iml" filepath="$PROJECT_DIR$/.idea/modules/data/data_test.iml" group="data" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/deployment.iml" filepath="$PROJECT_DIR$/.idea/modules/deployment.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/deployment_main.iml" filepath="$PROJECT_DIR$/.idea/modules/deployment_main.iml" group="deployment" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/deployment_test.iml" filepath="$PROJECT_DIR$/.idea/modules/deployment_test.iml" group="deployment" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/domain/domain_main.iml" filepath="$PROJECT_DIR$/.idea/modules/domain/domain_main.iml" group="domain" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/domain/domain_test.iml" filepath="$PROJECT_DIR$/.idea/modules/domain/domain_test.iml" group="domain" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/presentation/presentation_main.iml" filepath="$PROJECT_DIR$/.idea/modules/presentation/presentation_main.iml" group="presentation" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/presentation/presentation_test.iml" filepath="$PROJECT_DIR$/.idea/modules/presentation/presentation_test.iml" group="presentation" />
     </modules>
   </component>
 </project>
