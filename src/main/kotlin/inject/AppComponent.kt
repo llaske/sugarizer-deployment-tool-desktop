@@ -13,7 +13,7 @@ interface AppComponent {
 
     companion object {
         fun init(application: Application) : AppComponent {
-            return DaggerAppComponent
+            return DaggerAppComponent.Builder().build()
         }
     }
 }
