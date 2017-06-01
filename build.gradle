@@ -20,6 +20,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'application'
+apply plugin: 'kotlin-kapt'
 
 sourceCompatibility = 1.8
 mainClassName = 'Main'
@@ -46,16 +47,23 @@ jar {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
+kapt {
+    generateStubs = true
+}
+
 dependencies {
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version'
 
     compile 'no.tornado:tornadofx:1.7.5'
+
     compile 'com.google.dagger:dagger:2.11'
+    kapt 'com.google.dagger:dagger-compiler:2.11'
+
     compile 'io.reactivex:rxjavafx:2.0.2'
     compile 'io.reactivex.rxjava2:rxkotlin:2.0.3'
     compile 'io.reactivex.rxjava2:rxjava:2.0.3'
+
     compile 'com.github.vidstige:jadb:v1.0.1'
-    compile 'com.google.dagger:dagger-compiler:2.11'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

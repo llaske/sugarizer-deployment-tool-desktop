@@ -5,7 +5,8 @@ import view.main.MainView
 import javax.inject.Inject
 
 class Main  : App(MainView::class) {
-    @Inject val jadb = JADB()
+
+    @Inject lateinit var jadb: JADB
 
     override fun start(stage: Stage) {
         super.start(stage)

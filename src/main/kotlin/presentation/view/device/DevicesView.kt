@@ -16,7 +16,7 @@ import javax.inject.Inject
 class DevicesView : View() {
     override val root: GridPane by fxml("/layout/view-devices.fxml")
 
-    @Inject val jadb = JADB()
+    @Inject lateinit var jadb: JADB
 
     val columnName: TableColumn<DeviceModel, String> by fxid(propName = "columnName")
     val columnStatus: TableColumn<DeviceModel, String> by fxid(propName = "columnStatus")
