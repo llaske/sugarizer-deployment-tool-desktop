@@ -4,7 +4,7 @@ import tornadofx.App
 import view.main.MainView
 import javax.inject.Inject
 
-class MainApp  : App(MainView::class) {
+class Main  : App(MainView::class) {
     @Inject val jadb = JADB()
 
     override fun start(stage: Stage) {

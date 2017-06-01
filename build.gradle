@@ -19,8 +19,10 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'kotlin'
+apply plugin: 'application'
 
 sourceCompatibility = 1.8
+mainClassName = 'Main'
 
 repositories {
     mavenCentral()
@@ -29,17 +31,23 @@ repositories {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget= "1.8"
+    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.includeRuntime = true
 }
 
-manifest {
-    attributes 'Implementation-Title': 'Gradle Jar File Example',
-    'Implementation-Version': version,
-    'Main-Class': 'com.sugarizer.Main'
+jar {
+    from configurations.runtime
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Jar File Example',
+        'Implementation-Version': version,
+        'Main-Class': 'Main'
+    }
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile 'org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version'
 
     compile 'no.tornado:tornadofx:1.7.5'
     compile 'com.google.dagger:dagger:2.11'
@@ -47,8 +55,7 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxkotlin:2.0.3'
     compile 'io.reactivex.rxjava2:rxjava:2.0.3'
     compile 'com.github.vidstige:jadb:v1.0.1'
-
-    //annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
+    compile 'com.google.dagger:dagger-compiler:2.11'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
