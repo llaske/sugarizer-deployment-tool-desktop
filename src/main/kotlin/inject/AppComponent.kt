@@ -13,7 +13,9 @@ interface AppComponent {
 
     companion object {
         fun init(application: Application) : AppComponent {
-            return DaggerAppComponent.Builder().build()
+            return DaggerAppComponent.builder()
+                    .appModule(AppModule())
+                    .build()
         }
     }
 }
