@@ -1,5 +1,6 @@
 package view.main
 
+import com.sugarizer.BuildConfig
 import javafx.scene.control.Button
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.GridPane
@@ -40,7 +41,7 @@ class MainView : View() {
     }
 
     init {
-        title = "Sugarizer Deloyement Tool"
+        title = "Sugarizer Deloyement Tool - " + BuildConfig.VERSION
 
         Main.appComponent.inject(this)
 
@@ -50,14 +51,7 @@ class MainView : View() {
 
             with(inventory) { action { load(Views.INVENTORY) } }
             with(devices) { action { load(Views.DEVICES) } }
-            with(application) { action {
-                println("Pressed")
-                if (jadb.numberDevice() > 0) {
-                    println("Changing state")
-
-                    jadb.changeAction(0, "Doing something")
-                }
-            }}
+            with(application) { action { if (jadb.numberDevice() > 0) { jadb.changeAction(0, "Doing something") } }}
 
             load(Views.DEVICES)
         } catch (e: IOException) {

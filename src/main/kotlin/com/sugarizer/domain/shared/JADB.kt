@@ -1,16 +1,24 @@
 package com.sugarizer.domain.shared
 
+import com.sugarizer.BuildConfig
 import com.sugarizer.domain.model.DeviceEventModel
 import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.main.Main
 import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.schedulers.Schedulers
+import se.vidstige.jadb.DeviceDetectionListener
+import se.vidstige.jadb.DeviceWatcher
 import se.vidstige.jadb.JadbConnection
 import se.vidstige.jadb.JadbDevice
+import java.net.ConnectException
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class JADB {
 
     @Inject lateinit var bus: RxBus
+    @Inject lateinit var stringUtils: StringUtils
 
     var listJadb = mutableListOf<JadbDevice>()
     var connection: JadbConnection = JadbConnection()
@@ -56,12 +64,12 @@ class JADB {
     fun numberDevice(): Int {
         try {
             return connection.devices.size
-        } catch (e: java.net.ConnectException) {
+        } catch (e: ConnectException) {
             return 0
         }
     }
 
-    fun changeAction(device: se.vidstige.jadb.JadbDevice, action: String) {
+    fun changeAction(device: JadbDevice, action: String) {
         var device = DeviceModel(device)
 
         device.setAction(action)
@@ -78,10 +86,7 @@ class JADB {
     }
 
     fun changeAction(index: Int, action: String) {
-        println("Size: " + listJadb.size)
         if (connection.devices.size > index) {
-            println("Gone change action of presentation.device: " + connection.devices[index].serial)
-            //list[index].setAction(action)
             changeAction(connection.devices[index], action)
         }
     }
@@ -91,7 +96,7 @@ class JADB {
             subscriber -> run {
 
             try {
-                var watcher: se.vidstige.jadb.DeviceWatcher = connection.createDeviceWatcher(object : se.vidstige.jadb.DeviceDetectionListener {
+                var watcher: DeviceWatcher = connection.createDeviceWatcher(object : DeviceDetectionListener {
                     override fun onDetect(devices: MutableList<se.vidstige.jadb.JadbDevice>?) {
                         println("onDetect")
 
@@ -104,8 +109,38 @@ class JADB {
 
                             devices.filter { !listJadb.contains(it) }
                                     .forEach {
+                                        var deviceModel: DeviceModel = DeviceModel(it)
+
+                                        Observable.create<String> {
+                                            while (deviceModel.isDeviceOffline()) {
+                                                println("Device Offline")
+                                                Thread.sleep(1000)
+                                            }
+
+                                            it.onComplete()
+                                        }
+                                                .subscribeOn(Schedulers.computation())
+                                                .observeOn(Schedulers.io())
+                                                .doOnComplete {
+                                                    println("On Complete")
+                                                    deviceModel.hasPackage(BuildConfig.APP_PACKAGE).subscribe {
+                                                        if (it) {
+                                                            deviceModel.startApp().doOnComplete { deviceModel.sendLog("Connected to Sugarizer Deployment Tool") }.subscribe()
+                                                        } else {
+                                                            changeAction(deviceModel.jadbDevice, "Installing Application...")
+                                                            deviceModel.installAPK(BuildConfig.APK_LOCATION)
+                                                                    .doOnComplete { deviceModel.startApp().doOnComplete {
+                                                                        deviceModel.sendLog("Connected to Sugarizer Deployment Tool")
+                                                                        changeAction(deviceModel.jadbDevice, "Application installed")
+                                                                    }.subscribe()
+                                                                    }.subscribe()
+                                                        }
+                                                    }
+                                                }.subscribe()
+
                                         listJadb.add(it)
-                                        subscriber.onNext(DeviceEventModel(DeviceEventModel.Status.ADDED, DeviceModel(it)))
+
+                                        subscriber.onNext(DeviceEventModel(DeviceEventModel.Status.ADDED, deviceModel))
                                     }
                         }
                     }

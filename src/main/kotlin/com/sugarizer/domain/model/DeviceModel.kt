@@ -1,33 +1,47 @@
 package com.sugarizer.domain.model
 
+import com.sugarizer.BuildConfig
+import com.sugarizer.domain.shared.StringUtils
+import com.sugarizer.main.Main
+import com.sun.org.apache.xpath.internal.operations.Bool
 import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.schedulers.Schedulers
 import javafx.beans.property.SimpleStringProperty
 import se.vidstige.jadb.JadbDevice
 import se.vidstige.jadb.JadbException
 import se.vidstige.jadb.RemoteFile
 import se.vidstige.jadb.managers.PackageManager
 import java.io.File
+import javax.inject.Inject
 
-class DeviceModel(device: se.vidstige.jadb.JadbDevice) {
-    var jadbDevice: se.vidstige.jadb.JadbDevice = device
-    val name = javafx.beans.property.SimpleStringProperty("name")
-    val status = javafx.beans.property.SimpleStringProperty("status")
-    val action = javafx.beans.property.SimpleStringProperty("action")
+class DeviceModel(device: JadbDevice) {
+
+    @Inject lateinit var stringUtils: StringUtils
+
+    var jadbDevice: JadbDevice = device
+    val name = SimpleStringProperty("name")
+    val status = SimpleStringProperty("status")
+    val action = SimpleStringProperty("action")
+    val ping = SimpleStringProperty("ping")
 
     init {
+        Main.appComponent.inject(this)
+
         name.set(device.serial)
         action.set("Nothing")
+        ping.set("Ping")
 
         try {
             status.set(device.state.toString())
-        } catch (e: se.vidstige.jadb.JadbException) {
+        } catch (e: JadbException) {
             e.printStackTrace()
         }
     }
 
-    fun getDevice(): se.vidstige.jadb.JadbDevice { return jadbDevice }
+    fun getDevice(): JadbDevice { return jadbDevice }
 
-    fun setDevice(device: se.vidstige.jadb.JadbDevice) {
+    fun setDevice(device: JadbDevice) {
         jadbDevice = device
     }
 
@@ -43,39 +57,93 @@ class DeviceModel(device: se.vidstige.jadb.JadbDevice) {
         action.set(newAction)
     }
 
-    fun nameProperty(): javafx.beans.property.SimpleStringProperty { return name }
-    fun statusProperty(): javafx.beans.property.SimpleStringProperty { return status }
-    fun actionProperty(): javafx.beans.property.SimpleStringProperty { return action }
+    fun nameProperty(): SimpleStringProperty { return name }
+    fun statusProperty(): SimpleStringProperty { return status }
+    fun actionProperty(): SimpleStringProperty { return action }
+    fun pingProperty(): SimpleStringProperty { return ping }
 
-    fun push(localFile: String, remoteFile: String) : io.reactivex.Observable<String> {
-        return io.reactivex.Observable.create {
-            jadbDevice.push(java.io.File(localFile), se.vidstige.jadb.RemoteFile(remoteFile))
-
-            it.onComplete()
-        }
-    }
-
-    fun pull(remoteFile: String, localFile: String) : io.reactivex.Observable<String> {
-        return io.reactivex.Observable.create {
-            jadbDevice.pull(se.vidstige.jadb.RemoteFile(remoteFile), java.io.File(localFile))
+    fun push(localFile: String, remoteFile: String) : Observable<String> {
+        return Observable.create {
+            jadbDevice.push(File(localFile), RemoteFile(remoteFile))
 
             it.onComplete()
         }
     }
 
-    fun installAPK(file: String) : io.reactivex.Observable<String> {
-       return io.reactivex.Observable.create {
-           se.vidstige.jadb.managers.PackageManager(jadbDevice).install(java.io.File(file))
+    fun pull(remoteFile: String, localFile: String) : Observable<String> {
+        return Observable.create {
+            jadbDevice.pull(RemoteFile(remoteFile), File(localFile))
+
+            it.onComplete()
+        }
+    }
+
+    fun installAPK(file: String) : Observable<String> {
+       return Observable.create {
+           println("Before Install")
+           PackageManager(jadbDevice).install(File(file))
+           println("After Install")
 
            it.onComplete()
        }
     }
 
-    fun remove(file: String) : io.reactivex.Observable<String> {
-        return io.reactivex.Observable.create {
-            se.vidstige.jadb.managers.PackageManager(jadbDevice).remove(se.vidstige.jadb.RemoteFile(file))
+    fun remove(file: String) : Observable<String> {
+        return Observable.create {
+            PackageManager(jadbDevice).remove(RemoteFile(file))
 
             it.onComplete()
+        }
+    }
+
+    fun getListPackage() : Observable<List<String>> {
+        return Observable.create {
+            var list: MutableList<String> = mutableListOf()
+            var returnCMD: String = stringUtils.convertStreamToString(jadbDevice.executeShell(BuildConfig.CMD_LIST_PACKAGE))
+
+            returnCMD.split("\n").forEach {
+                list.add(it.removePrefix("package:"))
+            }
+
+            it.onNext(list)
+        }
+    }
+
+    fun hasPackage(name: String) : Observable<Boolean> {
+        return Observable.create { has ->
+            run {
+                getListPackage().subscribeOn(Schedulers.computation())
+                        .observeOn(Schedulers.io())
+                        .subscribe {
+                            has.onNext(it.contains(name))
+                        }
+            }
+        }
+    }
+
+    fun ping() {
+        jadbDevice.executeShell(BuildConfig.CMD_PING)
+        sendLog("Ping")
+    }
+
+    fun sendLog(send: String) {
+        println(stringUtils.convertStreamToString(jadbDevice.executeShell(BuildConfig.CMD_LOG + " --es extra_log \"" + send + "\"")))
+    }
+
+    fun startApp(): Observable<Boolean> {
+        return Observable.create {
+            println(stringUtils.convertStreamToString(jadbDevice.executeShell("am start -n " + BuildConfig.APP_PACKAGE + "/" + BuildConfig.APP_PACKAGE + ".EmptyActivity")))
+
+            it.onComplete()
+        }
+    }
+
+    fun isDeviceOffline(): Boolean {
+        try {
+            jadbDevice.state
+            return false
+        } catch (e: JadbException) {
+            return true
         }
     }
 }

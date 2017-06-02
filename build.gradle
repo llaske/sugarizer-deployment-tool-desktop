@@ -6,17 +6,22 @@ buildscript {
 
     repositories {
         mavenCentral()
+
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'gradle.plugin.de.fuerstenau:BuildConfigPlugin:1.1.8'
     }
 }
 
+apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'application'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'de.fuerstenau.buildconfig'
 
 sourceCompatibility = 1.8
 mainClassName = 'Main'
@@ -79,4 +84,16 @@ task archiveZip(type: Zip, dependsOn: 'jar') {
 sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
     main.java.srcDirs += [file("$buildDir/generated/source/kapt/main")]
+}
+
+buildConfig {
+    appName = project.name
+    version = project.version
+
+    buildConfigField 'String', 'APP_PACKAGE', "com.sugarizer.sugarizerdeploymenttoolapp"
+    buildConfigField 'String', 'APK_LOCATION', "apk/app-debug.apk"
+
+    buildConfigField 'String', 'CMD_LIST_PACKAGE',  "pm list packages"
+    buildConfigField 'String', 'CMD_PING',  "am broadcast -a com.sugarizer.sugarizerdeploymentoolapp.Broadcast.ACTION_PING"
+    buildConfigField 'String', 'CMD_LOG',  "am broadcast -a com.sugarizer.sugarizerdeploymentoolapp.Broadcast.ACTION_LOG"
 }

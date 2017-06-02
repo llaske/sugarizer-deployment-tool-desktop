@@ -33,7 +33,5 @@ class Main : App(MainView::class) {
         jadb.stopADB()
 
         super.stop()
-
-        println("STOP")
     }
 }

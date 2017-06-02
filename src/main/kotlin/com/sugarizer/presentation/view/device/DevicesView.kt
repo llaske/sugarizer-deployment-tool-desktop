@@ -11,6 +11,14 @@ import com.sugarizer.domain.model.DeviceEventModel
 import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.RxBus
+import com.sugarizer.domain.shared.StringUtils
+import javafx.beans.property.ReadOnlyObjectWrapper
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.value.ObservableValue
+import javafx.event.EventHandler
+import javafx.scene.control.Button
+import javafx.scene.control.TableCell
+import javafx.util.Callback
 import tornadofx.*
 import view.devicedetails.DeviceDetailsView
 import javax.inject.Inject
@@ -20,10 +28,12 @@ class DevicesView : View() {
 
     @Inject lateinit var jadb: JADB
     @Inject lateinit var bus: RxBus
+    @Inject lateinit var stringUtils: StringUtils
 
     val columnName: TableColumn<DeviceModel, String> by fxid(propName = "columnName")
     val columnStatus: TableColumn<DeviceModel, String> by fxid(propName = "columnStatus")
     val columnAction: TableColumn<DeviceModel, String> by fxid(propName = "columnAction")
+    val columnPing: TableColumn<DeviceModel, String> by fxid(propName = "columnPing")
 
     val tableDevice: TableView<DeviceModel> by fxid(propName = "deviceTable")
 
@@ -33,6 +43,37 @@ class DevicesView : View() {
         columnName.cellValueFactory = PropertyValueFactory<DeviceModel, String>("name")
         columnStatus.cellValueFactory = PropertyValueFactory<DeviceModel, String>("status")
         columnAction.cellValueFactory = PropertyValueFactory<DeviceModel, String>("action")
+        columnPing.cellValueFactory = PropertyValueFactory<DeviceModel, String>("ping")
+
+        columnPing.cellFactory = Callback {
+            val button = Button()
+
+            button.maxWidth = Double.MAX_VALUE
+            button.maxHeight = Double.MAX_VALUE
+
+            object : TableCell<DeviceModel, String>() {
+                override fun updateItem(item: String?, empty: Boolean) {
+                    super.updateItem(item, empty)
+
+                    if (item == null) {
+                        graphic = null
+                    } else {
+                        button.text = "Ping"
+                        button.onAction = EventHandler {
+
+                            //println(convertStreamToString(rowItem.jadbDevice.executeShell("am startservice com.sugarizer.sugarizerdeploymenttoolapp.BroadcastService", "")))
+                            //println(stringUtils.convertStreamToString(rowItem.jadbDevice.executeShell("am broadcast -a com.sugarizer.sugarizerdeploymentoolapp.Broadcast.ACTION_PING", "")))
+                            rowItem.hasPackage("com.android.fmradio").subscribe { println(it) }
+                            rowItem.hasPackage("com.sugarizer.sugarizerdeploymenttoolapp").subscribe { println(it) }
+                            rowItem.sendLog("Test")
+                            rowItem.ping()
+                        }
+
+                        graphic = button
+                    }
+                }
+            }
+        }
 
         with(tableDevice) {
             jadb.watcher()
@@ -41,15 +82,11 @@ class DevicesView : View() {
                     .subscribe { deviceEvent ->
                         run {
                             when (deviceEvent.status) {
-                                DeviceEventModel.Status.ADDED -> {
-                                    println("Added")
-                                    items.add(deviceEvent.device)
-                                }
+                                DeviceEventModel.Status.ADDED -> { items.add(deviceEvent.device) }
 
                                 DeviceEventModel.Status.REMOVED -> {
                                     items.filter { it.name.get().equals(deviceEvent.device.name.get()) }
                                             .forEach {
-                                                println("Removed")
                                                 items.remove(it)
                                             }
                                 }
@@ -60,8 +97,6 @@ class DevicesView : View() {
 
             bus.toObservable().subscribe { deviceEvent ->
                 run {
-                    println("onChanged")
-
                     items.filter { it.jadbDevice.serial.equals(deviceEvent.device.jadbDevice.serial) }
                             .forEach {
                                 it.setAction(deviceEvent.device.action.get())
@@ -74,38 +109,13 @@ class DevicesView : View() {
 
             onDoubleClick {
                 var device: DeviceModel = selectedItem!!
-
-                println("Double click on : " + device.name.get())
-
-//                presentation.device.push("testfile.rnd", "/sdcard/testfile.rnd")
-//                        .subscribeOn(Schedulers.newThread())
-//                        .doOnComplete { println("File pushed") }
-//                        .subscribe()
                 var details: View = DeviceDetailsView(device)
                 var stage: Stage = Stage()
+
                 stage.isFocused = true
                 stage.initOwner(modalStage)
                 details.openWindow()
-
-                //println(convertStreamToString(presentation.device.executeShell("rm sdcard/testfile.rnd")))
-
-                //println("File deleted")
-
-//                for (tmp in selectedItem?.getDevice()?.list("/sdcard/")!!) {
-//                    println("isDirectory: " + tmp.isDirectory)
-//
-//                    try {
-//                        println("Name: " + tmp.name)
-//                    } catch (e: UnsupportedOperationException) {
-//                        println("Problem when get name")
-//                    }
-//                }
             }
         }
-    }
-
-    fun convertStreamToString(`is`: java.io.InputStream): String {
-        val s = java.util.Scanner(`is`).useDelimiter("\\A")
-        return if (s.hasNext()) s.next() else ""
     }
 }

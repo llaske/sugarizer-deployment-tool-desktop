@@ -2,6 +2,7 @@ package com.sugarizer.inject
 
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.RxBus
+import com.sugarizer.domain.shared.StringUtils
 import com.sugarizer.domain.threading.PostExecutionThread
 import com.sugarizer.domain.threading.UseCaseExecutor
 import dagger.Module
@@ -41,5 +42,11 @@ class AppModule() {
     @Provides
     fun providesRxBus() : RxBus {
         return RxBus()
+    }
+
+    @Singleton
+    @Provides
+    fun providesStringUtils() : StringUtils {
+        return StringUtils()
     }
 }
