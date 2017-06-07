@@ -9,6 +9,17 @@ machine:
      TERM: dumb
      JAVA_HOME: /usr/lib/jvm/java-8-oracle
 
-test:
-  override:
-    - ./gradlew archiveZip
+#test:
+#  override:
+#    - ./gradlew archiveZip
+
+deployment:
+  production:
+     branch: master
+     commands:
+        - ./gradlew archiveZip
+
+  staging:
+     branch: dev
+     commands:
+         - ./gradlew assemble

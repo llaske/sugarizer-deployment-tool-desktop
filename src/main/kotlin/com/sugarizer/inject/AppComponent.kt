@@ -18,6 +18,7 @@ interface AppComponent {
     fun inject(jadb: JADB)
 
     fun inject(deviceModel: DeviceModel)
+
     companion object {
         fun init(application: javafx.application.Application) : AppComponent {
             return DaggerAppComponent.builder()

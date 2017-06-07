@@ -15,7 +15,7 @@ import java.net.ConnectException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class JADB {
+open class JADB {
 
     @Inject lateinit var bus: RxBus
     @Inject lateinit var stringUtils: StringUtils

@@ -5,6 +5,7 @@ import com.sugarizer.domain.shared.RxBus
 import com.sugarizer.domain.shared.StringUtils
 import com.sugarizer.domain.threading.PostExecutionThread
 import com.sugarizer.domain.threading.UseCaseExecutor
+import com.sugarizer.main.Main
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Scheduler
