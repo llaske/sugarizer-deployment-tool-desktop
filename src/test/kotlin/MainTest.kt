@@ -1,25 +1,18 @@
 import com.sugarizer.domain.shared.JADB
-import com.sugarizer.inject.AppComponent
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThat
-import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
 import org.mockito.Mockito
-import tornadofx.App
-import javax.inject.Inject
+import org.mockito.Mockito.mock
 
 class MainTest {
-    @get:Rule val rule = RuleTest()
-
-    @Mock lateinit var jadb: JADB
+    val jadb: JADB = mock(JADB::class.java)
 
     @Test
-    fun testSomething(){
-        Mockito.`when`(jadb.numberDevice()).thenReturn(0)
+    fun testSomething() {
+        Mockito.doReturn(Int.MAX_VALUE).`when`(jadb).numberDevice()
 
         val number = jadb.numberDevice()
 
-        assertEquals(number, 0)
+        assertEquals(number, Int.MAX_VALUE)
     }
 }
