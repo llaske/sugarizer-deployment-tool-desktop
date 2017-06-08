@@ -1,4 +1,4 @@
-package view.devicedetails
+package com.sugarizer.presentation.view.devicedetails.view.devicedetails
 
 import javafx.scene.Parent
 import com.sugarizer.domain.model.DeviceModel

@@ -12,18 +12,42 @@ import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.RxBus
 import com.sugarizer.domain.shared.StringUtils
-import javafx.beans.property.ReadOnlyObjectWrapper
-import javafx.beans.property.SimpleStringProperty
-import javafx.beans.value.ObservableValue
-import javafx.event.EventHandler
+import com.sugarizer.presentation.view.device.DeviceContract
+import com.sugarizer.presentation.view.device.DevicePresenter
 import javafx.scene.control.Button
 import javafx.scene.control.TableCell
 import javafx.util.Callback
 import tornadofx.*
-import view.devicedetails.DeviceDetailsView
 import javax.inject.Inject
 
-class DevicesView : View() {
+class DevicesView : View(), DeviceContract.View {
+    override fun onDeviceAdded(deviceEventModel: DeviceEventModel) {
+        tableDevice.items.add(deviceEventModel.device)
+    }
+
+    override fun onDeviceChanged(deviceEventModel: DeviceEventModel) {
+        tableDevice.items.filter {
+            it.jadbDevice.serial.equals(deviceEventModel.device.jadbDevice.serial) }
+                .forEach {
+                    it.setAction(deviceEventModel.device.action.get())
+                    it.setName(deviceEventModel.device.name.get())
+                    it.setStatus(deviceEventModel.device.status.get())
+                    it.setDevice(deviceEventModel.device.jadbDevice)
+                }
+    }
+
+    override fun onDeviceRemoved(deviceEventModel: DeviceEventModel) {
+        tableDevice.items.filter {
+            it.name.get().equals(deviceEventModel.device.name.get()) }
+                .forEach {
+                    tableDevice.items.remove(it)
+                }
+    }
+
+    override fun test() {
+
+    }
+
     override val root: GridPane by fxml("/layout/view-devices.fxml")
 
     @Inject lateinit var jadb: JADB
@@ -37,13 +61,19 @@ class DevicesView : View() {
 
     val tableDevice: TableView<DeviceModel> by fxid(propName = "deviceTable")
 
+    val presenter: DevicePresenter
+
     init {
         Main.appComponent.inject(this)
+
+        presenter = DevicePresenter(this, jadb, bus, stringUtils)
 
         columnName.cellValueFactory = PropertyValueFactory<DeviceModel, String>("name")
         columnStatus.cellValueFactory = PropertyValueFactory<DeviceModel, String>("status")
         columnAction.cellValueFactory = PropertyValueFactory<DeviceModel, String>("action")
         columnPing.cellValueFactory = PropertyValueFactory<DeviceModel, String>("ping")
+
+        presenter.start()
 
         columnPing.cellFactory = Callback {
             val button = Button()
@@ -59,15 +89,7 @@ class DevicesView : View() {
                         graphic = null
                     } else {
                         button.text = "Ping"
-                        button.onAction = EventHandler {
-
-                            //println(convertStreamToString(rowItem.jadbDevice.executeShell("am startservice com.sugarizer.sugarizerdeploymenttoolapp.BroadcastService", "")))
-                            //println(stringUtils.convertStreamToString(rowItem.jadbDevice.executeShell("am broadcast -a com.sugarizer.sugarizerdeploymentoolapp.Broadcast.ACTION_PING", "")))
-                            rowItem.hasPackage("com.android.fmradio").subscribe { println(it) }
-                            rowItem.hasPackage("com.sugarizer.sugarizerdeploymenttoolapp").subscribe { println(it) }
-                            rowItem.sendLog("Test")
-                            rowItem.ping()
-                        }
+                        button.onAction = presenter.onPingClick(rowItem)
 
                         graphic = button
                     }
@@ -76,46 +98,14 @@ class DevicesView : View() {
         }
 
         with(tableDevice) {
-            jadb.watcher()
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.io())
-                    .subscribe { deviceEvent ->
-                        run {
-                            when (deviceEvent.status) {
-                                DeviceEventModel.Status.ADDED -> { items.add(deviceEvent.device) }
-
-                                DeviceEventModel.Status.REMOVED -> {
-                                    items.filter { it.name.get().equals(deviceEvent.device.name.get()) }
-                                            .forEach {
-                                                items.remove(it)
-                                            }
-                                }
-                                else -> { }
-                            }
-                        }
-                    }
-
-            bus.toObservable().subscribe { deviceEvent ->
-                run {
-                    items.filter { it.jadbDevice.serial.equals(deviceEvent.device.jadbDevice.serial) }
-                            .forEach {
-                                it.setAction(deviceEvent.device.action.get())
-                                it.setName(deviceEvent.device.name.get())
-                                it.setStatus(deviceEvent.device.status.get())
-                                it.setDevice(deviceEvent.device.jadbDevice)
-                            }
-                }
-            }
-
             onDoubleClick {
-                var device: DeviceModel = selectedItem!!
-                var details: View = DeviceDetailsView(device)
-                var stage: Stage = Stage()
-
-                stage.isFocused = true
-                stage.initOwner(modalStage)
-                details.openWindow()
+                selectedItem?.also {
+                    modalStage?.let {
+                        stage -> presenter.onTableRowDoubleClick(it, stage)
+                    }
+                }
             }
         }
     }
+
 }

@@ -8,14 +8,14 @@
         xmlns="http://javafx.com/javafx/8.0.112"
         xmlns:fx="http://javafx.com/fxml/1">
 
-   <children>
-      <TableView
-              GridPane.hgrow="ALWAYS"
-              GridPane.vgrow="ALWAYS">
-        <columns>
-          <TableColumn prefWidth="75.0" text="Files" />
-          <TableColumn prefWidth="75.0" text="C2" />
-        </columns>
-      </TableView>
-   </children>
+    <children>
+        <TableView
+                GridPane.hgrow="ALWAYS"
+                GridPane.vgrow="ALWAYS">
+            <columns>
+                <TableColumn prefWidth="75.0" text="Files" />
+                <TableColumn prefWidth="75.0" text="C2" />
+            </columns>
+        </TableView>
+    </children>
 </GridPane>

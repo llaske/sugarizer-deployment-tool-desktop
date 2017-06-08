@@ -6,6 +6,7 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.GridPane
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.main.Main
+import com.sugarizer.presentation.view.appmanager.AppManagerView
 import tornadofx.View
 import tornadofx.action
 import view.device.DevicesView
@@ -29,7 +30,8 @@ class MainView : View() {
 
     private enum class Views {
         DEVICES,
-        INVENTORY;
+        INVENTORY,
+        APP_MANAGER;
 
         override fun toString(): String {
             when (this) {
@@ -48,10 +50,11 @@ class MainView : View() {
         try {
             views.put(Views.DEVICES, DevicesView::class as KClass<View>)
             views.put(Views.INVENTORY, InventoryView::class as KClass<View>)
+            views.put(Views.APP_MANAGER, AppManagerView::class as KClass<View>)
 
             with(inventory) { action { load(Views.INVENTORY) } }
             with(devices) { action { load(Views.DEVICES) } }
-            with(application) { action { if (jadb.numberDevice() > 0) { jadb.changeAction(0, "Doing something") } }}
+            with(application) { action { load(Views.APP_MANAGER) }}
 
             load(Views.DEVICES)
         } catch (e: IOException) {

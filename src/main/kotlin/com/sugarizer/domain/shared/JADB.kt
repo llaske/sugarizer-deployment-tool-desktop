@@ -7,10 +7,12 @@ import com.sugarizer.main.Main
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
+import net.dongliu.apk.parser.ApkFile
 import se.vidstige.jadb.DeviceDetectionListener
 import se.vidstige.jadb.DeviceWatcher
 import se.vidstige.jadb.JadbConnection
 import se.vidstige.jadb.JadbDevice
+import se.vidstige.jadb.managers.PackageManager
 import java.net.ConnectException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

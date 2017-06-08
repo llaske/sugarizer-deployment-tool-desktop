@@ -122,12 +122,22 @@ class DeviceModel(device: JadbDevice) {
     }
 
     fun ping() {
-        jadbDevice.executeShell(BuildConfig.CMD_PING)
-        sendLog("Ping")
+        Observable.create<Any> {
+            jadbDevice.executeShell(BuildConfig.CMD_PING)
+            sendLog("Ping")
+        }
+                .subscribeOn(Schedulers.computation())
+                .subscribe()
     }
 
     fun sendLog(send: String) {
-        println(stringUtils.convertStreamToString(jadbDevice.executeShell(BuildConfig.CMD_LOG + " --es extra_log \"" + send + "\"")))
+        Observable.create<String> {
+            it.onNext(stringUtils.convertStreamToString(jadbDevice.executeShell(BuildConfig.CMD_LOG + " --es extra_log \"" + send + "\"")))
+        }
+                .subscribeOn(Schedulers.computation())
+                .subscribe {
+                    println(it)
+                }
     }
 
     fun startApp(): Observable<Boolean> {
