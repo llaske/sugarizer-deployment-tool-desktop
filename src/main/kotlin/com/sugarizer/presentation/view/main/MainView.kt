@@ -7,9 +7,9 @@ import javafx.scene.layout.GridPane
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.main.Main
 import com.sugarizer.presentation.view.appmanager.AppManagerView
+import com.sugarizer.presentation.view.device.DevicesView
 import tornadofx.View
 import tornadofx.action
-import view.device.DevicesView
 import view.inventory.InventoryView
 import java.io.IOException
 import javax.inject.Inject

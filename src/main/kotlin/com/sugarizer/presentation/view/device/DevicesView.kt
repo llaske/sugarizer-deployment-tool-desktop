@@ -1,4 +1,4 @@
-package view.device
+package com.sugarizer.presentation.view.device
 
 import com.sugarizer.main.Main
 import io.reactivex.schedulers.Schedulers
@@ -12,8 +12,6 @@ import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.RxBus
 import com.sugarizer.domain.shared.StringUtils
-import com.sugarizer.presentation.view.device.DeviceContract
-import com.sugarizer.presentation.view.device.DevicePresenter
 import javafx.scene.control.Button
 import javafx.scene.control.TableCell
 import javafx.util.Callback

@@ -33,8 +33,10 @@ class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: 
 
     override fun onPingClick(device: DeviceModel): EventHandler<ActionEvent> {
         return EventHandler {
-            device.hasPackage("com.sugarizer.sugarizerdeploymenttoolapp").subscribeOn(Schedulers.computation()).subscribe { println(it) }
-            device.ping()
+            jadb.hasPackage(device.jadbDevice, "com.sugarizer.sugarizerdeploymenttoolapp")
+                    .subscribeOn(Schedulers.computation())
+                    .doOnComplete { jadb.ping(device.jadbDevice) }
+                    .subscribe { println(it) }
         }
     }
 

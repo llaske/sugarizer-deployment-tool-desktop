@@ -8,24 +8,21 @@ import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
 import net.dongliu.apk.parser.ApkFile
-import se.vidstige.jadb.DeviceDetectionListener
-import se.vidstige.jadb.DeviceWatcher
-import se.vidstige.jadb.JadbConnection
-import se.vidstige.jadb.JadbDevice
+import se.vidstige.jadb.*
 import se.vidstige.jadb.managers.PackageManager
+import java.io.File
 import java.net.ConnectException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-open class JADB {
+class JADB {
 
     @Inject lateinit var bus: RxBus
     @Inject lateinit var stringUtils: StringUtils
 
     var listJadb = mutableListOf<JadbDevice>()
+    var listDevice = mutableListOf<DeviceModel>()
     var connection: JadbConnection = JadbConnection()
-
-    var onChangedObservable: Observable<DeviceEventModel> = Observable.create {}
 
     init {
         Main.appComponent.inject(this)
@@ -106,6 +103,12 @@ open class JADB {
                             listJadb.filter { !devices.contains(it) }
                                     .forEach {
                                         listJadb.remove(it)
+
+                                        listDevice.filter {
+                                            it.name.get().equals(it.name.get()) }
+                                                .forEach {
+                                                    listDevice.remove(it)
+                                                }
                                         subscriber.onNext(DeviceEventModel(DeviceEventModel.Status.REMOVED, DeviceModel(it)))
                                     }
 
@@ -114,7 +117,7 @@ open class JADB {
                                         var deviceModel: DeviceModel = DeviceModel(it)
 
                                         Observable.create<String> {
-                                            while (deviceModel.isDeviceOffline()) {
+                                            while (isDeviceOffline(deviceModel.jadbDevice)) {
                                                 println("Device Offline")
                                                 Thread.sleep(1000)
                                             }
@@ -125,22 +128,27 @@ open class JADB {
                                                 .observeOn(Schedulers.io())
                                                 .doOnComplete {
                                                     println("On Complete")
-                                                    deviceModel.hasPackage(BuildConfig.APP_PACKAGE).subscribe {
+                                                    hasPackage(deviceModel.jadbDevice, BuildConfig.APP_PACKAGE).subscribe {
                                                         if (it) {
-                                                            deviceModel.startApp().doOnComplete { deviceModel.sendLog("Connected to Sugarizer Deployment Tool") }.subscribe()
+                                                            startApp(deviceModel.jadbDevice).doOnComplete {
+                                                                sendLog(deviceModel.jadbDevice, "Connected to Sugarizer Deployment Tool")
+                                                            }.subscribe()
                                                         } else {
                                                             changeAction(deviceModel.jadbDevice, "Installing Application...")
-                                                            deviceModel.installAPK(BuildConfig.APK_LOCATION)
-                                                                    .doOnComplete { deviceModel.startApp().doOnComplete {
-                                                                        deviceModel.sendLog("Connected to Sugarizer Deployment Tool")
-                                                                        changeAction(deviceModel.jadbDevice, "Application installed")
-                                                                    }.subscribe()
+                                                            installAPK(deviceModel.jadbDevice, File(BuildConfig.APK_LOCATION))
+                                                                    .doOnComplete {
+                                                                        startApp(deviceModel.jadbDevice)
+                                                                                .doOnComplete {
+                                                                                    sendLog(deviceModel.jadbDevice, "Connected to Sugarizer Deployment Tool")
+                                                                                    changeAction(deviceModel.jadbDevice, "Application installed")
+                                                                                }.subscribe()
                                                                     }.subscribe()
                                                         }
                                                     }
                                                 }.subscribe()
 
                                         listJadb.add(it)
+                                        listDevice.add(DeviceModel(it))
 
                                         subscriber.onNext(DeviceEventModel(DeviceEventModel.Status.ADDED, deviceModel))
                                     }
@@ -162,12 +170,114 @@ open class JADB {
         }
     }
 
-    fun watchChanged(): io.reactivex.Observable<DeviceEventModel> {
-        return onChangedObservable
-    }
-
     fun convertStreamToString(`is`: java.io.InputStream): String {
         val s = java.util.Scanner(`is`).useDelimiter("\\A")
         return if (s.hasNext()) s.next() else ""
+    }
+
+    fun push(jadbDevice: JadbDevice, localFile: String, remoteFile: String) : Observable<String> {
+        return Observable.create {
+            jadbDevice.push(File(localFile), RemoteFile(remoteFile))
+
+            it.onComplete()
+        }
+    }
+
+    fun pull(jadbDevice: JadbDevice, remoteFile: String, localFile: String) : Observable<String> {
+        return Observable.create {
+            jadbDevice.pull(RemoteFile(remoteFile), File(localFile))
+
+            it.onComplete()
+        }
+    }
+
+    fun installAPK(jadbDevice: JadbDevice, file: File) : Observable<String> {
+        return Observable.create {
+            changeAction(jadbDevice, "Installing: " + file.name)
+            sendLog(jadbDevice, "Installing: " + file.name)
+
+            try {
+                PackageManager(jadbDevice).install(file)
+                changeAction(jadbDevice, file.name + " installed")
+                sendLog(jadbDevice, file.name + " installed")
+            } catch (e: JadbException) {
+                changeAction(jadbDevice, file.name + " already installed")
+                sendLog(jadbDevice, file.name + " already installed")
+            } finally {
+                it.onComplete()
+            }
+        }
+    }
+
+    fun remove(jadbDevice: JadbDevice, file: String) : Observable<String> {
+        return Observable.create {
+            PackageManager(jadbDevice).remove(RemoteFile(file))
+
+            it.onComplete()
+        }
+    }
+
+    fun getListPackage(jadbDevice: JadbDevice) : Observable<List<String>> {
+        return Observable.create {
+            var list: MutableList<String> = mutableListOf()
+            var returnCMD: String = stringUtils.convertStreamToString(jadbDevice.executeShell(BuildConfig.CMD_LIST_PACKAGE))
+
+            returnCMD.split("\n").forEach {
+                list.add(it.removePrefix("package:"))
+            }
+
+            it.onNext(list)
+        }
+    }
+
+    fun hasPackage(jadbDevice: JadbDevice, name: String) : Observable<Boolean> {
+        return Observable.create { has ->
+            run {
+                getListPackage(jadbDevice).subscribeOn(Schedulers.computation())
+                        .observeOn(Schedulers.io())
+                        .doOnComplete { has.onComplete() }
+                        .subscribe {
+                            has.onNext(it.contains(name))
+
+                            has.onComplete()
+                        }
+            }
+        }
+    }
+
+    fun ping(jadbDevice: JadbDevice) {
+        Observable.create<Any> {
+            jadbDevice.executeShell(BuildConfig.CMD_PING)
+            sendLog(jadbDevice, "Ping")
+        }
+                .subscribeOn(Schedulers.computation())
+                .subscribe()
+    }
+
+    fun sendLog(jadbDevice: JadbDevice, send: String) {
+        Observable.create<String> {
+            it.onNext(stringUtils.convertStreamToString(jadbDevice.executeShell(BuildConfig.CMD_LOG + " --es extra_log \"" + send + "\"")))
+        }
+                .subscribeOn(Schedulers.computation())
+                .subscribe {
+                    println(it)
+                }
+    }
+
+    fun startApp(jadbDevice: JadbDevice): Observable<Boolean> {
+        return Observable.create {
+            println(stringUtils.convertStreamToString(jadbDevice.executeShell("am start -n " + BuildConfig.APP_PACKAGE + "/" + BuildConfig.APP_PACKAGE + ".EmptyActivity")))
+
+            it.onComplete()
+        }
+    }
+
+    fun isDeviceOffline(jadbDevice: JadbDevice): Boolean {
+        try {
+            jadbDevice.state
+            return false
+        } catch (e: JadbException) {
+            return true
+        }
     }
 }

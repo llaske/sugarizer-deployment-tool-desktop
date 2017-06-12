@@ -81,6 +81,9 @@ task archiveZip(type: Zip, dependsOn: 'jar') {
     from ('adb') {
         into 'adb'
     }
+    from ('apk') {
+        into 'apk'
+    }
 
     from (tasks.jar.archivePath) {
         into '/'
