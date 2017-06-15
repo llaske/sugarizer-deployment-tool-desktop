@@ -6,9 +6,12 @@ import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.main.Main
 import io.reactivex.Observable
 import io.reactivex.Scheduler
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
 import net.dongliu.apk.parser.ApkFile
+import net.dongliu.apk.parser.ApkParsers
 import se.vidstige.jadb.*
+import se.vidstige.jadb.managers.Package
 import se.vidstige.jadb.managers.PackageManager
 import java.io.File
 import java.net.ConnectException
@@ -34,9 +37,9 @@ class JADB {
         var process: Process? = null
 
         when (OsCheck.operatingSystemType) {
-            OsCheck.OSType.Windows -> { process = Runtime.getRuntime().exec(arrayOf("./adb/windows/platform-tools/adb.exe", "start-server")) }
-            OsCheck.OSType.Linux -> { process = Runtime.getRuntime().exec(arrayOf("./adb/linux/platform-tools/adb", "start-server"))}
-            OsCheck.OSType.MacOS -> { process = Runtime.getRuntime().exec(arrayOf("./adb/MACOS/platform-tools/adb", "start-server")) }
+            OsCheck.OSType.Windows -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_WINDOWS_PATH, "start-server")) }
+            OsCheck.OSType.Linux -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_LINUX_PATH, "start-server"))}
+            OsCheck.OSType.MacOS -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_MAC_PATH, "start-server")) }
             OsCheck.OSType.Other -> { println("OS invalid") }
         }
 
@@ -49,9 +52,9 @@ class JADB {
         var process: Process? = null
 
         when (OsCheck.operatingSystemType) {
-            OsCheck.OSType.Windows -> { process = Runtime.getRuntime().exec(arrayOf("./adb/windows/platform-tools/adb.exe", "kill-server")) }
-            OsCheck.OSType.Linux -> { process = Runtime.getRuntime().exec(arrayOf("./adb/linux/platform-tools/adb", "kill-server"))}
-            OsCheck.OSType.MacOS -> { process = Runtime.getRuntime().exec(arrayOf("./adb/MACOS/platform-tools/adb", "kill-server")) }
+            OsCheck.OSType.Windows -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_WINDOWS_PATH, "kill-server")) }
+            OsCheck.OSType.Linux -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_LINUX_PATH, "kill-server"))}
+            OsCheck.OSType.MacOS -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_MAC_PATH, "kill-server")) }
             OsCheck.OSType.Other -> { println("OS invalid") }
         }
 
@@ -135,7 +138,7 @@ class JADB {
                                                             }.subscribe()
                                                         } else {
                                                             changeAction(deviceModel.jadbDevice, "Installing Application...")
-                                                            installAPK(deviceModel.jadbDevice, File(BuildConfig.APK_LOCATION))
+                                                            installAPK(deviceModel.jadbDevice, File(BuildConfig.APK_LOCATION), false)
                                                                     .doOnComplete {
                                                                         startApp(deviceModel.jadbDevice)
                                                                                 .doOnComplete {
@@ -191,20 +194,44 @@ class JADB {
         }
     }
 
-    fun installAPK(jadbDevice: JadbDevice, file: File) : Observable<String> {
-        return Observable.create {
-            changeAction(jadbDevice, "Installing: " + file.name)
-            sendLog(jadbDevice, "Installing: " + file.name)
+    fun installAPK(jadbDevice: JadbDevice, file: File, force: Boolean) : Observable<String> {
+        return Observable.create { subscriber ->
+            run {
+                changeAction(jadbDevice, "Installing: " + file.name)
+                sendLog(jadbDevice, "Installing: " + file.name)
 
-            try {
-                PackageManager(jadbDevice).install(file)
-                changeAction(jadbDevice, file.name + " installed")
-                sendLog(jadbDevice, file.name + " installed")
-            } catch (e: JadbException) {
-                changeAction(jadbDevice, file.name + " already installed")
-                sendLog(jadbDevice, file.name + " already installed")
-            } finally {
-                it.onComplete()
+                try {
+                    PackageManager(jadbDevice).install(file)
+                    changeAction(jadbDevice, file.name + " installed")
+                    sendLog(jadbDevice, file.name + " installed")
+
+                    subscriber.onComplete()
+                } catch (e: JadbException) {
+                    changeAction(jadbDevice, file.name + " already installed")
+                    sendLog(jadbDevice, file.name + " already installed")
+
+                    if (force) {
+                        println("Froce: " + force)
+                        uninstallApp(jadbDevice, ApkFile(file).apkMeta.packageName)
+                                .subscribeOn(Schedulers.computation())
+                                .observeOn(JavaFxScheduler.platform())
+                                .doOnComplete {
+                                    sendLog(jadbDevice, "Reinstalling " + file.name)
+                                    installAPK(jadbDevice, file, false)
+                                            .subscribeOn(Schedulers.computation())
+                                            .observeOn(JavaFxScheduler.platform())
+                                            .doOnComplete {
+                                                sendLog(jadbDevice, file.name +  " Reinstalled")
+
+                                                subscriber.onComplete()
+                                            }
+                                            .subscribe()
+                                }
+                                .subscribe()
+                    } else {
+                        subscriber.onComplete()
+                    }
+                }
             }
         }
     }
@@ -267,6 +294,17 @@ class JADB {
     fun startApp(jadbDevice: JadbDevice): Observable<Boolean> {
         return Observable.create {
             println(stringUtils.convertStreamToString(jadbDevice.executeShell("am start -n " + BuildConfig.APP_PACKAGE + "/" + BuildConfig.APP_PACKAGE + ".EmptyActivity")))
+
+            it.onComplete()
+        }
+    }
+
+    fun uninstallApp(jadbDevice: JadbDevice, name: String): Observable<String> {
+        println("Test 1")
+        return Observable.create {
+            sendLog(jadbDevice, "Uninstalling " + name)
+            PackageManager(jadbDevice).uninstall(Package(name))
+            sendLog(jadbDevice, name + " Uninstalled")
 
             it.onComplete()
         }

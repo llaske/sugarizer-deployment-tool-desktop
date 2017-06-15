@@ -1,13 +1,14 @@
 package com.sugarizer.presentation.view.appmanager
 
 import com.sugarizer.domain.shared.JADB
-import com.sugarizer.presentation.view.device.DevicesView
 import io.reactivex.Observable
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
+import net.dongliu.apk.parser.ApkFile
 import se.vidstige.jadb.JadbDevice
 import java.io.File
 
@@ -27,11 +28,11 @@ class AppManagerPresenter(val view: AppManagerContract.View, val jadb: JADB) : A
 
                 for (i in listOfFiles!!.indices) {
                     if (listOfFiles[i].isFile) {
-                        println("File " + listOfFiles[i].name)
-                        println("File " + listOfFiles[i].extension)
                         if (listOfFiles[i].extension.equals("apk")) {
                             if (!list.contains(listOfFiles[i])) {
-                                view.onFileAdded(listOfFiles[i].name)
+                                var apk: ApkFile = ApkFile(listOfFiles[i])
+                                it.onNext(listOfFiles[i].name + " - " + apk.apkMeta.versionName)
+
                                 list.add(listOfFiles[i])
                             }
                         }
@@ -41,8 +42,10 @@ class AppManagerPresenter(val view: AppManagerContract.View, val jadb: JADB) : A
                 }
             }
                     .subscribeOn(Schedulers.computation())
-                    .observeOn(Schedulers.io())
-                    .subscribe()
+                    .observeOn(JavaFxScheduler.platform())
+                    .subscribe {
+                        view.onFileAdded(it)
+                    }
         }
     }
 
@@ -66,7 +69,7 @@ class AppManagerPresenter(val view: AppManagerContract.View, val jadb: JADB) : A
     }
 
     fun installOnDevice(jadbDevice: JadbDevice, list: List<File>, i: Int) {
-        jadb.installAPK(jadbDevice, list[i])
+        jadb.installAPK(jadbDevice, list[i], view.isForceInstall())
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.io())
                 .doOnComplete {

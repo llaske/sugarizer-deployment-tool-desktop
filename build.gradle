@@ -69,6 +69,8 @@ dependencies {
 
     compile 'net.dongliu:apk-parser:2.2.0'
 
+    compile 'com.google.code.gson:gson:2.8.1'
+
     testCompile 'junit:junit:4.12'
     testCompile 'com.google.dagger:dagger:2.11'
     testCompile 'org.mockito:mockito-core:2.8.9'
@@ -81,6 +83,7 @@ task archiveZip(type: Zip, dependsOn: 'jar') {
     from ('adb') {
         into 'adb'
     }
+
     from ('apk') {
         into 'apk'
     }
@@ -105,4 +108,8 @@ buildConfig {
     buildConfigField 'String', 'CMD_LIST_PACKAGE',  "pm list packages"
     buildConfigField 'String', 'CMD_PING',  "am broadcast -a com.sugarizer.sugarizerdeploymentoolapp.Broadcast.ACTION_PING"
     buildConfigField 'String', 'CMD_LOG',  "am broadcast -a com.sugarizer.sugarizerdeploymentoolapp.Broadcast.ACTION_LOG"
+
+    buildConfigField 'String', 'OS_WINDOWS_PATH', "./adb/windows/platform-tools/adb.exe"
+    buildConfigField 'String', 'OS_MAC_PATH', "./adb/MACOS/platform-tools/adb"
+    buildConfigField 'String', 'OS_LINUX_PATH', "./adb/linux/platform-tools/adb"
 }

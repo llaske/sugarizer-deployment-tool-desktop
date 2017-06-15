@@ -5,6 +5,7 @@ import com.sugarizer.main.Main
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.Button
+import javafx.scene.control.CheckBox
 import javafx.scene.control.ListView
 import javafx.scene.control.TextField
 import javafx.scene.layout.GridPane
@@ -21,6 +22,7 @@ class AppManagerView : View(), AppManagerContract.View {
     val repositoryArea: TextField by fxid("repository")
     val presenter: AppManagerPresenter
     val listView: ListView<String> by fxid("listApp")
+    val forceInstall: CheckBox by fxid("forceInstall")
 
     init {
         Main.appComponent.inject(this)
@@ -45,5 +47,9 @@ class AppManagerView : View(), AppManagerContract.View {
 
     override fun setInstallDisable(boolean: Boolean) {
         install.isDisable = boolean
+    }
+
+    override fun isForceInstall(): Boolean {
+        return forceInstall.isSelected
     }
 }

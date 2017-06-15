@@ -1,5 +1,6 @@
 package com.sugarizer.presentation.view.appmanager
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.stage.Stage
@@ -13,6 +14,8 @@ interface AppManagerContract {
         fun onFileAdded(string: String)
 
         fun onFileRemoved(string: String)
+
+        fun isForceInstall() : Boolean
     }
 
     interface Presenter {

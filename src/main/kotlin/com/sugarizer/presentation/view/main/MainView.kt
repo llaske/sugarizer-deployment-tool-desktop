@@ -7,6 +7,7 @@ import javafx.scene.layout.GridPane
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.main.Main
 import com.sugarizer.presentation.view.appmanager.AppManagerView
+import com.sugarizer.presentation.view.createinstruction.CreateInstructionView
 import com.sugarizer.presentation.view.device.DevicesView
 import tornadofx.View
 import tornadofx.action
@@ -25,13 +26,15 @@ class MainView : View() {
     val inventory : Button by fxid(propName = "inventory")
     val devices : Button by fxid(propName = "devices")
     val application : Button by fxid(propName = "appManager")
+    val createInstruction : Button by fxid(propName = "createInstruction")
 
     private val views = mutableMapOf<Views, KClass<View>>()
 
     private enum class Views {
         DEVICES,
         INVENTORY,
-        APP_MANAGER;
+        APP_MANAGER,
+        CREATE_INSTRUCTION;
 
         override fun toString(): String {
             when (this) {
@@ -51,10 +54,12 @@ class MainView : View() {
             views.put(Views.DEVICES, DevicesView::class as KClass<View>)
             views.put(Views.INVENTORY, InventoryView::class as KClass<View>)
             views.put(Views.APP_MANAGER, AppManagerView::class as KClass<View>)
+            views.put(Views.CREATE_INSTRUCTION, CreateInstructionView::class as KClass<View>)
 
             with(inventory) { action { load(Views.INVENTORY) } }
             with(devices) { action { load(Views.DEVICES) } }
             with(application) { action { load(Views.APP_MANAGER) }}
+            with(createInstruction) { action { load(Views.CREATE_INSTRUCTION) } }
 
             load(Views.DEVICES)
         } catch (e: IOException) {

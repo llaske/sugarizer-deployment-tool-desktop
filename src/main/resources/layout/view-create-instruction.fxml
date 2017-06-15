@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <GridPane fx:id="createInstruction">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="47.5" />
+                <ColumnConstraints percentWidth="5" />
+                <ColumnConstraints percentWidth="47.5" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints percentHeight="10" />
+                <RowConstraints percentHeight="80" />
+                <RowConstraints percentHeight="10" />
+            </rowConstraints>
+            <children>
+                <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" text="List of Instruction" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" text="List of Instruction Disponible" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                <VBox fx:id="tab1" alignment="TOP_CENTER" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <SplitPane GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="2" />
+                <VBox fx:id="tab2" alignment="TOP_CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                    <children>
+                        <Button fx:id="installApk" disable="false" maxWidth="Infinity" text="Install Application" />
+                        <Button fx:id="pushFile" disable="true" maxWidth="Infinity" text="Push File" />
+                        <Button fx:id="deleteFile" disable="true" maxWidth="Infinity" text="Delete File" />
+                    </children>
+                </VBox>
+                <Button fx:id="creation" disable="true" maxHeight="Infinity" maxWidth="Infinity" text="Create Instruction" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="2" />
+            </children>
+        </GridPane>
+        <VBox fx:id="progress" alignment="CENTER" visible="false">
+            <children>
+                <ProgressIndicator />
+            </children>
+        </VBox>
+    </children>
+</StackPane>
