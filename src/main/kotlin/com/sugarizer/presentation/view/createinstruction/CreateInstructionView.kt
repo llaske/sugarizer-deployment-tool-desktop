@@ -1,13 +1,12 @@
 package com.sugarizer.presentation.view.createinstruction
 
 import javafx.scene.control.Button
-import javafx.scene.control.ProgressIndicator
+import javafx.scene.control.TextField
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.StackPane
 import tornadofx.View
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
-
 
 class CreateInstructionView : View(), CreateInstructionContract.View {
     override val root: StackPane by fxml("/layout/view-create-instruction.fxml")
@@ -23,6 +22,9 @@ class CreateInstructionView : View(), CreateInstructionContract.View {
     val deleteFile: Button by fxid("deleteFile")
 
     val creation: Button by fxid("creation")
+    val choosedDirectory: TextField by fxid("choosedDirectory")
+    val chooseDirectory: Button by fxid("chooseDirectory")
+    val nameZip: TextField by fxid("nameZip")
 
     val presenter: CreateInstructionPresenter = CreateInstructionPresenter(this)
 
@@ -37,14 +39,13 @@ class CreateInstructionView : View(), CreateInstructionContract.View {
         createPane.onDragOver = presenter.onPaneDragOver(createPane)
         createPane.onDragDropped = presenter.onCreatePaneDragDropped(createPane)
 
-        //installApk.onAction = presenter.onClickInstallApk(primaryStage)
-
         creation.onAction = presenter.onClickCreateInstruction()
+        chooseDirectory.onAction = presenter.onClickChooseDirectory(primaryStage)
     }
 
     override fun showProgress(boolean: Boolean) {
-        progress.isVisible = true
-        createInstruction.isDisable = true
+        progress.isVisible = boolean
+        createInstruction.isDisable = boolean
     }
 
     override fun primaryStage(): Stage {
@@ -53,5 +54,31 @@ class CreateInstructionView : View(), CreateInstructionContract.View {
 
     override fun disableCreation(boolean: Boolean) {
         creation.isDisable = boolean
+    }
+
+    override fun reset() {
+        choosedDirectory.text = ""
+        nameZip.text = "Name of output zip"
+        listPane.children.clear()
+    }
+
+    override fun isNameZipEnterred(): Boolean {
+        return nameZip.text.isNotEmpty() && !nameZip.text.equals("Name of output zip")
+    }
+
+    override fun getChoosedDirectory(): String {
+        return choosedDirectory.text
+    }
+
+    override fun getNameZipFile(): String {
+        return nameZip.text
+    }
+
+    override fun isDiretoryChoose(): Boolean {
+        return choosedDirectory.text.isNotEmpty()
+    }
+
+    override fun setChoosedDirectory(string: String) {
+        choosedDirectory.text = string
     }
 }

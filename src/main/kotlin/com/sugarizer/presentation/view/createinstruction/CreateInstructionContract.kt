@@ -15,7 +15,19 @@ interface CreateInstructionContract {
 
         fun disableCreation(boolean: Boolean)
 
+        fun reset()
+
         fun primaryStage(): Stage
+
+        fun isNameZipEnterred(): Boolean
+
+        fun isDiretoryChoose(): Boolean
+
+        fun getChoosedDirectory(): String
+
+        fun getNameZipFile(): String
+
+        fun setChoosedDirectory(string: String)
     }
 
     interface Presenter {
@@ -36,5 +48,7 @@ interface CreateInstructionContract {
         fun onClickInstallApk(primaryStage: Stage): EventHandler<ActionEvent>
 
         fun onClickCreateInstruction(): EventHandler<ActionEvent>
+
+        fun onClickChooseDirectory(primaryStage: Stage): EventHandler<ActionEvent>
     }
 }

@@ -5,6 +5,10 @@ import com.sugarizer.domain.model.InstallApkModel
 import com.sugarizer.domain.model.Instruction
 import com.sugarizer.domain.model.InstructionsModel
 import com.sugarizer.domain.model.Model
+import com.sugarizer.domain.shared.ZipInUtils
+import io.reactivex.Observable
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
+import io.reactivex.schedulers.Schedulers
 import javafx.event.EventHandler
 import javafx.scene.control.Button
 import javafx.scene.image.Image
@@ -12,10 +16,13 @@ import javafx.scene.input.*
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.Pane
 import javafx.event.ActionEvent
+import javafx.scene.control.Alert
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
-import java.io.File
-
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
+import java.io.*
+import java.io.IOException
 
 class CreateInstructionPresenter(val view: CreateInstructionContract.View) : CreateInstructionContract.Presenter {
     val buttonFormat = DataFormat("com.sugarizer.formats.button")
@@ -110,9 +117,40 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
 
     override fun onClickCreateInstruction(): EventHandler<ActionEvent> {
         return EventHandler {
-            println(Gson().toJson(instructionModel, InstructionsModel::class.java).toString())
-
             view.showProgress(true)
+
+            Observable.create<String> {
+                if (view.isNameZipEnterred() && view.isDiretoryChoose()) {
+
+                    var zipIn = ZipInUtils(view.getChoosedDirectory() + "\\" + view.getNameZipFile() + ".zip", instructionModel)
+
+                    zipIn.startZiping()
+                    zipIn.finishZip()
+
+                    it.onComplete()
+                } else {
+                    //throw Throwable("Test")
+                    //it.onError(Throwable("Enter a name for a Zip"))
+                }
+            }
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(JavaFxScheduler.platform())
+                    .doOnComplete {
+                        listInstructionTmp.clear()
+                        view.reset()
+                        view.showProgress(false)
+                    }
+                    .doOnError {
+                        view.showProgress(false)
+                        println("onError")
+                        //println(it.message)
+                        var alert = Alert(Alert.AlertType.ERROR)
+                        alert.title = "Error"
+                        alert.contentText = "Please enter a name for the Zip archive"
+
+                        alert.showAndWait()
+                    }
+                    .subscribe()
         }
     }
 
@@ -145,5 +183,14 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
         listInstructionTmp.add(instructionModel)
 
         view.disableCreation(false)
+    }
+
+    override fun onClickChooseDirectory(primaryStage: Stage): EventHandler<ActionEvent> {
+        return EventHandler {
+            var directory = DirectoryChooser()
+            directory.title = "Choose the output directory"
+            var choosedDirectory: File = directory.showDialog(primaryStage)
+            view.setChoosedDirectory(choosedDirectory.absolutePath)
+        }
     }
 }
