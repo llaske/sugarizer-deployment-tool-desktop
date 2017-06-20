@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
+
+    <children>
+        <TableView id="device-table" fx:id="deviceTable" stylesheets="@../css/view-devices.css" GridPane.columnIndex="0" GridPane.columnSpan="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="columnName" text="Name" />
+                <TableColumn fx:id="columnStatus" text="Status" />
+                <TableColumn fx:id="columnAction" text="Current Action" />
+                <TableColumn fx:id="columnPing" text="Ping" />
+            </columns>
+        </TableView>
+    </children>
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
+</GridPane>

@@ -1,0 +1,7 @@
+#device-table .table-column {
+    -fx-alignment: center;
+}
+
+#device-table .table-cell {
+    -fx-alignment: center;
+}
