@@ -2,7 +2,7 @@ package com.sugarizer.domain.model
 
 import com.google.gson.annotations.SerializedName
 
-class InstructionsModel<T> where T : Model{
+class InstructionsModel {
     enum class Type {
         INTALL_APK,
         PUSH_FILE,
@@ -10,10 +10,10 @@ class InstructionsModel<T> where T : Model{
     }
 
     @SerializedName("instrcutions")
-    var intructions: List<Instruction<T>>? = null
+    var intructions: List<Instruction>? = null
 }
 
-class Instruction<T> where T : Model{
+class Instruction {
     @SerializedName("type")
     var type: InstructionsModel.Type? = null
 
@@ -21,17 +21,13 @@ class Instruction<T> where T : Model{
     var ordre: Int? = null
 
     @SerializedName("data")
-    var data: T? = null
+    var data: String? = null
 }
 
-class InstallApkModel : Model() {
+class InstallApkModel {
     @SerializedName("number_apk")
     var numberApk: Int? = 0
 
     @SerializedName("apks")
     var apks: List<String>? = null
-}
-
-abstract class Model {
-
 }

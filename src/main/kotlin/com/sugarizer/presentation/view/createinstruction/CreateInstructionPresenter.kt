@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import com.sugarizer.domain.model.InstallApkModel
 import com.sugarizer.domain.model.Instruction
 import com.sugarizer.domain.model.InstructionsModel
-import com.sugarizer.domain.model.Model
 import com.sugarizer.domain.shared.ZipInUtils
 import io.reactivex.Observable
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
@@ -28,11 +27,11 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
     val buttonFormat = DataFormat("com.sugarizer.formats.button")
 
     var draggingButton: Button? = null
-    var listInstructionTmp: MutableList<Instruction<*>> = mutableListOf()
-    var instructionModel: InstructionsModel<Model> = InstructionsModel()
+    var listInstructionTmp: MutableList<Instruction> = mutableListOf()
+    var instructionModel: InstructionsModel = InstructionsModel()
 
     init {
-        instructionModel.intructions = listInstructionTmp as List<Instruction<Model>>
+        instructionModel.intructions = listInstructionTmp as List<Instruction>
     }
 
     override fun onCreateButtonDragDone(): EventHandler<DragEvent> {
@@ -165,7 +164,7 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
         directory.title = "Choose the apk directory"
         var choosedDirectory: File = directory.showDialog(view.primaryStage())
 
-        var instructionModel: Instruction<InstallApkModel> = Instruction()
+        var instructionModel: Instruction = Instruction()
         var model: InstallApkModel = InstallApkModel()
         var listApk: MutableList<String> = mutableListOf()
 
@@ -176,7 +175,7 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
         model.numberApk = listApk.size
         model.apks = listApk
 
-        instructionModel.data = model
+        instructionModel.data = Gson().toJson(model)
         instructionModel.ordre = listInstructionTmp.size
         instructionModel.type = InstructionsModel.Type.INTALL_APK
 

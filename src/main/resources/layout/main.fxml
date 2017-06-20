@@ -33,7 +33,7 @@
                 <Button fx:id="filePusher" maxWidth="Infinity" mnemonicParsing="false" text="File Pusher" GridPane.columnIndex="0" GridPane.rowIndex="3" disable="true" />
                 <Button fx:id="fileDeleter" maxWidth="Infinity" mnemonicParsing="false" text="File Deleter" GridPane.columnIndex="0" GridPane.rowIndex="4" disable="true" />
                 <Button fx:id="createInstruction" maxWidth="Infinity" mnemonicParsing="false" text="Create Instruction" GridPane.columnIndex="0" GridPane.rowIndex="5" disable="false" />
-                <Button fx:id="loadInstruction" maxWidth="Infinity" mnemonicParsing="false" text="Load Instruction" GridPane.columnIndex="0" GridPane.rowIndex="6" disable="true" />
+                <Button fx:id="loadInstruction" maxWidth="Infinity" mnemonicParsing="false" text="Load Instruction" GridPane.columnIndex="0" GridPane.rowIndex="6" disable="false" />
                 <Button fx:id="settings" maxWidth="Infinity" mnemonicParsing="false" text="Settings" GridPane.columnIndex="0" GridPane.rowIndex="7" disable="true" />
             </children>
         </GridPane>

@@ -9,6 +9,8 @@ import com.sugarizer.main.Main
 import com.sugarizer.presentation.view.appmanager.AppManagerView
 import com.sugarizer.presentation.view.createinstruction.CreateInstructionView
 import com.sugarizer.presentation.view.device.DevicesView
+import com.sugarizer.presentation.view.loadinstruction.LoadInstructionView
+import com.sun.org.apache.bcel.internal.generic.LoadInstruction
 import tornadofx.View
 import tornadofx.action
 import view.inventory.InventoryView
@@ -27,6 +29,7 @@ class MainView : View() {
     val devices : Button by fxid(propName = "devices")
     val application : Button by fxid(propName = "appManager")
     val createInstruction : Button by fxid(propName = "createInstruction")
+    val loadInstruction: Button by fxid(propName = "loadInstruction")
 
     private val views = mutableMapOf<Views, KClass<View>>()
 
@@ -34,7 +37,8 @@ class MainView : View() {
         DEVICES,
         INVENTORY,
         APP_MANAGER,
-        CREATE_INSTRUCTION;
+        CREATE_INSTRUCTION,
+        LOAD_INSTRUCTION;
 
         override fun toString(): String {
             when (this) {
@@ -55,11 +59,13 @@ class MainView : View() {
             views.put(Views.INVENTORY, InventoryView::class as KClass<View>)
             views.put(Views.APP_MANAGER, AppManagerView::class as KClass<View>)
             views.put(Views.CREATE_INSTRUCTION, CreateInstructionView::class as KClass<View>)
+            views.put(Views.LOAD_INSTRUCTION, LoadInstructionView::class as KClass<View>)
 
             with(inventory) { action { load(Views.INVENTORY) } }
             with(devices) { action { load(Views.DEVICES) } }
             with(application) { action { load(Views.APP_MANAGER) }}
             with(createInstruction) { action { load(Views.CREATE_INSTRUCTION) } }
+            with(loadInstruction) { action { load(Views.LOAD_INSTRUCTION) } }
 
             load(Views.DEVICES)
         } catch (e: IOException) {
