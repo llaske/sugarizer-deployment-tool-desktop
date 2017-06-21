@@ -6,9 +6,12 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
+<?import com.sugarizer.presentation.custom.ListMenuItem?>
+<?import javafx.scene.control.Separator?>
 <GridPane stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
     <columnConstraints>
         <ColumnConstraints percentWidth="30.0" />
+        <ColumnConstraints />
         <ColumnConstraints fillWidth="true" percentWidth="70.0" />
     </columnConstraints>
     <rowConstraints>
@@ -25,19 +28,23 @@
                 <RowConstraints />
                 <RowConstraints />
                 <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
+                <RowConstraints />
             </rowConstraints>
             <children>
-                <Button fx:id="devices" maxWidth="Infinity" mnemonicParsing="false" text="Devices" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Button fx:id="inventory" maxWidth="Infinity" mnemonicParsing="false" text="Inventory" GridPane.columnIndex="0" GridPane.rowIndex="1" disable="true"/>
-                <Button fx:id="appManager" maxWidth="Infinity" mnemonicParsing="false" text="Application Manager" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <Button fx:id="filePusher" maxWidth="Infinity" mnemonicParsing="false" text="File Pusher" GridPane.columnIndex="0" GridPane.rowIndex="3" disable="true" />
-                <Button fx:id="fileDeleter" maxWidth="Infinity" mnemonicParsing="false" text="File Deleter" GridPane.columnIndex="0" GridPane.rowIndex="4" disable="true" />
-                <Button fx:id="createInstruction" maxWidth="Infinity" mnemonicParsing="false" text="Create Instruction" GridPane.columnIndex="0" GridPane.rowIndex="5" disable="false" />
-                <Button fx:id="loadInstruction" maxWidth="Infinity" mnemonicParsing="false" text="Load Instruction" GridPane.columnIndex="0" GridPane.rowIndex="6" disable="false" />
-                <Button fx:id="settings" maxWidth="Infinity" mnemonicParsing="false" text="Settings" GridPane.columnIndex="0" GridPane.rowIndex="7" disable="true" />
+                <ListMenuItem fx:id="devices"  name="Devices" GridPane.columnIndex="0" GridPane.rowIndex="0" visible="true"/>
+                <ListMenuItem fx:id="inventory" name="Inventory" GridPane.columnIndex="0" GridPane.rowIndex="1" disable="true"/>
+                <ListMenuItem fx:id="appManager" name="Application Manager" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <ListMenuItem fx:id="filePusher" name="File Pusher" GridPane.columnIndex="0" GridPane.rowIndex="3" disable="true" />
+                <ListMenuItem fx:id="fileDeleter" name="File Deleter" GridPane.columnIndex="0" GridPane.rowIndex="4" disable="true" />
+                <ListMenuItem fx:id="createInstruction" name="Create Instruction" GridPane.columnIndex="0" GridPane.rowIndex="5" disable="false" />
+                <ListMenuItem fx:id="loadInstruction" name="Load Instruction" GridPane.columnIndex="0" GridPane.rowIndex="6" disable="false" />
+                <ListMenuItem fx:id="synchronisation" name="Synchronisation" GridPane.columnIndex="0" GridPane.rowIndex="7" disable="false" />
+                <ListMenuItem fx:id="settings" name="Settings" GridPane.columnIndex="0" GridPane.rowIndex="8" disable="true" />
             </children>
         </GridPane>
-        <BorderPane fx:id="container" GridPane.columnIndex="1" GridPane.columnSpan="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
-        </BorderPane>
+        <Separator GridPane.rowIndex="0" GridPane.columnIndex="1" orientation="VERTICAL" halignment="CENTER" valignment="CENTER"/>
+        <BorderPane fx:id="container" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS"/>
     </children>
 </GridPane>

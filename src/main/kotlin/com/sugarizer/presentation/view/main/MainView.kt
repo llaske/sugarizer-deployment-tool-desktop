@@ -6,11 +6,13 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.GridPane
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.main.Main
+import com.sugarizer.presentation.custom.ListMenuItem
 import com.sugarizer.presentation.view.appmanager.AppManagerView
 import com.sugarizer.presentation.view.createinstruction.CreateInstructionView
 import com.sugarizer.presentation.view.device.DevicesView
 import com.sugarizer.presentation.view.loadinstruction.LoadInstructionView
 import com.sun.org.apache.bcel.internal.generic.LoadInstruction
+import sun.security.krb5.Realm
 import tornadofx.View
 import tornadofx.action
 import view.inventory.InventoryView
@@ -25,11 +27,11 @@ class MainView : View() {
 
     val container : BorderPane by fxid(propName = "container")
 
-    val inventory : Button by fxid(propName = "inventory")
-    val devices : Button by fxid(propName = "devices")
-    val application : Button by fxid(propName = "appManager")
-    val createInstruction : Button by fxid(propName = "createInstruction")
-    val loadInstruction: Button by fxid(propName = "loadInstruction")
+    val inventory : ListMenuItem by fxid(propName = "inventory")
+    val devices : ListMenuItem by fxid(propName = "devices")
+    val application : ListMenuItem by fxid(propName = "appManager")
+    val createInstruction : ListMenuItem by fxid(propName = "createInstruction")
+    val loadInstruction: ListMenuItem by fxid(propName = "loadInstruction")
 
     private val views = mutableMapOf<Views, KClass<View>>()
 
@@ -61,13 +63,15 @@ class MainView : View() {
             views.put(Views.CREATE_INSTRUCTION, CreateInstructionView::class as KClass<View>)
             views.put(Views.LOAD_INSTRUCTION, LoadInstructionView::class as KClass<View>)
 
-            with(inventory) { action { load(Views.INVENTORY) } }
-            with(devices) { action { load(Views.DEVICES) } }
-            with(application) { action { load(Views.APP_MANAGER) }}
-            with(createInstruction) { action { load(Views.CREATE_INSTRUCTION) } }
-            with(loadInstruction) { action { load(Views.LOAD_INSTRUCTION) } }
+            devices.setOnMouseClicked { load(Views.DEVICES) }
+            inventory.setOnMouseClicked { load(Views.INVENTORY) }
+            application.setOnMouseClicked { load(Views.APP_MANAGER) }
+            createInstruction.setOnMouseClicked { load(Views.CREATE_INSTRUCTION) }
+            loadInstruction.setOnMouseClicked { load(Views.LOAD_INSTRUCTION) }
 
             load(Views.DEVICES)
+
+            devices.setProgress(true)
         } catch (e: IOException) {
             e.printStackTrace()
         }

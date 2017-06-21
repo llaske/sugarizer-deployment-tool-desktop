@@ -4,11 +4,11 @@ import com.google.gson.Gson
 import com.sugarizer.domain.model.InstallApkModel
 import com.sugarizer.domain.model.InstructionsModel
 import com.sugarizer.domain.shared.ZipOutUtils
+import com.sugarizer.presentation.custom.ListItemLoadInstruction
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
-import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.stage.FileChooser
 
@@ -30,7 +30,7 @@ class LoadInstructionPresenter(val view: LoadInstructionContract.View) : LoadIns
                         println("Size: " + zipOut.instruction?.intructions?.size)
                         zipOut.instruction?.intructions?.forEach {
                             when (it.type) {
-                                InstructionsModel.Type.INTALL_APK -> view.addInstruction(Label("Install APK : " + (Gson().fromJson(it.data, InstallApkModel::class.java).numberApk)))
+                                InstructionsModel.Type.INTALL_APK -> view.addInstruction(ListItemLoadInstruction(it.ordre, it.type, (Gson().fromJson(it.data, InstallApkModel::class.java).numberApk.toString())))
                             }
                         }
                     }
