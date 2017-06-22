@@ -20,13 +20,15 @@
             <rowConstraints>
                 <RowConstraints percentHeight="10"/>
                 <RowConstraints />
-                <RowConstraints percentHeight="90"/>
+                <RowConstraints percentHeight="80"/>
+                <RowConstraints percentHeight="10"/>
             </rowConstraints>
             <children>
                 <Button fx:id="loadInstruction" text="Load Instruction" GridPane.columnIndex="0" GridPane.rowIndex="0" maxWidth="Infinity" maxHeight="Infinity"/>
                 <Label fx:id="nameFile" GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="Infinity" alignment="CENTER"/>
                 <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1"/>
                 <VBox fx:id="listInstruction" maxHeight="Infinity" maxWidth="Infinity" GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+                <Button fx:id="startInstruction" text="Start Instruction" GridPane.columnIndex="0" GridPane.rowIndex="3" maxWidth="Infinity" maxHeight="Infinity" disable="true"/>
             </children>
         </GridPane>
         <VBox fx:id="progress" visible="false"

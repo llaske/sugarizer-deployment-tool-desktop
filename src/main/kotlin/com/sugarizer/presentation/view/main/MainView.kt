@@ -1,7 +1,6 @@
 package view.main
 
 import com.sugarizer.BuildConfig
-import javafx.scene.control.Button
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.GridPane
 import com.sugarizer.domain.shared.JADB
@@ -11,10 +10,7 @@ import com.sugarizer.presentation.view.appmanager.AppManagerView
 import com.sugarizer.presentation.view.createinstruction.CreateInstructionView
 import com.sugarizer.presentation.view.device.DevicesView
 import com.sugarizer.presentation.view.loadinstruction.LoadInstructionView
-import com.sun.org.apache.bcel.internal.generic.LoadInstruction
-import sun.security.krb5.Realm
 import tornadofx.View
-import tornadofx.action
 import view.inventory.InventoryView
 import java.io.IOException
 import javax.inject.Inject
@@ -32,6 +28,8 @@ class MainView : View() {
     val application : ListMenuItem by fxid(propName = "appManager")
     val createInstruction : ListMenuItem by fxid(propName = "createInstruction")
     val loadInstruction: ListMenuItem by fxid(propName = "loadInstruction")
+
+    var lastItem: ListMenuItem? = null
 
     private val views = mutableMapOf<Views, KClass<View>>()
 
@@ -63,21 +61,23 @@ class MainView : View() {
             views.put(Views.CREATE_INSTRUCTION, CreateInstructionView::class as KClass<View>)
             views.put(Views.LOAD_INSTRUCTION, LoadInstructionView::class as KClass<View>)
 
-            devices.setOnMouseClicked { load(Views.DEVICES) }
-            inventory.setOnMouseClicked { load(Views.INVENTORY) }
-            application.setOnMouseClicked { load(Views.APP_MANAGER) }
-            createInstruction.setOnMouseClicked { load(Views.CREATE_INSTRUCTION) }
-            loadInstruction.setOnMouseClicked { load(Views.LOAD_INSTRUCTION) }
+            devices.setOnMouseClicked { load(Views.DEVICES, devices) }
+            inventory.setOnMouseClicked { load(Views.INVENTORY, inventory) }
+            application.setOnMouseClicked { load(Views.APP_MANAGER, application) }
+            createInstruction.setOnMouseClicked { load(Views.CREATE_INSTRUCTION, createInstruction) }
+            loadInstruction.setOnMouseClicked { load(Views.LOAD_INSTRUCTION, loadInstruction) }
 
-            load(Views.DEVICES)
+
+            load(Views.DEVICES, devices)
 
             devices.setProgress(true)
+            devices.setSelected(true)
         } catch (e: IOException) {
             e.printStackTrace()
         }
     }
 
-    private fun load(view: Views) {
+    private fun load(view: Views, item: ListMenuItem) {
         if (views.containsKey(view)) {
             with(container) {
                 center = find((views[view]) as KClass<View>).root
@@ -85,5 +85,12 @@ class MainView : View() {
         } else {
             println("Error: key not found in map")
         }
+
+        lastItem?.let {
+            it.setSelected(false)
+        }
+
+        item.setSelected(true)
+        lastItem = item
     }
 }

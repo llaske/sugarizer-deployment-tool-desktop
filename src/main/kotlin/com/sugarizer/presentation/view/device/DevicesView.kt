@@ -16,6 +16,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.TableCell
 import javafx.util.Callback
 import tornadofx.*
+import view.main.MainView
 import javax.inject.Inject
 
 class DevicesView : View(), DeviceContract.View {
@@ -105,5 +106,4 @@ class DevicesView : View(), DeviceContract.View {
             }
         }
     }
-
 }

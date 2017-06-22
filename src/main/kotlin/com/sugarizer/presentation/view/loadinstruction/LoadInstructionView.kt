@@ -1,5 +1,6 @@
 package com.sugarizer.presentation.view.loadinstruction
 
+import com.sugarizer.presentation.custom.ListItemLoadInstruction
 import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -17,11 +18,14 @@ class LoadInstructionView : View(), LoadInstructionContract.View{
     val progress: VBox by fxid("progress")
     val grid: GridPane by fxid("content")
     val listInstruction: VBox by fxid("listInstruction")
+    val startInstruction: Button by fxid("startInstruction")
+    val map: HashMap<Int, ListItemLoadInstruction> = HashMap()
 
     val presenter: LoadInstructionPresenter = LoadInstructionPresenter(this)
 
     init {
         loadInstruction.onAction = presenter.onClickLoad()
+        startInstruction.onAction = presenter.onClickStart()
     }
 
     override fun primaryStage(): Stage {
@@ -37,7 +41,20 @@ class LoadInstructionView : View(), LoadInstructionContract.View{
         grid.isDisable = boolean
     }
 
-    override fun addInstruction(node: Node) {
-        listInstruction.children.add(node)
+    override fun addInstruction(ordre: Int, item: ListItemLoadInstruction) {
+        if (!map.containsKey(ordre)) {
+            map.put(ordre, item)
+            listInstruction.children.add(item)
+        }
+    }
+
+    override fun setProgressOnInstruction(ordre: Int, boolean: Boolean) {
+        if (map.containsKey(ordre)) {
+            map[ordre]?.setProgress(boolean)
+        }
+    }
+
+    override fun canStart(boolean: Boolean) {
+        startInstruction.isDisable = !boolean
     }
 }

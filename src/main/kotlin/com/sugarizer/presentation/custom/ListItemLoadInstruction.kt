@@ -10,6 +10,12 @@ import javafx.scene.layout.RowConstraints
 import tornadofx.gridpaneColumnConstraints
 
 class ListItemLoadInstruction(val ordre: Int?, val type: InstructionsModel.Type?, val content: String?) : GridPane() {
+    val ordreLabel: Label = Label(ordre.toString())
+    val typeLabel: Label = Label(type.toString())
+    val info: Label = Label(content + " " + type?.let { getUnitFromType(it) })
+    val progress: ProgressIndicator = ProgressIndicator()
+    val separator: Separator = Separator(Orientation.HORIZONTAL)
+
     init {
         maxHeight = 50.0
         maxWidth = Double.MAX_VALUE
@@ -35,12 +41,6 @@ class ListItemLoadInstruction(val ordre: Int?, val type: InstructionsModel.Type?
         columnConstraints.add(columnThree)
         columnConstraints.add(columnFour)
 
-        val ordreLabel: Label = Label(ordre.toString())
-        val typeLabel: Label = Label(type.toString())
-        val info: Label = Label(content + " " + type?.let { getUnitFromType(it) })
-        val progress: ProgressIndicator = ProgressIndicator()
-        val separator: Separator = Separator(Orientation.HORIZONTAL)
-
         ordreLabel.alignment = Pos.CENTER
         ordreLabel.maxWidth = Double.MAX_VALUE
         typeLabel.alignment = Pos.CENTER
@@ -49,6 +49,8 @@ class ListItemLoadInstruction(val ordre: Int?, val type: InstructionsModel.Type?
         info.maxWidth = Double.MAX_VALUE
         progress.maxWidth = Double.MAX_VALUE
         separator.maxWidth = Double.MAX_VALUE
+
+        progress.isVisible = false
 
         gridpaneColumnConstraints.let {
             setRowIndex(ordreLabel, 0)
@@ -81,5 +83,9 @@ class ListItemLoadInstruction(val ordre: Int?, val type: InstructionsModel.Type?
             InstructionsModel.Type.PUSH_FILE -> { return "files"}
             InstructionsModel.Type.DELETE_FILE -> { return "files" }
         }
+    }
+
+    fun setProgress(boolean: Boolean) {
+        progress.isVisible = boolean
     }
 }
