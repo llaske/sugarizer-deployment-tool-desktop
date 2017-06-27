@@ -15,6 +15,7 @@ import se.vidstige.jadb.managers.Package
 import se.vidstige.jadb.managers.PackageManager
 import java.io.File
 import java.net.ConnectException
+import java.sql.SQLData
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -22,10 +23,12 @@ class JADB {
 
     @Inject lateinit var bus: RxBus
     @Inject lateinit var stringUtils: StringUtils
+    @Inject lateinit var db: DataBase
 
     var listJadb = mutableListOf<JadbDevice>()
     var listDevice = mutableListOf<DeviceModel>()
     var connection: JadbConnection = JadbConnection()
+    var watcher: DeviceWatcher? = null
 
     init {
         Main.appComponent.inject(this)
@@ -98,7 +101,7 @@ class JADB {
             subscriber -> run {
 
             try {
-                var watcher: DeviceWatcher = connection.createDeviceWatcher(object : DeviceDetectionListener {
+                watcher = connection.createDeviceWatcher(object : DeviceDetectionListener {
                     override fun onDetect(devices: MutableList<se.vidstige.jadb.JadbDevice>?) {
                         println("onDetect")
 
@@ -109,10 +112,10 @@ class JADB {
 
                                         listDevice.filter {
                                             it.name.get().equals(it.name.get()) }
-                                                .forEach {
-                                                    listDevice.remove(it)
-                                                }
+                                                .forEach { listDevice.remove(it) }
                                         subscriber.onNext(DeviceEventModel(DeviceEventModel.Status.REMOVED, DeviceModel(it)))
+
+                                        
                                     }
 
                             devices.filter { !listJadb.contains(it) }
@@ -165,7 +168,9 @@ class JADB {
                     }
                 })
 
-                watcher.watch()
+                watcher?.let {
+                    it.watch()
+                }
             } catch (e: java.net.ConnectException) {
                 println("Error: Connection refused (adb is started ?)")
             }
@@ -316,6 +321,12 @@ class JADB {
             return false
         } catch (e: JadbException) {
             return true
+        }
+    }
+
+    fun stopWatching(){
+        watcher?.let {
+            it.stop()
         }
     }
 }

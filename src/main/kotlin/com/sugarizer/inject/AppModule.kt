@@ -1,5 +1,6 @@
 package com.sugarizer.inject
 
+import com.sugarizer.domain.shared.DataBase
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.RxBus
 import com.sugarizer.domain.shared.StringUtils
@@ -49,5 +50,11 @@ class AppModule() {
     @Provides
     fun providesStringUtils() : StringUtils {
         return StringUtils()
+    }
+
+    @Singleton
+    @Provides
+    fun providesDatabase() : DataBase {
+        return DataBase()
     }
 }

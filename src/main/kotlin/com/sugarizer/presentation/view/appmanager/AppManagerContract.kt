@@ -1,5 +1,6 @@
 package com.sugarizer.presentation.view.appmanager
 
+import com.sugarizer.presentation.custom.ListItemApplication
 import com.sun.org.apache.xpath.internal.operations.Bool
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
@@ -11,11 +12,13 @@ interface AppManagerContract {
 
         fun setInstallDisable(boolean: Boolean)
 
-        fun onFileAdded(string: String)
+        fun onFileAdded(item: ListItemApplication)
 
-        fun onFileRemoved(string: String)
+        fun onFileRemoved(item: ListItemApplication)
 
         fun isForceInstall() : Boolean
+
+        fun start()
     }
 
     interface Presenter {

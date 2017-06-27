@@ -31,6 +31,7 @@ class Main : App(MainView::class) {
 
     override fun stop() {
         jadb.stopADB()
+        jadb.stopWatching()
 
         super.stop()
     }

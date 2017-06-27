@@ -8,6 +8,7 @@
 
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
 <GridPane stylesheets="@../css/view-app-manager.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
     <columnConstraints>
         <ColumnConstraints percentWidth="25" />
@@ -21,14 +22,14 @@
         <RowConstraints percentHeight="10" />
     </rowConstraints>
     <children>
-        <TextField
+        <Label
                 id="repository"
                 fx:id="repository"
-                editable="false"
                 styleClass="text"
                 stylesheets="@../css/view-app-manager.css"
                 maxWidth="Infinity"
                 maxHeight="Infinity"
+                alignment="CENTER"
                 GridPane.columnIndex="0"
                 GridPane.columnSpan="3"
                 GridPane.rowIndex="0" />

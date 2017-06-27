@@ -3,6 +3,7 @@ package com.sugarizer.inject
 import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.main.Main
+import com.sugarizer.presentation.custom.ListItemApplication
 import com.sugarizer.presentation.view.appmanager.AppManagerView
 import com.sugarizer.presentation.view.device.DevicesView
 import com.sugarizer.presentation.view.loadinstruction.LoadInstructionPresenter
@@ -25,6 +26,8 @@ interface AppComponent {
     fun inject(appManagerView: AppManagerView)
 
     fun inject(loadInstructionPresenter: LoadInstructionPresenter)
+
+    fun inject(listItemApplication: ListItemApplication)
 
     companion object {
         fun init(application: javafx.application.Application) : AppComponent {
