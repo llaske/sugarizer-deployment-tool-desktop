@@ -37,7 +37,7 @@
                 fx:id="chooseRepository"
                 maxHeight="Infinity"
                 maxWidth="Infinity"
-                text="..."
+                text="Choose apk files"
                 GridPane.columnIndex="3"
                 GridPane.rowIndex="0" />
         <ListView

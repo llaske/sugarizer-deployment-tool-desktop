@@ -1,5 +1,6 @@
 package com.sugarizer.presentation.view.createinstruction
 
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.scene.control.Button
 import javafx.scene.control.TextField
 import javafx.scene.layout.GridPane
@@ -7,6 +8,7 @@ import javafx.scene.layout.StackPane
 import tornadofx.View
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
+import java.util.*
 
 class CreateInstructionView : View(), CreateInstructionContract.View {
     override val root: StackPane by fxml("/layout/view-create-instruction.fxml")
@@ -28,6 +30,8 @@ class CreateInstructionView : View(), CreateInstructionContract.View {
 
     val presenter: CreateInstructionPresenter = CreateInstructionPresenter(this)
 
+    val inWork = SimpleBooleanProperty(false)
+
     init {
         for (tmp in  createPane.children){
             tmp.onDragDetected = presenter.onCreateButtonDragDetected(tmp as Button)
@@ -46,6 +50,7 @@ class CreateInstructionView : View(), CreateInstructionContract.View {
     override fun showProgress(boolean: Boolean) {
         progress.isVisible = boolean
         createInstruction.isDisable = boolean
+        inWork.set(boolean)
     }
 
     override fun primaryStage(): Stage {
@@ -60,6 +65,7 @@ class CreateInstructionView : View(), CreateInstructionContract.View {
         choosedDirectory.text = ""
         nameZip.text = "Name of output zip"
         listPane.children.clear()
+        creation.isDisable = true
     }
 
     override fun isNameZipEnterred(): Boolean {

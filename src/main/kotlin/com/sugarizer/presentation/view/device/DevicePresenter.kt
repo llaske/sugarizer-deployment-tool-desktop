@@ -6,6 +6,7 @@ import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.RxBus
 import com.sugarizer.domain.shared.StringUtils
+import com.sugarizer.presentation.view.devicedetails.view.devicedetails.DeviceDetailsPresenter
 import io.reactivex.schedulers.Schedulers
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
@@ -40,14 +41,11 @@ class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: 
         }
     }
 
-    override fun onTableRowDoubleClick(selectedItem: DeviceModel, modalStage: Stage) {
-        var device: DeviceModel = selectedItem!!
-        var details: View = DeviceDetailsView(device)
-        var stage: Stage = Stage()
+    override fun onTableRowDoubleClick(selectedItem: DeviceModel) {
+        println("Double Click")
+        var details = DeviceDetailsPresenter(selectedItem)
 
-        stage.isFocused = true
-        stage.initOwner(modalStage)
-        details.openWindow()
+        details.showAndWait()
     }
 
     override fun start() {

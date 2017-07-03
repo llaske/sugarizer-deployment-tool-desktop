@@ -1,6 +1,8 @@
 package com.sugarizer.presentation.custom
 
+import com.sugarizer.domain.model.Instruction
 import com.sugarizer.domain.model.InstructionsModel
+import com.sugarizer.presentation.view.createinstruction.instructions.ClickInstructionView
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.control.*
@@ -9,10 +11,10 @@ import javafx.scene.layout.GridPane
 import javafx.scene.layout.RowConstraints
 import tornadofx.gridpaneColumnConstraints
 
-class ListItemLoadInstruction(val ordre: Int?, val type: InstructionsModel.Type?, val content: String?) : GridPane() {
-    val ordreLabel: Label = Label(ordre.toString())
-    val typeLabel: Label = Label(type.toString())
-    val info: Label = Label(content + " " + type?.let { getUnitFromType(it) })
+class ListItemLoadInstruction(val instruction: Instruction) : GridPane() {
+    val ordreLabel: Label = Label(instruction.ordre.toString())
+    val typeLabel: Label = Label(instruction.type.toString())
+    val info: Label = Label("")
     val progress: ProgressIndicator = ProgressIndicator()
     val separator: Separator = Separator(Orientation.HORIZONTAL)
 
@@ -75,6 +77,8 @@ class ListItemLoadInstruction(val ordre: Int?, val type: InstructionsModel.Type?
         children.add(info)
         children.add(progress)
         children.add(separator)
+
+        //instruction.content + " " + type?.let { getUnitFromType(it) }
     }
 
     private fun  getUnitFromType(type: InstructionsModel.Type): String {
@@ -83,6 +87,8 @@ class ListItemLoadInstruction(val ordre: Int?, val type: InstructionsModel.Type?
             InstructionsModel.Type.PUSH_FILE -> { return "files"}
             InstructionsModel.Type.DELETE_FILE -> { return "files" }
         }
+
+        return ""
     }
 
     fun setProgress(boolean: Boolean) {

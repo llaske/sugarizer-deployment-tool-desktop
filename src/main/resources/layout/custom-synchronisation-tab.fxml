@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root type="javafx.scene.layout.GridPane"
+         xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://java.sun.com/JSP/Page"
+         prefHeight="400.0" prefWidth="600.0">
+    <columnConstraints>
+        <ColumnConstraints percentWidth="25"/>
+        <ColumnConstraints percentWidth="25"/>
+        <ColumnConstraints percentWidth="25"/>
+        <ColumnConstraints percentWidth="25"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints percentHeight="10"/>
+        <RowConstraints percentHeight="10"/>
+        <RowConstraints percentHeight="10"/>
+        <RowConstraints percentHeight="70"/>
+    </rowConstraints>
+    <children>
+        <Label text="Number files: " GridPane.rowIndex="0" GridPane.columnIndex="0" alignment="CENTER"/>
+        <Label text="0" GridPane.rowIndex="0" GridPane.columnIndex="1" alignment="CENTER"/>
+        <ListView fx:id="list" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowSpan="3"/>
+        <Button fx:id="addButton" text="Add" GridPane.columnIndex="3" GridPane.rowIndex="1" maxWidth="Infinity" maxHeight="Infinity"/>
+        <Button fx:id="removeButton" text="Remove" GridPane.columnIndex="3" GridPane.rowIndex="2" maxWidth="Infinity" maxHeight="Infinity"/>
+    </children>
+</fx:root>

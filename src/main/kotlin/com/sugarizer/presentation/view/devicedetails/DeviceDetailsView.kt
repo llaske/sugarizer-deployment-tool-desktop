@@ -2,12 +2,63 @@ package com.sugarizer.presentation.view.devicedetails.view.devicedetails
 
 import javafx.scene.Parent
 import com.sugarizer.domain.model.DeviceModel
+import com.sugarizer.domain.shared.JADB
+import com.sugarizer.main.Main
+import javafx.fxml.FXML
+import javafx.fxml.FXMLLoader
+import javafx.scene.control.Dialog
+import javafx.scene.control.Label
+import javafx.scene.control.ListView
+import javafx.scene.control.TextField
+import javafx.scene.layout.GridPane
+import se.vidstige.jadb.managers.PackageManager
 import tornadofx.View
+import java.io.IOException
+import javax.inject.Inject
 
-class DeviceDetailsView(device: DeviceModel) : View() {
-    override val root: Parent by fxml("/layout/device-details.fxml")
+class DeviceDetailsPresenter(val device: DeviceModel) : Dialog<String>() {
+
+    @Inject lateinit var jadb: JADB
+
+    @FXML lateinit var listPackage: ListView<String>
+    @FXML lateinit var name: Label
+    @FXML lateinit var model: Label
+    @FXML lateinit var romName: Label
+    @FXML lateinit var romVersion: Label
+    @FXML lateinit var apiVersion: Label
 
     init {
+        Main.appComponent.inject(this)
+
+        val loader = FXMLLoader(javaClass.getResource("/layout/device-details.fxml"))
+        val view = DeviceDetailsView()
+
+        loader.setRoot(view)
+        loader.setController(this)
+
+        dialogPane.scene.window.setOnCloseRequest { close() }
+
         title = "Details of " + device.name.get()
+
+        try {
+            loader.load<GridPane>()
+            dialogPane.content = view
+
+            PackageManager(device.jadbDevice).packages.forEach {
+                listPackage.items.add(it.toString())
+            }
+
+            name.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.product.name", ""))
+            model.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.product.model", ""))
+            romName.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.cm.releasetype", ""))
+            romVersion.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.modversion", ""))
+            apiVersion.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.build.version.sdk", ""))
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
+}
+
+class DeviceDetailsView() : GridPane() {
+
 }

@@ -65,6 +65,7 @@ class ListItemApplication(val name: ApkFile, val apkFile: File) : GridPane() {
 
         versionLabel.maxWidth = Double.MAX_VALUE
         versionLabel.alignment = Pos.CENTER
+        numberDeviveLabel.isVisible = true
         numberDeviveLabel.maxWidth = Double.MAX_VALUE
         numberDeviveLabel.alignment = Pos.CENTER
         numberDeviveLabel.text = "0/" + jadb.listJadb.size.toString()
@@ -96,9 +97,9 @@ class ListItemApplication(val name: ApkFile, val apkFile: File) : GridPane() {
         children.add(progress)
     }
 
-    fun startInstall(isForce: Boolean){
-        Observable.create<String> { subscriber ->
-            run {
+    fun startInstall(isForce: Boolean): Observable<String> {
+        return Observable.create { mainSub -> run {
+            Observable.create<String> { subscriber -> run {
                 subscriber.onNext("Starting...")
                 jadb.listDevice.forEach { deviceModel ->
                     subscriber.onNext("Installing on: " + deviceModel.name.get())
@@ -115,17 +116,21 @@ class ListItemApplication(val name: ApkFile, val apkFile: File) : GridPane() {
                             .subscribe()
                 }
             }
-        }
-                .subscribeOn(Schedulers.computation())
-                .observeOn(JavaFxScheduler.platform())
-                .doOnComplete {
-                    println("OnComplete Installed on all devices")
-                    progress.isVisible = false }
-                .subscribe {
-                    progress.isVisible = true
+            }
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(JavaFxScheduler.platform())
+                    .doOnComplete {
+                        println("OnComplete Installed on all devices")
+                        progress.isVisible = false
 
-                    installingOn.text = it
-                }
+                        mainSub.onComplete()
+                    }.subscribe {
+                progress.isVisible = true
+
+                installingOn.text = it
+            }
+        }
+        }
     }
 
     fun installOnDevice(jadbDevice: JadbDevice, isForce: Boolean) {

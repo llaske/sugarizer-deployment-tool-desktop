@@ -19,6 +19,10 @@ interface LoadInstructionContract {
         fun setProgressOnInstruction(ordre: Int, boolean: Boolean)
 
         fun canStart(boolean: Boolean)
+
+        fun setInWork(boolean: Boolean)
+
+        fun reset()
     }
 
     interface Presenter {

@@ -1,6 +1,8 @@
 package com.sugarizer.presentation.view.loadinstruction
 
 import com.sugarizer.presentation.custom.ListItemLoadInstruction
+import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.value.ObservableBooleanValue
 import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -22,6 +24,8 @@ class LoadInstructionView : View(), LoadInstructionContract.View{
     val map: HashMap<Int, ListItemLoadInstruction> = HashMap()
 
     val presenter: LoadInstructionPresenter = LoadInstructionPresenter(this)
+
+    var inWork = SimpleBooleanProperty(false)
 
     init {
         loadInstruction.onAction = presenter.onClickLoad()
@@ -56,5 +60,14 @@ class LoadInstructionView : View(), LoadInstructionContract.View{
 
     override fun canStart(boolean: Boolean) {
         startInstruction.isDisable = !boolean
+    }
+
+    override fun setInWork(boolean: Boolean) {
+        inWork.set(boolean)
+    }
+
+    override fun reset() {
+        listInstruction.children.clear()
+        map.clear()
     }
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root
+        type="javafx.scene.layout.GridPane"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://java.sun.com/JSP/Page">
+    <columnConstraints>
+        <ColumnConstraints percentWidth="50"/>
+        <ColumnConstraints percentWidth="50"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints percentHeight="50"/>
+        <RowConstraints percentHeight="50"/>
+    </rowConstraints>
+    <children>
+        <Label text="Duration :" alignment="CENTER" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="duration" GridPane.rowIndex="0" GridPane.columnIndex="1" maxHeight="Infinity"/>
+        <Button fx:id="ok" text="Ok" GridPane.rowIndex="1" GridPane.columnIndex="0" maxHeight="Infinity" maxWidth="Infinity"/>
+        <Button fx:id="cancel" text="Cancel" GridPane.rowIndex="1" GridPane.columnIndex="1" maxHeight="Infinity" maxWidth="Infinity"/>
+    </children>
+</fx:root>

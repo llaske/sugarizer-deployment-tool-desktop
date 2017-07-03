@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<fx:root
+        type="javafx.scene.layout.GridPane"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://java.sun.com/JSP/Page">
+    <columnConstraints>
+        <ColumnConstraints percentWidth="50"/>
+        <ColumnConstraints percentWidth="50"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints percentHeight="30"/>
+        <RowConstraints percentHeight="30"/>
+        <RowConstraints percentHeight="30"/>
+        <RowConstraints percentHeight="20"/>
+    </rowConstraints>
+    <children>
+        <Label text="X :" alignment="CENTER" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <Label text="Y :" alignment="CENTER" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <Label text="Duration :" alignment="CENTER" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="x" GridPane.rowIndex="0" GridPane.columnIndex="1" maxHeight="Infinity"/>
+        <TextField fx:id="y" GridPane.rowIndex="1" GridPane.columnIndex="1" maxHeight="Infinity"/>
+        <TextField fx:id="duration" GridPane.rowIndex="2" GridPane.columnIndex="1" maxHeight="Infinity"/>
+        <Button fx:id="ok" text="Ok" GridPane.rowIndex="3" GridPane.columnIndex="0" maxHeight="Infinity" maxWidth="Infinity"/>
+        <Button fx:id="cancel" text="Cancel" GridPane.rowIndex="3" GridPane.columnIndex="1" maxHeight="Infinity" maxWidth="Infinity"/>
+    </children>
+</fx:root>

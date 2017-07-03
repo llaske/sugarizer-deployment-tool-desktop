@@ -10,7 +10,16 @@ import com.sugarizer.presentation.view.appmanager.AppManagerView
 import com.sugarizer.presentation.view.createinstruction.CreateInstructionView
 import com.sugarizer.presentation.view.device.DevicesView
 import com.sugarizer.presentation.view.loadinstruction.LoadInstructionView
+import com.sugarizer.presentation.view.synchronisation.SynchronisationView
+import com.sun.javafx.css.converters.BooleanConverter
+import io.reactivex.rxkotlin.toObservable
+import javafx.beans.binding.Bindings
+import javafx.beans.property.SimpleIntegerProperty
+import javafx.util.converter.NumberStringConverter
 import tornadofx.View
+import tornadofx.booleanBinding
+import tornadofx.find
+import tornadofx.integerBinding
 import view.inventory.InventoryView
 import java.io.IOException
 import javax.inject.Inject
@@ -28,6 +37,7 @@ class MainView : View() {
     val application : ListMenuItem by fxid(propName = "appManager")
     val createInstruction : ListMenuItem by fxid(propName = "createInstruction")
     val loadInstruction: ListMenuItem by fxid(propName = "loadInstruction")
+    val synchronisation: ListMenuItem by fxid(propName = "synchronisation")
 
     var lastItem: ListMenuItem? = null
 
@@ -38,7 +48,8 @@ class MainView : View() {
         INVENTORY,
         APP_MANAGER,
         CREATE_INSTRUCTION,
-        LOAD_INSTRUCTION;
+        LOAD_INSTRUCTION,
+        SYNCHRONISATION;
 
         override fun toString(): String {
             when (this) {
@@ -60,17 +71,22 @@ class MainView : View() {
             views.put(Views.APP_MANAGER, AppManagerView::class as KClass<View>)
             views.put(Views.CREATE_INSTRUCTION, CreateInstructionView::class as KClass<View>)
             views.put(Views.LOAD_INSTRUCTION, LoadInstructionView::class as KClass<View>)
+            views.put(Views.SYNCHRONISATION, SynchronisationView::class as KClass<View>)
 
             devices.setOnMouseClicked { load(Views.DEVICES, devices) }
             inventory.setOnMouseClicked { load(Views.INVENTORY, inventory) }
             application.setOnMouseClicked { load(Views.APP_MANAGER, application) }
             createInstruction.setOnMouseClicked { load(Views.CREATE_INSTRUCTION, createInstruction) }
             loadInstruction.setOnMouseClicked { load(Views.LOAD_INSTRUCTION, loadInstruction) }
+            synchronisation.setOnMouseClicked { load(Views.SYNCHRONISATION, synchronisation) }
 
+            devices.numberLabel.textProperty().bind(Bindings.size((find((views[Views.DEVICES]) as KClass<View>) as DevicesView).tableDevice.items).asString())
+            application.numberLabel.textProperty().bind(Bindings.size((find((views[Views.APP_MANAGER]) as KClass<View>) as AppManagerView).listView.items).asString())
+            createInstruction.progress.visibleProperty().bind((find((views[Views.CREATE_INSTRUCTION]) as KClass<View>) as CreateInstructionView).inWork)
+            loadInstruction.progress.visibleProperty().bind((find((views[Views.LOAD_INSTRUCTION]) as KClass<View>) as LoadInstructionView).inWork)
 
             load(Views.DEVICES, devices)
 
-            devices.setProgress(true)
             devices.setSelected(true)
         } catch (e: IOException) {
             e.printStackTrace()
@@ -81,6 +97,11 @@ class MainView : View() {
         if (views.containsKey(view)) {
             with(container) {
                 center = find((views[view]) as KClass<View>).root
+
+                if (view.equals(Views.DEVICES)) {
+                    var tmp = (find((views[view]) as KClass<View>) as DevicesView)
+                    devices.numberLabel.textProperty().bind(Bindings.size(tmp.tableDevice.items).asString())
+                }
             }
         } else {
             println("Error: key not found in map")

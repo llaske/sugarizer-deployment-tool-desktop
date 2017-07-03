@@ -23,7 +23,7 @@ interface DeviceContract {
     interface Presenter {
         fun start()
 
-        fun onTableRowDoubleClick(selectedItem: DeviceModel, modalStage: Stage)
+        fun onTableRowDoubleClick(selectedItem: DeviceModel)
 
         fun onPingClick(deviceModel: DeviceModel): EventHandler<ActionEvent>
     }

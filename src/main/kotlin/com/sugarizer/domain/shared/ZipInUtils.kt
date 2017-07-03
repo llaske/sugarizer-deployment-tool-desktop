@@ -30,6 +30,10 @@ class ZipInUtils(val name: String, val instructionsModel: InstructionsModel) {
                 InstructionsModel.Type.INTALL_APK -> { zipInstallApk(Gson().fromJson(it.data, InstallApkModel::class.java), it?.ordre!!) }
                 InstructionsModel.Type.PUSH_FILE -> {  }
                 InstructionsModel.Type.DELETE_FILE -> {  }
+                InstructionsModel.Type.INSTRUCTION_SWIPE, InstructionsModel.Type.INSTRUCTION_TEXT,
+                InstructionsModel.Type.INSTRUCTION_KEY, InstructionsModel.Type.INSTRUCTION_LONG_CLICK,
+                InstructionsModel.Type.INSTRUCTION_CLICK, InstructionsModel.Type.SLEEP
+                -> { (instruction.intructions as MutableList).add(it) }
             }
         }
     }

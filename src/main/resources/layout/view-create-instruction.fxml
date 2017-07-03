@@ -25,8 +25,8 @@
                 <RowConstraints percentHeight="15" />
             </rowConstraints>
             <children>
-                <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" text="List of Instruction" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" text="List of Instruction Disponible" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" text="Enabled Instructions" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" text="Available instructions" GridPane.columnIndex="2" GridPane.rowIndex="0" />
                 <VBox fx:id="tab1" alignment="TOP_CENTER" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                 <SplitPane GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="2" />
                 <VBox fx:id="tab2" alignment="TOP_CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
@@ -34,6 +34,12 @@
                         <Button fx:id="installApk" disable="false" maxWidth="Infinity" text="Install Application" />
                         <Button fx:id="pushFile" disable="true" maxWidth="Infinity" text="Push File" />
                         <Button fx:id="deleteFile" disable="true" maxWidth="Infinity" text="Delete File" />
+                        <Button fx:id="inputClick" disable="false" maxWidth="Infinity" text="Click"/>
+                        <Button fx:id="inputLongClick" disable="false" maxWidth="Infinity" text="Long Click"/>
+                        <Button fx:id="inputKey" disable="false" maxWidth="Infinity" text="Key"/>
+                        <Button fx:id="inputSwipe" disable="false" maxWidth="Infinity" text="Swipe"/>
+                        <Button fx:id="inputText" disable="false" maxWidth="Infinity" text="Text"/>
+                        <Button fx:id="sleep" disable="false" maxWidth="Infinity" text="Sleep"/>
                     </children>
                 </VBox>
                 <GridPane GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.columnSpan="3">
@@ -48,7 +54,7 @@
                     </rowConstraints>
                     <children>
                         <TextField fx:id="choosedDirectory" disable="false" maxHeight="Infinity" maxWidth="Infinity" text="" GridPane.columnIndex="0" GridPane.rowIndex="0" editable="false"/>
-                        <Button fx:id="chooseDirectory" disable="false" maxHeight="Infinity" maxWidth="Infinity" text="..." GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="1"/>
+                        <Button fx:id="chooseDirectory" disable="false" maxHeight="Infinity" maxWidth="Infinity" text="Output location" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="1"/>
                         <TextField fx:id="nameZip" disable="false" maxHeight="Infinity" maxWidth="Infinity" text="Name of output zip" editable="true" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
                         <Button fx:id="creation" disable="true" maxHeight="Infinity" maxWidth="Infinity" text="Create Instruction" GridPane.columnIndex="2" GridPane.rowIndex="0" GridPane.rowSpan="2" />
                     </children>

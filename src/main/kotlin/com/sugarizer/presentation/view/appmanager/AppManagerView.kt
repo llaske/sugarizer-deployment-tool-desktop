@@ -3,6 +3,9 @@ package com.sugarizer.presentation.view.appmanager
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.main.Main
 import com.sugarizer.presentation.custom.ListItemApplication
+import io.reactivex.Observable
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
+import io.reactivex.schedulers.Schedulers
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.*
@@ -52,8 +55,33 @@ class AppManagerView : View(), AppManagerContract.View {
     }
 
     override fun start() {
-        listView.items.forEach {
-            it.startInstall(isForceInstall())
+        val tmpNb = listView.items.size
+        var i = 0
+
+        Observable.create<String> { subscriber -> run {
+                listView.items.forEach {
+                    it.startInstall(isForceInstall())
+                            .subscribeOn(Schedulers.computation())
+                            .observeOn(JavaFxScheduler.platform())
+                            .doOnComplete {
+                                println("setInstall - 1")
+                                subscriber.onNext("")
+                            }
+                            .subscribe {}
+                }
+            }
         }
+                .subscribeOn(Schedulers.computation())
+                .observeOn(JavaFxScheduler.platform())
+                .doOnComplete { setInstallDisable(false) }
+                .subscribe {
+                    println("setInstall - onNext")
+                    ++i
+
+                    if (i >= tmpNb) {
+                        println("setInstall - Finish")
+                        setInstallDisable(false)
+                    }
+                }
     }
 }

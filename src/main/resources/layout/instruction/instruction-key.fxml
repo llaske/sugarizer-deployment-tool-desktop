@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<fx:root
+        type="javafx.scene.layout.GridPane"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://java.sun.com/JSP/Page">
+    <fx:define>
+        <ToggleGroup fx:id="radioGroup"/>
+    </fx:define>
+    <columnConstraints>
+        <ColumnConstraints percentWidth="20"/>
+        <ColumnConstraints percentWidth="20"/>
+        <ColumnConstraints percentWidth="20"/>
+        <ColumnConstraints percentWidth="20"/>
+        <ColumnConstraints percentWidth="20"/>
+        <ColumnConstraints percentWidth="20"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints percentHeight="90"/>
+        <RowConstraints percentHeight="10"/>
+    </rowConstraints>
+    <children>
+        <VBox fx:id="boxOne" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2">
+            <children>
+                <RadioButton fx:id="1" text="Soft left" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="2" text="Soft Right" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="3" text="Home" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="4" text="Back" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="174" text="Book Mark" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="121" text="Break" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="106" text="Left Thumb" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="107" text="Right Thumb" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="167" text="Channel Down" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="166" text="Channel Up" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="28" text="Clear" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="207" text="Contact Special Key" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="278" text="Copy" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="113" text="CTRL Left" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="114" text="CTRL Right" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="64" text="Explorer Special Key" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="80" text="Camera Focus" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="125" text="Forward" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="112" text="Forward Delete" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="119" text="Function Modifier Key" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="165" text="Info" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="124" text="Insert" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="222" text="Audio Track" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="209" text="Music Special Key" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="91" text="Mute" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="59" text="Shift Left" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="60" text="Shift Right" toggleGroup="$radioGroup"/>
+            </children>
+        </VBox>
+        <VBox fx:id="boxTwo" GridPane.columnIndex="2" GridPane.rowIndex="0" GridPane.columnSpan="2">
+            <children>
+                <RadioButton fx:id="57" text="Alt Left" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="58" text="Alt Right" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="187" text="App Switch" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="219" text="Assit" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="182" text="AVR Input" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="181" text="AVR Power" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="220" text="Brightness Down" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="221" text="Brightness Up" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="210" text="Calculator Special Key" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="208" text="Calendar Special Key" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="5" text="Call" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="27" text="Camera" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="115" text="Caps Lock" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="175" text="Captions" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="277" text="Cut" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="6" text="End Call" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="66" text="Enter" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="65" text="Enveloppe Special Key" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="111" text="Escape" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="172" text="Guide" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="259" text="Help" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="204" text="Language Switch" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="229" text="Last Channel" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="82" text="Menu" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="262" text="Navigate In" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="261" text="Navigate Next" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="263" text="Navigate Out" toggleGroup="$radioGroup"/>
+            </children>
+        </VBox>
+        <VBox fx:id="boxThree" GridPane.rowIndex="0" GridPane.columnIndex="4" GridPane.columnSpan="2">
+            <children>
+                <RadioButton fx:id="128" text="Media Close" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="129" text="Media Eject" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="90" text="Media Fast Forward" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="87" text="Media Next" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="127" text="Media Pause" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="126" text="Media Play" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="85" text="Media Play/Pause" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="88" text="Media Previous" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="130" text="Media Record" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="273" text="Media Skip backward" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="272" text="Media Skip Forward" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="275" text="Media Step backwar" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="86" text="Media Stop" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="226" text="Media Top Menu" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="223" text="Sleep" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="276" text="Soft Sleep" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="224" text="Wake Up" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="260" text="Navigate Previous" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="83" text="Notification" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="93" text="Page Down" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="92" text="Page Up" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="225" text="Pairing" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="279" text="Paste" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="26" text="Power" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="116" text="Scroll Lock" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="84" text="Search" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="176" text="Settings" toggleGroup="$radioGroup"/>
+            </children>
+        </VBox>
+        <Button fx:id="ok" text="Ok" GridPane.rowIndex="1" GridPane.columnIndex="2" maxHeight="Infinity" maxWidth="Infinity"/>
+        <Button fx:id="cancel" text="Cancel" GridPane.rowIndex="1" GridPane.columnIndex="3" maxHeight="Infinity" maxWidth="Infinity"/>
+    </children>
+</fx:root>

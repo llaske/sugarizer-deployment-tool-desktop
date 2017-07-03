@@ -1,5 +1,7 @@
 package com.sugarizer.presentation.custom
 
+import javafx.beans.property.BooleanProperty
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.geometry.Insets
@@ -12,6 +14,7 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.*
 import tornadofx.gridpaneColumnConstraints
+import tornadofx.show
 
 class ListMenuItem : GridPane() {
     var name: SimpleStringProperty = SimpleStringProperty("")
@@ -22,6 +25,7 @@ class ListMenuItem : GridPane() {
     val titleLabel = Label(name.get())
     val numberLabel = Label(number.toString())
     val progress = ProgressIndicator()
+    val showNumber = SimpleBooleanProperty()
 
     init {
         titleLabel.textProperty().bind(name)
@@ -57,6 +61,7 @@ class ListMenuItem : GridPane() {
         menuSelect.fitHeight = 25.0
         menuSelect.isVisible = false
         titleLabel.padding = Insets(0.0, 0.0, 0.0, 5.0)
+        numberLabel.isVisible = true
         numberLabel.alignment = Pos.CENTER
         numberLabel.maxWidth = Double.MAX_VALUE
         progress.isVisible = false
@@ -90,6 +95,8 @@ class ListMenuItem : GridPane() {
         children.add(stack)
         children.add(separator)
         children.add(menuSelect)
+
+        numberLabel.visibleProperty().bind(showNumber)
     }
 
     fun setName(name: String){
@@ -110,5 +117,20 @@ class ListMenuItem : GridPane() {
 
     fun setSelected(boolean: Boolean) {
         menuSelect.isVisible = boolean
+    }
+
+    fun numberProperty(){
+    }
+
+    fun setShowNumber(boolean: Boolean){
+        showNumber.set(boolean)
+    }
+
+    fun getShowNumber(): Boolean {
+        return showNumber.get()
+    }
+
+    fun showNumber(): BooleanProperty {
+        return showNumber
     }
 }

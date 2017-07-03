@@ -8,6 +8,9 @@ import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
+import javafx.scene.control.Alert
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.ApkParsers
 import se.vidstige.jadb.*
@@ -25,7 +28,7 @@ class JADB {
     @Inject lateinit var stringUtils: StringUtils
     @Inject lateinit var db: DataBase
 
-    var listJadb = mutableListOf<JadbDevice>()
+    var listJadb = FXCollections.observableArrayList<JadbDevice>()
     var listDevice = mutableListOf<DeviceModel>()
     var connection: JadbConnection = JadbConnection()
     var watcher: DeviceWatcher? = null
@@ -37,32 +40,61 @@ class JADB {
     }
 
     fun startADB() {
-        var process: Process? = null
+        try {
 
-        when (OsCheck.operatingSystemType) {
-            OsCheck.OSType.Windows -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_WINDOWS_PATH, "start-server")) }
-            OsCheck.OSType.Linux -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_LINUX_PATH, "start-server"))}
-            OsCheck.OSType.MacOS -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_MAC_PATH, "start-server")) }
-            OsCheck.OSType.Other -> { println("OS invalid") }
-        }
+            var process: Process? = null
 
-        process?.let {
-            println(convertStreamToString(it.inputStream))
+            when (OsCheck.operatingSystemType) {
+                OsCheck.OSType.Windows -> {
+                    process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_WINDOWS_PATH, "start-server"))
+                }
+                OsCheck.OSType.Linux -> {
+                    process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_LINUX_PATH, "start-server"))
+                }
+                OsCheck.OSType.MacOS -> {
+                    process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_MAC_PATH, "start-server"))
+                }
+                OsCheck.OSType.Other -> {
+                    println("OS invalid")
+                }
+            }
+
+            process?.let {
+                println(convertStreamToString(it.inputStream))
+            }
+        } catch (e: Exception) {
+            var alert = Alert(Alert.AlertType.ERROR)
+
+            alert.title = "Error"
+            alert.headerText = null
+            alert.contentText = "ADB not started"
         }
     }
 
     fun stopADB() {
-        var process: Process? = null
+        try {
+            var process: Process? = null
 
-        when (OsCheck.operatingSystemType) {
-            OsCheck.OSType.Windows -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_WINDOWS_PATH, "kill-server")) }
-            OsCheck.OSType.Linux -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_LINUX_PATH, "kill-server"))}
-            OsCheck.OSType.MacOS -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_MAC_PATH, "kill-server")) }
-            OsCheck.OSType.Other -> { println("OS invalid") }
-        }
+            when (OsCheck.operatingSystemType) {
+                OsCheck.OSType.Windows -> {
+                    process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_WINDOWS_PATH, "kill-server"))
+                }
+                OsCheck.OSType.Linux -> {
+                    process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_LINUX_PATH, "kill-server"))
+                }
+                OsCheck.OSType.MacOS -> {
+                    process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_MAC_PATH, "kill-server"))
+                }
+                OsCheck.OSType.Other -> {
+                    println("OS invalid")
+                }
+            }
 
-        process?.let {
-            println(convertStreamToString(it.inputStream))
+            process?.let {
+                println(convertStreamToString(it.inputStream))
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -148,7 +180,9 @@ class JADB {
                                                                                     sendLog(deviceModel.jadbDevice, "Connected to Sugarizer Deployment Tool")
                                                                                     changeAction(deviceModel.jadbDevice, "Application installed")
                                                                                 }.subscribe()
-                                                                    }.subscribe()
+                                                                    }
+                                                                    .doOnError {  }
+                                                                    .subscribe()
                                                         }
                                                     }
                                                 }.subscribe()
@@ -202,6 +236,10 @@ class JADB {
     fun installAPK(jadbDevice: JadbDevice, file: File, force: Boolean) : Observable<String> {
         return Observable.create { subscriber ->
             run {
+                if (!file.exists()) {
+                    throw Throwable("File not found: " + file.name)
+                }
+
                 changeAction(jadbDevice, "Installing: " + file.name)
                 sendLog(jadbDevice, "Installing: " + file.name)
 
@@ -216,7 +254,6 @@ class JADB {
                     sendLog(jadbDevice, file.name + " already installed")
 
                     if (force) {
-                        println("Froce: " + force)
                         uninstallApp(jadbDevice, ApkFile(file).apkMeta.packageName)
                                 .subscribeOn(Schedulers.computation())
                                 .observeOn(JavaFxScheduler.platform())

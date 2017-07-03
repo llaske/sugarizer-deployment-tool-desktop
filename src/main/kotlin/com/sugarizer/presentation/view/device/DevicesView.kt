@@ -12,6 +12,7 @@ import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.RxBus
 import com.sugarizer.domain.shared.StringUtils
+import javafx.application.Platform
 import javafx.scene.control.Button
 import javafx.scene.control.TableCell
 import javafx.util.Callback
@@ -21,7 +22,9 @@ import javax.inject.Inject
 
 class DevicesView : View(), DeviceContract.View {
     override fun onDeviceAdded(deviceEventModel: DeviceEventModel) {
-        tableDevice.items.add(deviceEventModel.device)
+        Platform.runLater {
+            tableDevice.items.add(deviceEventModel.device)
+        }
     }
 
     override fun onDeviceChanged(deviceEventModel: DeviceEventModel) {
@@ -39,7 +42,10 @@ class DevicesView : View(), DeviceContract.View {
         tableDevice.items.filter {
             it.name.get().equals(deviceEventModel.device.name.get()) }
                 .forEach {
-                    tableDevice.items.remove(it)
+                    Platform.runLater {
+                        tableDevice.items.remove(it)
+                        tableDevice.items.size
+                    }
                 }
     }
 
@@ -87,7 +93,7 @@ class DevicesView : View(), DeviceContract.View {
                     if (item == null) {
                         graphic = null
                     } else {
-                        button.text = "Ping"
+                        button.text = "Identify Device"
                         button.onAction = presenter.onPingClick(rowItem)
 
                         graphic = button
@@ -98,10 +104,8 @@ class DevicesView : View(), DeviceContract.View {
 
         with(tableDevice) {
             onDoubleClick {
-                selectedItem?.also {
-                    modalStage?.let {
-                        stage -> presenter.onTableRowDoubleClick(it, stage)
-                    }
+                selectedItem?.let {
+                    presenter.onTableRowDoubleClick(it)
                 }
             }
         }

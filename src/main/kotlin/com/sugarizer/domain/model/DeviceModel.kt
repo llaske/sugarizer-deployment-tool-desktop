@@ -30,7 +30,7 @@ class DeviceModel(device: JadbDevice) {
 
         name.set(device.serial)
         action.set("Nothing")
-        ping.set("Ping")
+        ping.set("Identify Device")
 
         try {
             status.set(device.state.toString())

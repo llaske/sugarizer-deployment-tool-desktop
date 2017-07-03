@@ -1,10 +1,15 @@
 package com.sugarizer.presentation.view.createinstruction
 
 import com.google.gson.Gson
+import com.sugarizer.BuildConfig
+import com.sugarizer.domain.model.ClickModel
 import com.sugarizer.domain.model.InstallApkModel
 import com.sugarizer.domain.model.Instruction
 import com.sugarizer.domain.model.InstructionsModel
+import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.ZipInUtils
+import com.sugarizer.main.Main
+import com.sugarizer.presentation.view.createinstruction.instructions.ClickInstruction
 import io.reactivex.Observable
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
@@ -18,10 +23,9 @@ import javafx.event.ActionEvent
 import javafx.scene.control.Alert
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
+import se.vidstige.jadb.managers.Package
 import java.io.*
-import java.io.IOException
+import javax.inject.Inject
 
 class CreateInstructionPresenter(val view: CreateInstructionContract.View) : CreateInstructionContract.Presenter {
     val buttonFormat = DataFormat("com.sugarizer.formats.button")
@@ -30,14 +34,24 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
     var listInstructionTmp: MutableList<Instruction> = mutableListOf()
     var instructionModel: InstructionsModel = InstructionsModel()
 
+    @Inject lateinit var jadb: JADB
+
     init {
+        Main.appComponent.inject(this)
+
         instructionModel.intructions = listInstructionTmp as List<Instruction>
     }
 
     override fun onCreateButtonDragDone(): EventHandler<DragEvent> {
         return EventHandler<DragEvent> {
-            when (draggingButton?.text) {
-                "Install Application" -> { onIntallApk() }
+            when (draggingButton?.id) {
+                "installApk" -> { onIntallApk() }
+                "sleep" -> onInput(ClickInstruction.Type.SLEEP)
+                "inputClick" -> { onInput(ClickInstruction.Type.CLICK) }
+                "inputLongClick" -> { onInput(ClickInstruction.Type.LONG_CLICK) }
+                "inputKey" -> { onInput(ClickInstruction.Type.KEY) }
+                "inputSwipe" -> { onInput(ClickInstruction.Type.SWIPE) }
+                "inputText" -> { onInput(ClickInstruction.Type.TEXT) }
             }
 
             draggingButton = null
@@ -46,6 +60,18 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
 
     override fun onCreateButtonDragDetected(button: Button): EventHandler<MouseEvent> {
         return EventHandler<MouseEvent> {
+            when (button.id) {
+                "inputClick", "inputSwipe", "inputLongClick" -> {
+                    jadb.listJadb.forEach { device -> run {
+                        Observable.create<Any> {
+                            println(jadb.convertStreamToString(device.executeShell(BuildConfig.CMD_START_X_Y, "")))
+                        }
+                                .subscribeOn(Schedulers.computation())
+                                .subscribe()
+                    }
+                    }
+                }
+            }
             val db = button.startDragAndDrop(TransferMode.COPY)
             db.dragView = button.snapshot(null, null) as Image?
             val cc = ClipboardContent()
@@ -87,8 +113,10 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
                 tmp.onDragDone = onListButtonDragDone()
                 tmp.maxWidth = Double.MAX_VALUE
 
-                when (tmp.text) {
-                    "Install Application" -> { tmp.onAction = onClickInstallApk(view.primaryStage()) }
+
+                when (tmp.id) {
+                    "installApk" -> { tmp.onAction = onClickInstallApk(view.primaryStage()) }
+                    "inputClick" -> { tmp.onAction = EventHandler { println(jadb.convertStreamToString(jadb.listJadb[0].executeShell("input keyevent 3", ""))) } }
                 }
 
                 pane.children.add(tmp)
@@ -116,6 +144,7 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
 
     override fun onClickCreateInstruction(): EventHandler<ActionEvent> {
         return EventHandler {
+            println("Size Instruction: " + instructionModel.intructions?.size)
             view.showProgress(true)
 
             Observable.create<String> {
@@ -159,6 +188,15 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
         }
     }
 
+    override fun onClickChooseDirectory(primaryStage: Stage): EventHandler<ActionEvent> {
+        return EventHandler {
+            var directory = DirectoryChooser()
+            directory.title = "Choose the output directory"
+            var choosedDirectory: File = directory.showDialog(primaryStage)
+            view.setChoosedDirectory(choosedDirectory.absolutePath)
+        }
+    }
+
     fun onIntallApk() {
         var directory = DirectoryChooser()
         directory.title = "Choose the apk directory"
@@ -184,12 +222,33 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
         view.disableCreation(false)
     }
 
-    override fun onClickChooseDirectory(primaryStage: Stage): EventHandler<ActionEvent> {
-        return EventHandler {
-            var directory = DirectoryChooser()
-            directory.title = "Choose the output directory"
-            var choosedDirectory: File = directory.showDialog(primaryStage)
-            view.setChoosedDirectory(choosedDirectory.absolutePath)
+    fun onInput(type: ClickInstruction.Type){
+        var click = ClickInstruction(type)
+        var tmp = click.showAndWait()
+
+        if (tmp.get().equals("RESULT_CANCEL")){
+            (draggingButton?.parent as Pane).children.remove(draggingButton)
+            return
         }
+
+        var instruction: Instruction = Instruction()
+
+        when (type) {
+            ClickInstruction.Type.CLICK -> { instruction.type = InstructionsModel.Type.INSTRUCTION_CLICK }
+            ClickInstruction.Type.LONG_CLICK -> { instruction.type = InstructionsModel.Type.INSTRUCTION_LONG_CLICK }
+            ClickInstruction.Type.KEY -> { instruction.type = InstructionsModel.Type.INSTRUCTION_KEY }
+            ClickInstruction.Type.TEXT -> { instruction.type = InstructionsModel.Type.INSTRUCTION_TEXT }
+            ClickInstruction.Type.SWIPE -> { instruction.type = InstructionsModel.Type.INSTRUCTION_SWIPE }
+            ClickInstruction.Type.SLEEP -> instruction.type = InstructionsModel.Type.SLEEP
+        }
+
+        instruction.data = tmp.get()
+        instruction.ordre = listInstructionTmp.size
+
+        listInstructionTmp.add(instruction)
+
+        println("Result: " + tmp.get())
+
+        view.disableCreation(false)
     }
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import com.sugarizer.presentation.custom.SynchronisationTab?>
+
+<TabPane xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://java.sun.com/JSP/Page"
+         prefHeight="400.0" prefWidth="600.0">
+    <Tab text="Document" closable="false">
+        <SynchronisationTab fx:id="document" maxHeight="Infinity" maxWidth="Infinity"/>
+    </Tab>
+    <Tab text="Music" closable="false">
+        <SynchronisationTab fx:id="music"/>
+    </Tab>
+    <Tab text="Video" closable="false">
+        <SynchronisationTab fx:id="video"/>
+    </Tab>
+</TabPane>

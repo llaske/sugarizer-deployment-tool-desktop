@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import com.sugarizer.presentation.custom.ListMenuItem?>
+
 <GridPane stylesheets="@../css/main.css"
           xmlns="http://javafx.com/javafx/8.0.112"
           xmlns:fx="http://javafx.com/fxml/1">
@@ -24,15 +25,15 @@
     <children>
         <VBox maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0">
             <children>
-                <ListMenuItem fx:id="devices" name="Devices" GridPane.columnIndex="0" GridPane.rowIndex="0" visible="true"/>
-                <ListMenuItem fx:id="inventory" name="Inventory" GridPane.columnIndex="0" GridPane.rowIndex="1" disable="true"/>
-                <ListMenuItem fx:id="appManager" name="Application Manager" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                <ListMenuItem fx:id="filePusher" name="File Pusher" GridPane.columnIndex="0" GridPane.rowIndex="3" disable="true" />
-                <ListMenuItem fx:id="fileDeleter" name="File Deleter" GridPane.columnIndex="0" GridPane.rowIndex="4" disable="true" />
-                <ListMenuItem fx:id="createInstruction" name="Create Instruction" GridPane.columnIndex="0" GridPane.rowIndex="5" disable="false" />
-                <ListMenuItem fx:id="loadInstruction" name="Load Instruction" GridPane.columnIndex="0" GridPane.rowIndex="6" disable="false" />
-                <ListMenuItem fx:id="synchronisation" name="Synchronisation" GridPane.columnIndex="0" GridPane.rowIndex="7" disable="true" />
-                <ListMenuItem fx:id="settings" name="Settings" GridPane.columnIndex="0" GridPane.rowIndex="8" disable="true" />
+                <ListMenuItem fx:id="devices" name="Devices" GridPane.columnIndex="0" GridPane.rowIndex="0" visible="true" showNumber="true"/>
+                <ListMenuItem fx:id="inventory" name="Inventory" GridPane.columnIndex="0" GridPane.rowIndex="1" disable="true" showNumber="false"/>
+                <ListMenuItem fx:id="appManager" name="Application Manager" GridPane.columnIndex="0" GridPane.rowIndex="2" showNumber="false"/>
+                <ListMenuItem fx:id="filePusher" name="File Pusher" GridPane.columnIndex="0" GridPane.rowIndex="3" disable="true" showNumber="false"/>
+                <ListMenuItem fx:id="fileDeleter" name="File Remover" GridPane.columnIndex="0" GridPane.rowIndex="4" disable="true" showNumber="false"/>
+                <ListMenuItem fx:id="createInstruction" name="Create Instruction" GridPane.columnIndex="0" GridPane.rowIndex="5" disable="false" showNumber="false"/>
+                <ListMenuItem fx:id="loadInstruction" name="Instruction Loader" GridPane.columnIndex="0" GridPane.rowIndex="6" disable="false" showNumber="false"/>
+                <ListMenuItem fx:id="synchronisation" name="Synchronisation" GridPane.columnIndex="0" GridPane.rowIndex="7" disable="false" showNumber="false"/>
+                <ListMenuItem fx:id="settings" name="Settings" GridPane.columnIndex="0" GridPane.rowIndex="8" disable="true" showNumber="false"/>
             </children>
         </VBox>
         <Separator GridPane.rowIndex="0" GridPane.columnIndex="1" orientation="VERTICAL" halignment="CENTER" valignment="CENTER"/>

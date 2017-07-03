@@ -109,6 +109,9 @@ buildConfig {
     buildConfigField 'String', 'CMD_LIST_PACKAGE',  "pm list packages"
     buildConfigField 'String', 'CMD_PING',  "am broadcast -a com.sugarizer.sugarizerdeploymentoolapp.Broadcast.ACTION_PING"
     buildConfigField 'String', 'CMD_LOG',  "am broadcast -a com.sugarizer.sugarizerdeploymentoolapp.Broadcast.ACTION_LOG"
+    buildConfigField 'String', 'CMD_START_SERVER',  "am broadcast -a com.sugarizer.sugarizerdeploymentoolapp.Broadcast.ACTION_START_SERVER"
+    buildConfigField 'String', 'CMD_SEND_MESSAGE_BACK',  "am broadcast -a com.sugarizer.sugarizerdeploymentoolapp.Broadcast.ACTION_SEND_MESSAGE_BACK"
+    buildConfigField 'String', 'CMD_START_X_Y',  "am broadcast -a com.sugarizer.sugarizerdeploymentoolapp.Broadcast.ACTION_X_Y_SCREEN"
 
     buildConfigField 'String', 'OS_WINDOWS_PATH', "./adb/windows/platform-tools/adb.exe"
     buildConfigField 'String', 'OS_MAC_PATH', "./adb/MACOS/platform-tools/adb"
