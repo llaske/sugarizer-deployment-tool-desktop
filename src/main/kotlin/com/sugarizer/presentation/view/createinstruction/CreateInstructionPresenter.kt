@@ -9,6 +9,8 @@ import com.sugarizer.domain.model.InstructionsModel
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.ZipInUtils
 import com.sugarizer.main.Main
+import com.sugarizer.presentation.custom.ListItemCreateInstruction
+import com.sugarizer.presentation.custom.ListItemCreateInstructionRemove
 import com.sugarizer.presentation.view.createinstruction.instructions.ClickInstruction
 import io.reactivex.Observable
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
@@ -20,6 +22,7 @@ import javafx.scene.input.*
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.Pane
 import javafx.event.ActionEvent
+import javafx.scene.Node
 import javafx.scene.control.Alert
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
@@ -30,9 +33,11 @@ import javax.inject.Inject
 class CreateInstructionPresenter(val view: CreateInstructionContract.View) : CreateInstructionContract.Presenter {
     val buttonFormat = DataFormat("com.sugarizer.formats.button")
 
-    var draggingButton: Button? = null
+    var draggingButton: Node? = null
     var listInstructionTmp: MutableList<Instruction> = mutableListOf()
     var instructionModel: InstructionsModel = InstructionsModel()
+
+    val map = HashMap<Node, Instruction>()
 
     @Inject lateinit var jadb: JADB
 
@@ -44,21 +49,13 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
 
     override fun onCreateButtonDragDone(): EventHandler<DragEvent> {
         return EventHandler<DragEvent> {
-            when (draggingButton?.id) {
-                "installApk" -> { onIntallApk() }
-                "sleep" -> onInput(ClickInstruction.Type.SLEEP)
-                "inputClick" -> { onInput(ClickInstruction.Type.CLICK) }
-                "inputLongClick" -> { onInput(ClickInstruction.Type.LONG_CLICK) }
-                "inputKey" -> { onInput(ClickInstruction.Type.KEY) }
-                "inputSwipe" -> { onInput(ClickInstruction.Type.SWIPE) }
-                "inputText" -> { onInput(ClickInstruction.Type.TEXT) }
+            (draggingButton as ListItemCreateInstruction)?.let {
+                onAddInstruction(it.id, it.getTitleTest())
             }
-
-            draggingButton = null
         }
     }
 
-    override fun onCreateButtonDragDetected(button: Button): EventHandler<MouseEvent> {
+    override fun onCreateButtonDragDetected(button: ListItemCreateInstruction): EventHandler<MouseEvent> {
         return EventHandler<MouseEvent> {
             when (button.id) {
                 "inputClick", "inputSwipe", "inputLongClick" -> {
@@ -77,68 +74,53 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
             val cc = ClipboardContent()
             cc.put(buttonFormat, "button")
             db.setContent(cc)
-            draggingButton = button as Button?
+            draggingButton = button
         }
     }
 
-    override fun onPaneDragOver(pane: Pane): EventHandler<DragEvent> {
+    override fun onPaneDragOver(): EventHandler<DragEvent> {
         return EventHandler {
             val db = it.dragboard
             if (db.hasContent(buttonFormat)
-                    && draggingButton != null
-                    && draggingButton?.parent !== pane) {
+                    && draggingButton != null) {
                 it.acceptTransferModes(TransferMode.COPY)
             }
         }
     }
 
-    override fun onCreatePaneDragDropped(pane: Pane): EventHandler<DragEvent> {
+    override fun onCreatePaneDragDropped(): EventHandler<DragEvent> {
         return EventHandler {
             val db = it.dragboard
             if (db.hasContent(buttonFormat)) {
-                (draggingButton?.parent as Pane).children.remove(draggingButton)
+                draggingButton?.let {
+                    removeItem(it)
+                }
                 it.isDropCompleted = true
             }
         }
     }
 
-    override fun onListPaneDragDropped(pane: Pane): EventHandler<DragEvent> {
+    override fun onListPaneDragDropped(): EventHandler<DragEvent> {
         return EventHandler {
             val db = it.dragboard
             if (db.hasContent(buttonFormat)) {
-                val tmp = Button()
-
-                tmp.text = draggingButton?.text
-                tmp.onDragDetected = onListButtonDetected(tmp)
-                tmp.onDragDone = onListButtonDragDone()
-                tmp.maxWidth = Double.MAX_VALUE
-
-
-                when (tmp.id) {
-                    "installApk" -> { tmp.onAction = onClickInstallApk(view.primaryStage()) }
-                    "inputClick" -> { tmp.onAction = EventHandler { println(jadb.convertStreamToString(jadb.listJadb[0].executeShell("input keyevent 3", ""))) } }
+                (draggingButton as ListItemCreateInstruction)?.let {
+                    onAddInstruction(it.id, it.getTitleTest())
                 }
 
-                pane.children.add(tmp)
                 it.isDropCompleted = true
             }
         }
     }
 
-    override fun onListButtonDetected(button: Button): EventHandler<MouseEvent> {
+    override fun onListButtonDetected(button: ListItemCreateInstructionRemove): EventHandler<MouseEvent> {
         return EventHandler<MouseEvent> {
             val db = button.startDragAndDrop(TransferMode.COPY)
-            db.dragView = button.snapshot(null, null) as Image?
+            db.dragView = button.snapshot(null, null)
             val cc = ClipboardContent()
             cc.put(buttonFormat, "button")
             db.setContent(cc)
-            draggingButton = button as Button?
-        }
-    }
-
-    override fun onClickInstallApk(primaryStage: Stage): EventHandler<ActionEvent> {
-        return EventHandler {
-            println("Install Apk Clicked")
+            draggingButton = button
         }
     }
 
@@ -197,38 +179,43 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
         }
     }
 
-    fun onIntallApk() {
+    fun onIntallApk(): Instruction? {
         var directory = DirectoryChooser()
         directory.title = "Choose the apk directory"
-        var choosedDirectory: File = directory.showDialog(view.primaryStage())
+        var choosedDirectory = directory.showDialog(view.primaryStage())
 
-        var instructionModel: Instruction = Instruction()
-        var model: InstallApkModel = InstallApkModel()
-        var listApk: MutableList<String> = mutableListOf()
+        if (choosedDirectory != null) {
+            var instructionModel: Instruction = Instruction()
+            var model: InstallApkModel = InstallApkModel()
+            var listApk: MutableList<String> = mutableListOf()
 
-        choosedDirectory.listFiles()
-                .filter { it.isFile && it.extension.equals("apk") }
-                .mapTo(listApk) { it.absolutePath }
+            choosedDirectory.listFiles()
+                    .filter { it.isFile && it.extension.equals("apk") }
+                    .mapTo(listApk) { it.absolutePath }
 
-        model.numberApk = listApk.size
-        model.apks = listApk
+            model.numberApk = listApk.size
+            model.apks = listApk
 
-        instructionModel.data = Gson().toJson(model)
-        instructionModel.ordre = listInstructionTmp.size
-        instructionModel.type = InstructionsModel.Type.INTALL_APK
+            instructionModel.data = Gson().toJson(model)
+            instructionModel.ordre = listInstructionTmp.size
+            instructionModel.type = InstructionsModel.Type.INTALL_APK
 
-        listInstructionTmp.add(instructionModel)
+            listInstructionTmp.add(instructionModel)
 
-        view.disableCreation(false)
+            view.disableCreation(false)
+
+            return instructionModel
+        } else {
+            return null
+        }
     }
 
-    fun onInput(type: ClickInstruction.Type){
+    fun onInput(type: ClickInstruction.Type): Instruction? {
         var click = ClickInstruction(type)
         var tmp = click.showAndWait()
 
         if (tmp.get().equals("RESULT_CANCEL")){
-            (draggingButton?.parent as Pane).children.remove(draggingButton)
-            return
+            return null
         }
 
         var instruction: Instruction = Instruction()
@@ -247,8 +234,62 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
 
         listInstructionTmp.add(instruction)
 
-        println("Result: " + tmp.get())
-
         view.disableCreation(false)
+
+        return instruction
+    }
+
+    override fun onAddInstruction(id: String, title: String) {
+        var tmpInstruction: Instruction? = null
+
+        when (id) {
+            "installApk" -> { tmpInstruction = onIntallApk() }
+            "sleep" -> tmpInstruction = onInput(ClickInstruction.Type.SLEEP)
+            "inputClick" -> { tmpInstruction = onInput(ClickInstruction.Type.CLICK) }
+            "inputLongClick" -> { tmpInstruction =  onInput(ClickInstruction.Type.LONG_CLICK) }
+            "inputKey" -> { tmpInstruction = onInput(ClickInstruction.Type.KEY) }
+            "inputSwipe" -> { tmpInstruction = onInput(ClickInstruction.Type.SWIPE) }
+            "inputText" -> { tmpInstruction = onInput(ClickInstruction.Type.TEXT) }
+        }
+
+        if (tmpInstruction != null) {
+            val tmp = createInstructionView(title)
+
+            map.put(tmp, tmpInstruction)
+            view.onAddChildren(tmp)
+        }
+    }
+
+    fun createInstructionView(title: String): ListItemCreateInstructionRemove {
+        val tmp = ListItemCreateInstructionRemove()
+
+        tmp.setTitleTest(title)
+        tmp.onDragDetected = onListButtonDetected(tmp)
+        tmp.onDragDone = onListButtonDragDone()
+        tmp.maxWidth = Double.MAX_VALUE
+        tmp.addButton.onMouseClicked = EventHandler { removeItem(tmp) }
+
+        return tmp
+    }
+
+    fun removeItem(tmp: Node){
+        view.onRemoveChildren(tmp)
+        listInstructionTmp.remove(map[tmp])
+        map.remove(tmp)
+
+        resetOrdre()
+    }
+
+    fun resetOrdre(){
+        println("Last : " + listInstructionTmp.last().ordre)
+
+        Observable.create<Any> {
+            listInstructionTmp.forEachIndexed { index, instruction -> instruction.ordre = index }
+
+            it.onComplete()
+        }
+                .subscribeOn(Schedulers.computation())
+                .doOnComplete { println("Last: " + listInstructionTmp.last().ordre) }
+                .subscribe()
     }
 }

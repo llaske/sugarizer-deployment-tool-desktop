@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<fx:root type="javafx.scene.layout.GridPane"
+         xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         maxHeight="30" maxWidth="Infinity">
+    <columnConstraints>
+        <ColumnConstraints/>
+        <ColumnConstraints maxWidth="Infinity"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="25"/>
+        <RowConstraints />
+    </rowConstraints>
+    <children>
+        <Label fx:id="title" GridPane.rowIndex="0" GridPane.columnIndex="0" alignment="CENTER" maxWidth="Infinity" GridPane.hgrow="ALWAYS"/>
+        <ImageView fx:id="addButton" GridPane.columnIndex="1" GridPane.rowIndex="0" pickOnBounds="true">
+            <image>
+                <Image url="/image/remove.png"/>
+            </image>
+        </ImageView>
+        <Separator orientation="HORIZONTAL" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2" maxWidth="Infinity"/>
+    </children>
+</fx:root>

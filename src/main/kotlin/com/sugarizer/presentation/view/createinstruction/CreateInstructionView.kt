@@ -1,7 +1,11 @@
 package com.sugarizer.presentation.view.createinstruction
 
+import com.sugarizer.presentation.custom.ListItemCreateInstruction
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.event.EventHandler
+import javafx.scene.Node
 import javafx.scene.control.Button
+import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.StackPane
@@ -9,6 +13,7 @@ import tornadofx.View
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import java.util.*
+import kotlin.collections.HashMap
 
 class CreateInstructionView : View(), CreateInstructionContract.View {
     override val root: StackPane by fxml("/layout/view-create-instruction.fxml")
@@ -24,7 +29,7 @@ class CreateInstructionView : View(), CreateInstructionContract.View {
     val deleteFile: Button by fxid("deleteFile")
 
     val creation: Button by fxid("creation")
-    val choosedDirectory: TextField by fxid("choosedDirectory")
+    val choosedDirectory: Label by fxid("choosedDirectory")
     val chooseDirectory: Button by fxid("chooseDirectory")
     val nameZip: TextField by fxid("nameZip")
 
@@ -34,15 +39,17 @@ class CreateInstructionView : View(), CreateInstructionContract.View {
 
     init {
         for (tmp in  createPane.children){
-            tmp.onDragDetected = presenter.onCreateButtonDragDetected(tmp as Button)
+            //tmp.maxWidth(createPane.width)
+            tmp.onDragDetected = presenter.onCreateButtonDragDetected(tmp as ListItemCreateInstruction)
             tmp.onDragDone = presenter.onCreateButtonDragDone()
+            tmp.addButton.onMouseClicked = EventHandler { presenter.onAddInstruction(tmp.id, tmp.getTitleTest()) }
         }
-
-        listPane.onDragOver = presenter.onPaneDragOver(listPane)
-        listPane.onDragDropped = presenter.onListPaneDragDropped(listPane)
-        createPane.onDragOver = presenter.onPaneDragOver(createPane)
-        createPane.onDragDropped = presenter.onCreatePaneDragDropped(createPane)
-
+//
+        listPane.onDragOver = presenter.onPaneDragOver()
+        listPane.onDragDropped = presenter.onListPaneDragDropped()
+        createPane.onDragOver = presenter.onPaneDragOver()
+        createPane.onDragDropped = presenter.onCreatePaneDragDropped()
+//
         creation.onAction = presenter.onClickCreateInstruction()
         chooseDirectory.onAction = presenter.onClickChooseDirectory(primaryStage)
     }
@@ -86,5 +93,13 @@ class CreateInstructionView : View(), CreateInstructionContract.View {
 
     override fun setChoosedDirectory(string: String) {
         choosedDirectory.text = string
+    }
+
+    override fun onAddChildren(node: Node) {
+        listPane.children.add(node)
+    }
+
+    override fun onRemoveChildren(node: Node) {
+        listPane.children.remove(node)
     }
 }

@@ -55,7 +55,10 @@ class ClickInstruction(val type: Type) : Dialog<String>() {
         loader.setRoot(view)
         loader.setController(this)
 
-        dialogPane.scene.window.setOnCloseRequest { close() }
+        dialogPane.scene.window.setOnCloseRequest {
+            result = "RESULT_CANCEL"
+            close()
+        }
         var tmpTitle = type.toString().toLowerCase()
         tmpTitle = tmpTitle.replaceRange(0, 1, tmpTitle[0].toUpperCase().toString())
         title = tmpTitle

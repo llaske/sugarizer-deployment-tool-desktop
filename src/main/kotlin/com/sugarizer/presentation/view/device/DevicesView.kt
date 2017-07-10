@@ -13,14 +13,18 @@ import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.RxBus
 import com.sugarizer.domain.shared.StringUtils
 import javafx.application.Platform
+import javafx.fxml.FXML
 import javafx.scene.control.Button
 import javafx.scene.control.TableCell
+import javafx.scene.layout.StackPane
 import javafx.util.Callback
 import tornadofx.*
 import view.main.MainView
 import javax.inject.Inject
 
 class DevicesView : View(), DeviceContract.View {
+    @FXML lateinit var stackPane: StackPane
+
     override fun onDeviceAdded(deviceEventModel: DeviceEventModel) {
         Platform.runLater {
             tableDevice.items.add(deviceEventModel.device)
@@ -53,7 +57,7 @@ class DevicesView : View(), DeviceContract.View {
 
     }
 
-    override val root: GridPane by fxml("/layout/view-devices.fxml")
+    override val root: StackPane by fxml("/layout/view-devices.fxml")
 
     @Inject lateinit var jadb: JADB
     @Inject lateinit var bus: RxBus
@@ -109,5 +113,13 @@ class DevicesView : View(), DeviceContract.View {
                 }
             }
         }
+    }
+
+    override fun get(): Stage {
+        return primaryStage
+    }
+
+    override fun getParent(): StackPane {
+        return root
     }
 }

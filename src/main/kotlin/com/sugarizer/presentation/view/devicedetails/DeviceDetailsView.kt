@@ -1,6 +1,6 @@
 package com.sugarizer.presentation.view.devicedetails.view.devicedetails
 
-import javafx.scene.Parent
+import com.jfoenix.controls.JFXDialog
 import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.main.Main
@@ -9,14 +9,14 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.control.Dialog
 import javafx.scene.control.Label
 import javafx.scene.control.ListView
-import javafx.scene.control.TextField
 import javafx.scene.layout.GridPane
+import javafx.scene.layout.StackPane
 import se.vidstige.jadb.managers.PackageManager
-import tornadofx.View
 import java.io.IOException
 import javax.inject.Inject
 
-class DeviceDetailsPresenter(val device: DeviceModel) : Dialog<String>() {
+
+class DeviceDetailsPresenter(val device: DeviceModel) : StackPane() {
 
     @Inject lateinit var jadb: JADB
 
@@ -31,18 +31,18 @@ class DeviceDetailsPresenter(val device: DeviceModel) : Dialog<String>() {
         Main.appComponent.inject(this)
 
         val loader = FXMLLoader(javaClass.getResource("/layout/device-details.fxml"))
-        val view = DeviceDetailsView()
 
-        loader.setRoot(view)
+        loader.setRoot(this)
         loader.setController(this)
 
-        dialogPane.scene.window.setOnCloseRequest { close() }
+        //dialogPane.scene.window.setOnCloseRequest { close() }
 
-        title = "Details of " + device.name.get()
+        //title = "Details of " + device.name.get()
 
         try {
-            loader.load<GridPane>()
-            dialogPane.content = view
+            loader.load<StackPane>()
+            //dialogPane.content = view
+            //dialogContainer = view
 
             PackageManager(device.jadbDevice).packages.forEach {
                 listPackage.items.add(it.toString())
@@ -59,6 +59,6 @@ class DeviceDetailsPresenter(val device: DeviceModel) : Dialog<String>() {
     }
 }
 
-class DeviceDetailsView() : GridPane() {
+class DeviceDetailsView() : StackPane() {
 
 }

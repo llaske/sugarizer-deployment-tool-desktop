@@ -4,36 +4,39 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+
 <fx:root
-        type="javafx.scene.layout.GridPane"
+        type="javafx.scene.layout.StackPane"
         xmlns="http://javafx.com/javafx"
         xmlns:fx="http://java.sun.com/JSP/Page"
         prefHeight="600">
-    <columnConstraints>
-        <ColumnConstraints percentWidth="50"/>
-        <ColumnConstraints percentWidth="50"/>
-    </columnConstraints>
-    <rowConstraints>
-        <RowConstraints percentHeight="10"/>
-        <RowConstraints percentHeight="10"/>
-        <RowConstraints percentHeight="10"/>
-        <RowConstraints percentHeight="10"/>
-        <RowConstraints percentHeight="10"/>
-        <RowConstraints percentHeight="50" />
-    </rowConstraints>
-    <children>
-        <Label text="Name" alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-        <Label text="Model" alignment="CENTER_LEFT"  GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-        <Label text="API Version" alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-        <Label text="ROM Name" alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <Label text="ROM Version" alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+    <GridPane>
+        <columnConstraints>
+            <ColumnConstraints percentWidth="50"/>
+            <ColumnConstraints percentWidth="50"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints percentHeight="10"/>
+            <RowConstraints percentHeight="10"/>
+            <RowConstraints percentHeight="10"/>
+            <RowConstraints percentHeight="10"/>
+            <RowConstraints percentHeight="10"/>
+            <RowConstraints percentHeight="50" />
+        </rowConstraints>
+        <children>
+            <Label text="Name" alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <Label text="Model" alignment="CENTER_LEFT"  GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <Label text="API Version" alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+            <Label text="ROM Name" alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+            <Label text="ROM Version" alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
 
-        <Label fx:id="name" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-        <Label fx:id="model" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-        <Label fx:id="apiVersion" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-        <Label fx:id="romName" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-        <Label fx:id="romVersion" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+            <Label fx:id="name" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            <Label fx:id="model" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+            <Label fx:id="apiVersion" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+            <Label fx:id="romName" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+            <Label fx:id="romVersion" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
 
-        <ListView fx:id="listPackage" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2"/>
-    </children>
+            <ListView fx:id="listPackage" GridPane.columnIndex="0" GridPane.rowIndex="5" GridPane.columnSpan="2"/>
+        </children>
+    </GridPane>
 </fx:root>

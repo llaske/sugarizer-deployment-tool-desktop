@@ -1,5 +1,7 @@
 package com.sugarizer.presentation.view.device
 
+import com.jfoenix.controls.JFXDialog
+import com.jfoenix.controls.JFXPopup
 import com.sugarizer.presentation.view.devicedetails.view.devicedetails.DeviceDetailsView
 import com.sugarizer.domain.model.DeviceEventModel
 import com.sugarizer.domain.model.DeviceModel
@@ -10,8 +12,8 @@ import com.sugarizer.presentation.view.devicedetails.view.devicedetails.DeviceDe
 import io.reactivex.schedulers.Schedulers
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
-import javafx.stage.Stage
-import tornadofx.View
+import javafx.scene.control.Label
+import tornadofx.useMaxSize
 
 class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: RxBus, val stringUtils: StringUtils) : DeviceContract.Presenter {
 
@@ -43,9 +45,10 @@ class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: 
 
     override fun onTableRowDoubleClick(selectedItem: DeviceModel) {
         println("Double Click")
-        var details = DeviceDetailsPresenter(selectedItem)
+        var dialog = JFXDialog(view.getParent(), DeviceDetailsPresenter(selectedItem), JFXDialog.DialogTransition.TOP)
+        dialog.useMaxSize = false
 
-        details.showAndWait()
+        dialog.show()
     }
 
     override fun start() {
