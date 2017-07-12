@@ -1,11 +1,13 @@
-package view.inventory
+package com.sugarizer.presentation.view.inventory
 
-import javafx.scene.layout.GridPane
-import tornadofx.View
+import javafx.fxml.Initializable
+import java.net.URL
+import java.util.*
 
+class InventoryView : Initializable {
+    override fun initialize(location: URL?, resources: ResourceBundle?) {
 
-class InventoryView : View() {
-    override val root: GridPane by fxml("/layout/view-inventory.fxml")
+    }
 
     init {
 

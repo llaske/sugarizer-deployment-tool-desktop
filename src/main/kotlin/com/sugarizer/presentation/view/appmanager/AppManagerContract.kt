@@ -4,6 +4,7 @@ import com.sugarizer.presentation.custom.ListItemApplication
 import com.sun.org.apache.xpath.internal.operations.Bool
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
+import javafx.scene.input.MouseEvent
 import javafx.stage.Stage
 
 interface AppManagerContract {
@@ -22,8 +23,8 @@ interface AppManagerContract {
     }
 
     interface Presenter {
-        fun onChooseRepositoryClick(primaryStage: Stage): EventHandler<ActionEvent>
+        fun onChooseRepositoryClick(primaryStage: Stage): EventHandler<MouseEvent>
 
-        fun onInstallClick(): EventHandler<ActionEvent>
+        fun onInstallClick(): EventHandler<MouseEvent>
     }
 }

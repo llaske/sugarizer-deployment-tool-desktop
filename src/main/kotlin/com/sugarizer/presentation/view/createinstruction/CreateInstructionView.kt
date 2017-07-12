@@ -1,8 +1,11 @@
 package com.sugarizer.presentation.view.createinstruction
 
+import com.sugarizer.main.Main
 import com.sugarizer.presentation.custom.ListItemCreateInstruction
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.event.EventHandler
+import javafx.fxml.FXML
+import javafx.fxml.Initializable
 import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -12,46 +15,57 @@ import javafx.scene.layout.StackPane
 import tornadofx.View
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
+import java.net.URL
 import java.util.*
-import kotlin.collections.HashMap
 
-class CreateInstructionView : View(), CreateInstructionContract.View {
-    override val root: StackPane by fxml("/layout/view-create-instruction.fxml")
+class CreateInstructionView : Initializable, CreateInstructionContract.View {
 
-    val createInstruction: GridPane by fxid("createInstruction")
-    val progress: VBox by fxid("progress")
+    //val listPane: VBox by fxid("tab1")
+    //val createPane: VBox by fxid("tab2")
 
-    val listPane: VBox by fxid("tab1")
-    val createPane: VBox by fxid("tab2")
+//    val installApk: Button by fxid("installApk")
+//    val pushFile: Button by fxid("pushFile")
+//    val deleteFile: Button by fxid("deleteFile")
+//
+//    val creation: Button by fxid("creation")
+//    val choosedDirectory: Label by fxid("choosedDirectory")
+//    val chooseDirectory: Button by fxid("chooseDirectory")
+//    val nameZip: TextField by fxid("nameZip")
 
-    val installApk: Button by fxid("installApk")
-    val pushFile: Button by fxid("pushFile")
-    val deleteFile: Button by fxid("deleteFile")
-
-    val creation: Button by fxid("creation")
-    val choosedDirectory: Label by fxid("choosedDirectory")
-    val chooseDirectory: Button by fxid("chooseDirectory")
-    val nameZip: TextField by fxid("nameZip")
+    @FXML lateinit var createInstruction: GridPane
+    @FXML lateinit var progress: VBox
+    @FXML lateinit var tab1: VBox
+    @FXML lateinit var tab2: VBox
+    @FXML lateinit var installApk: ListItemCreateInstruction
+    @FXML lateinit var pushFile: ListItemCreateInstruction
+    @FXML lateinit var deleteFile: ListItemCreateInstruction
+    @FXML lateinit var creation: Button
+    @FXML lateinit var choosedDirectory: Label
+    @FXML lateinit var chooseDirectory: Button
+    @FXML lateinit var nameZip: TextField
 
     val presenter: CreateInstructionPresenter = CreateInstructionPresenter(this)
 
     val inWork = SimpleBooleanProperty(false)
 
     init {
-        for (tmp in  createPane.children){
-            //tmp.maxWidth(createPane.width)
+
+    }
+
+    override fun initialize(location: URL?, resources: ResourceBundle?) {
+        for (tmp in  tab2.children){
             tmp.onDragDetected = presenter.onCreateButtonDragDetected(tmp as ListItemCreateInstruction)
             tmp.onDragDone = presenter.onCreateButtonDragDone()
             tmp.addButton.onMouseClicked = EventHandler { presenter.onAddInstruction(tmp.id, tmp.getTitleTest()) }
         }
-//
-        listPane.onDragOver = presenter.onPaneDragOver()
-        listPane.onDragDropped = presenter.onListPaneDragDropped()
-        createPane.onDragOver = presenter.onPaneDragOver()
-        createPane.onDragDropped = presenter.onCreatePaneDragDropped()
-//
+
+        tab1.onDragOver = presenter.onPaneDragOver()
+        tab1.onDragDropped = presenter.onListPaneDragDropped()
+        tab2.onDragOver = presenter.onPaneDragOver()
+        tab2.onDragDropped = presenter.onCreatePaneDragDropped()
+
         creation.onAction = presenter.onClickCreateInstruction()
-        chooseDirectory.onAction = presenter.onClickChooseDirectory(primaryStage)
+        chooseDirectory.onAction = presenter.onClickChooseDirectory(Main.primaryStage)
     }
 
     override fun showProgress(boolean: Boolean) {
@@ -61,7 +75,7 @@ class CreateInstructionView : View(), CreateInstructionContract.View {
     }
 
     override fun primaryStage(): Stage {
-        return primaryStage
+        return Main.primaryStage
     }
 
     override fun disableCreation(boolean: Boolean) {
@@ -71,7 +85,7 @@ class CreateInstructionView : View(), CreateInstructionContract.View {
     override fun reset() {
         choosedDirectory.text = ""
         nameZip.text = "Name of output zip"
-        listPane.children.clear()
+        tab1.children.clear()
         creation.isDisable = true
     }
 
@@ -96,10 +110,10 @@ class CreateInstructionView : View(), CreateInstructionContract.View {
     }
 
     override fun onAddChildren(node: Node) {
-        listPane.children.add(node)
+        tab1.children.add(node)
     }
 
     override fun onRemoveChildren(node: Node) {
-        listPane.children.remove(node)
+        tab1.children.remove(node)
     }
 }

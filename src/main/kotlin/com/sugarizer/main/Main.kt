@@ -13,6 +13,7 @@ class Main : App(MainView::class) {
 
     companion object {
         lateinit var appComponent: AppComponent
+        lateinit var primaryStage: Stage
     }
 
     init {
@@ -20,6 +21,7 @@ class Main : App(MainView::class) {
     }
 
     override fun start(stage: Stage) {
+        primaryStage = stage
         super.start(stage)
 
         appComponent.inject(this)

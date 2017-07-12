@@ -45,24 +45,17 @@ class JADB {
             var process: Process? = null
 
             when (OsCheck.operatingSystemType) {
-                OsCheck.OSType.Windows -> {
-                    process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_WINDOWS_PATH, "start-server"))
-                }
-                OsCheck.OSType.Linux -> {
-                    process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_LINUX_PATH, "start-server"))
-                }
-                OsCheck.OSType.MacOS -> {
-                    process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_MAC_PATH, "start-server"))
-                }
-                OsCheck.OSType.Other -> {
-                    println("OS invalid")
-                }
+                OsCheck.OSType.Windows -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_WINDOWS_PATH, "start-server")) }
+                OsCheck.OSType.Linux -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_LINUX_PATH, "start-server")) }
+                OsCheck.OSType.MacOS -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_MAC_PATH, "start-server")) }
+                OsCheck.OSType.Other -> { println("OS invalid") }
             }
 
             process?.let {
                 println(convertStreamToString(it.inputStream))
             }
         } catch (e: Exception) {
+            e.printStackTrace()
             var alert = Alert(Alert.AlertType.ERROR)
 
             alert.title = "Error"
@@ -76,18 +69,10 @@ class JADB {
             var process: Process? = null
 
             when (OsCheck.operatingSystemType) {
-                OsCheck.OSType.Windows -> {
-                    process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_WINDOWS_PATH, "kill-server"))
-                }
-                OsCheck.OSType.Linux -> {
-                    process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_LINUX_PATH, "kill-server"))
-                }
-                OsCheck.OSType.MacOS -> {
-                    process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_MAC_PATH, "kill-server"))
-                }
-                OsCheck.OSType.Other -> {
-                    println("OS invalid")
-                }
+                OsCheck.OSType.Windows -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_WINDOWS_PATH, "kill-server")) }
+                OsCheck.OSType.Linux -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_LINUX_PATH, "kill-server")) }
+                OsCheck.OSType.MacOS -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_MAC_PATH, "kill-server")) }
+                OsCheck.OSType.Other -> { println("OS invalid") }
             }
 
             process?.let {
@@ -145,9 +130,10 @@ class JADB {
                                         listDevice.filter {
                                             it.name.get().equals(it.name.get()) }
                                                 .forEach { listDevice.remove(it) }
-                                        subscriber.onNext(DeviceEventModel(DeviceEventModel.Status.REMOVED, DeviceModel(it)))
 
-                                        
+                                        println("Serial Device Removed: " + it.serial)
+
+                                        subscriber.onNext(DeviceEventModel(DeviceEventModel.Status.REMOVED, DeviceModel(it)))
                                     }
 
                             devices.filter { !listJadb.contains(it) }
@@ -189,6 +175,10 @@ class JADB {
 
                                         listJadb.add(it)
                                         listDevice.add(DeviceModel(it))
+
+                                        Thread.sleep(1000)
+
+                                        deviceModel.reload()
 
                                         subscriber.onNext(DeviceEventModel(DeviceEventModel.Status.ADDED, deviceModel))
                                     }

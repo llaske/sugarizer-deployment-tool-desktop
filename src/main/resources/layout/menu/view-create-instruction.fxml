@@ -14,7 +14,12 @@
 <?import com.sugarizer.presentation.custom.ListItemCreateInstruction?>
 <?import javafx.scene.control.Separator?>
 
-<StackPane maxWidth="Infinity" maxHeight="Infinity" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane
+        maxWidth="Infinity"
+        maxHeight="Infinity"
+        xmlns="http://javafx.com/javafx/8.0.112"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.sugarizer.presentation.view.createinstruction.CreateInstructionView">
     <children>
         <GridPane fx:id="createInstruction" maxWidth="Infinity" maxHeight="Infinity">
             <columnConstraints>

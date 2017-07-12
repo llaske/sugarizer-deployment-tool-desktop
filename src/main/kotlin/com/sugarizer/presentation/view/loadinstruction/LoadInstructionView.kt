@@ -1,9 +1,10 @@
 package com.sugarizer.presentation.view.loadinstruction
 
+import com.sugarizer.main.Main
 import com.sugarizer.presentation.custom.ListItemLoadInstruction
 import javafx.beans.property.SimpleBooleanProperty
-import javafx.beans.value.ObservableBooleanValue
-import javafx.scene.Node
+import javafx.fxml.FXML
+import javafx.fxml.Initializable
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.layout.GridPane
@@ -11,29 +12,32 @@ import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import tornadofx.View
+import java.net.URL
+import java.util.*
 
-class LoadInstructionView : View(), LoadInstructionContract.View{
-    override val root: StackPane by fxml("/layout/view-load-instruction.fxml")
-
-    val loadInstruction: Button by fxid("loadInstruction")
-    val nameFile: Label by fxid("nameFile")
-    val progress: VBox by fxid("progress")
-    val grid: GridPane by fxid("content")
-    val listInstruction: VBox by fxid("listInstruction")
-    val startInstruction: Button by fxid("startInstruction")
-    val map: HashMap<Int, ListItemLoadInstruction> = HashMap()
+class LoadInstructionView : Initializable, LoadInstructionContract.View {
+    @FXML lateinit var loadInstruction: Button
+    @FXML lateinit var nameFile: Label
+    @FXML lateinit var progress: VBox
+    @FXML lateinit var content: GridPane
+    @FXML lateinit var listInstruction: VBox
+    @FXML lateinit var startInstruction: Button
 
     val presenter: LoadInstructionPresenter = LoadInstructionPresenter(this)
-
+    val map: HashMap<Int, ListItemLoadInstruction> = HashMap()
     var inWork = SimpleBooleanProperty(false)
 
     init {
+
+    }
+
+    override fun initialize(location: URL?, resources: ResourceBundle?) {
         loadInstruction.onAction = presenter.onClickLoad()
         startInstruction.onAction = presenter.onClickStart()
     }
 
     override fun primaryStage(): Stage {
-        return primaryStage
+        return Main.primaryStage
     }
 
     override fun setNameZip(name: String) {
@@ -42,7 +46,7 @@ class LoadInstructionView : View(), LoadInstructionContract.View{
 
     override fun showProgress(boolean: Boolean) {
         progress.isVisible = boolean
-        grid.isDisable = boolean
+        content.isDisable = boolean
     }
 
     override fun addInstruction(ordre: Int, item: ListItemLoadInstruction) {

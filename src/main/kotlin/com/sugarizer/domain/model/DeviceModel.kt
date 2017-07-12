@@ -1,6 +1,7 @@
 package com.sugarizer.domain.model
 
 import com.sugarizer.BuildConfig
+import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.StringUtils
 import com.sugarizer.main.Main
 import com.sun.org.apache.xpath.internal.operations.Bool
@@ -18,12 +19,16 @@ import javax.inject.Inject
 class DeviceModel(device: JadbDevice) {
 
     @Inject lateinit var stringUtils: StringUtils
+    @Inject lateinit var jadb: JADB
 
     var jadbDevice: JadbDevice = device
     val name = SimpleStringProperty("name")
     val status = SimpleStringProperty("status")
     val action = SimpleStringProperty("action")
     val ping = SimpleStringProperty("ping")
+    val model = SimpleStringProperty("model")
+    val version = SimpleStringProperty("version")
+    val serial = SimpleStringProperty("serial")
 
     init {
         Main.appComponent.inject(this)
@@ -35,7 +40,7 @@ class DeviceModel(device: JadbDevice) {
         try {
             status.set(device.state.toString())
         } catch (e: JadbException) {
-            e.printStackTrace()
+            //e.printStackTrace()
         }
     }
 
@@ -61,4 +66,15 @@ class DeviceModel(device: JadbDevice) {
     fun statusProperty(): SimpleStringProperty { return status }
     fun actionProperty(): SimpleStringProperty { return action }
     fun pingProperty(): SimpleStringProperty { return ping }
+
+    fun reload(){
+        try {
+            serial.set(jadbDevice.serial)
+            name.set(jadb.convertStreamToString(jadbDevice.executeShell("getprop ro.product.name", "")))
+            model.set(jadb.convertStreamToString(jadbDevice.executeShell("getprop ro.product.model", "")))
+            version.set(jadb.convertStreamToString(jadbDevice.executeShell("getprop ro.build.version.sdk", "")))
+        } catch (e: JadbException) {
+            e.printStackTrace()
+        }
+    }
 }

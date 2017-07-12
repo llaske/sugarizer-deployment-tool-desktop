@@ -1,31 +1,42 @@
 package view.main
 
+import com.jfoenix.controls.JFXRippler
 import com.sugarizer.BuildConfig
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.GridPane
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.main.Main
+import com.sugarizer.presentation.custom.ListItemDevice
 import com.sugarizer.presentation.custom.ListMenuItem
-import com.sugarizer.presentation.view.appmanager.AppManagerView
-import com.sugarizer.presentation.view.createinstruction.CreateInstructionView
 import com.sugarizer.presentation.view.device.DevicesView
-import com.sugarizer.presentation.view.home.HomeView
-import com.sugarizer.presentation.view.loadinstruction.LoadInstructionView
-import com.sugarizer.presentation.view.synchronisation.SynchronisationView
-import com.sun.javafx.css.converters.BooleanConverter
-import io.reactivex.rxkotlin.toObservable
-import javafx.beans.binding.Bindings
-import javafx.beans.property.SimpleIntegerProperty
+import javafx.animation.FadeTransition
+import javafx.event.EventHandler
+import javafx.scene.Node
 import javafx.scene.layout.StackPane
-import javafx.util.converter.NumberStringConverter
-import tornadofx.View
-import tornadofx.booleanBinding
-import tornadofx.find
-import tornadofx.integerBinding
-import view.inventory.InventoryView
+import javafx.util.Callback
+import javafx.util.Duration
+import org.controlsfx.control.GridCell
+import org.controlsfx.control.GridView
+import tornadofx.*
 import java.io.IOException
 import javax.inject.Inject
 import kotlin.reflect.KClass
+
+class ListItemDeviceCellFactory : Callback<GridView<ListItemDevice>, GridCell<ListItemDevice>> {
+    override fun call(param: GridView<ListItemDevice>?): GridCell<ListItemDevice> {
+        return ListItemDeviceCell()
+    }
+}
+
+class ListItemDeviceCell : GridCell<ListItemDevice>() {
+    override fun updateItem(item: ListItemDevice?, empty: Boolean) {
+        super.updateItem(item, empty)
+        if (empty || item == null) {
+            graphic = null
+        } else {
+            graphic = item
+        }
+    }
+}
 
 class MainView : View() {
     override val root : StackPane by fxml("/layout/main.fxml")
@@ -34,15 +45,36 @@ class MainView : View() {
 
     val container : BorderPane by fxid(propName = "container")
 
-    val inventory : ListMenuItem by fxid(propName = "inventory")
-    val devices : ListMenuItem by fxid(propName = "devices")
+    val inventory : ListMenuItem by fxid(propName = "inventorytets")
+    //val devices : ListMenuItem by fxid(propName = "devices")
     val application : ListMenuItem by fxid(propName = "appManager")
     val createInstruction : ListMenuItem by fxid(propName = "createInstruction")
     val loadInstruction: ListMenuItem by fxid(propName = "loadInstruction")
     val synchronisation: ListMenuItem by fxid(propName = "synchronisation")
     val home: ListMenuItem by fxid(propName = "home")
+    val devices: GridView<ListItemDevice> by fxid("devices")
+
+    val deviceButton: JFXRippler by fxid("deviceButton")
+    val inventoryButton: JFXRippler by fxid("inventoryButton")
+    val loadButton: JFXRippler by fxid("loadButton")
+    val createButton: JFXRippler by fxid("createButton")
+    val applicationButton: JFXRippler by fxid("applicationButton")
+
+    val devicesView: Node by fxid("devicesView")
+    val inventoryView: Node by fxid("inventoryView")
+    val loadView: Node by fxid("loadView")
+    val createView: Node by fxid("createView")
+    val applicationView: Node by fxid("applicationView")
+
+    val deviceBackground: Node by fxid("deviceBackground")
+    val inventoryBackground: Node by fxid("inventoryBackground")
+    val loadBackground: Node by fxid("loadBackground")
+    val createBackground: Node by fxid("createBackground")
+    val applicationBackground: Node by fxid("applicationBackground")
 
     var lastItem: ListMenuItem? = null
+    var lastView: Node = devicesView
+    var lastBackground: Node = deviceBackground
 
     private val views = mutableMapOf<Views, KClass<View>>()
 
@@ -70,33 +102,37 @@ class MainView : View() {
         Main.appComponent.inject(this)
 
         try {
-//            views.put(Views.DEVICES, DevicesView::class as KClass<View>)
-//            views.put(Views.INVENTORY, InventoryView::class as KClass<View>)
-//            views.put(Views.APP_MANAGER, AppManagerView::class as KClass<View>)
-//            views.put(Views.CREATE_INSTRUCTION, CreateInstructionView::class as KClass<View>)
-//            views.put(Views.LOAD_INSTRUCTION, LoadInstructionView::class as KClass<View>)
-//            views.put(Views.SYNCHRONISATION, SynchronisationView::class as KClass<View>)
-//            views.put(Views.HOME, HomeView::class as KClass<View>)
-//
-//            devices.setOnMouseClicked { load(Views.DEVICES, devices) }
-//            inventory.setOnMouseClicked { load(Views.INVENTORY, inventory) }
-//            application.setOnMouseClicked { load(Views.APP_MANAGER, application) }
-//            createInstruction.setOnMouseClicked { load(Views.CREATE_INSTRUCTION, createInstruction) }
-//            loadInstruction.setOnMouseClicked { load(Views.LOAD_INSTRUCTION, loadInstruction) }
-//            synchronisation.setOnMouseClicked { load(Views.SYNCHRONISATION, synchronisation) }
-//            home.setOnMouseClicked { load(Views.HOME, home) }
-//
-//            devices.numberLabel.textProperty().bind(Bindings.size((find((views[Views.DEVICES]) as KClass<View>) as DevicesView).tableDevice.items).asString())
-//            application.numberLabel.textProperty().bind(Bindings.size((find((views[Views.APP_MANAGER]) as KClass<View>) as AppManagerView).listView.items).asString())
-//            createInstruction.progress.visibleProperty().bind((find((views[Views.CREATE_INSTRUCTION]) as KClass<View>) as CreateInstructionView).inWork)
-//            loadInstruction.progress.visibleProperty().bind((find((views[Views.LOAD_INSTRUCTION]) as KClass<View>) as LoadInstructionView).inWork)
-//
-//            load(Views.HOME, home)
-//
-//            home.setSelected(true)
+            deviceButton.onMouseClicked = EventHandler { load(devicesView, deviceBackground) }
+            inventoryButton.onMouseClicked = EventHandler { load(inventoryView, inventoryBackground) }
+            applicationButton.onMouseClicked = EventHandler { load(applicationView, applicationBackground) }
+            loadButton.onMouseClicked = EventHandler { load(loadView, loadBackground) }
+            createButton.onMouseClicked = EventHandler { load(createView, createBackground) }
         } catch (e: IOException) {
             e.printStackTrace()
         }
+    }
+
+    private fun load(viewIn: Node, button: Node) {
+        viewIn.isVisible = true
+        var fadeIn = FadeTransition(Duration.millis(250.0), viewIn)
+        fadeIn.fromValue = 0.0
+        fadeIn.toValue = 1.0
+
+        var fadeOut = FadeTransition(Duration.millis(250.0), lastView)
+        fadeOut.fromValue = 1.0
+        fadeOut.toValue = 0.0
+
+        fadeIn.setOnFinished {
+            lastView.isVisible = false
+            lastView = viewIn
+
+            lastBackground.style = "-fx-background-color: #FFFFFF;"
+            lastBackground = button
+            button.style = "-fx-background-color: #808080;"
+        }
+
+        fadeIn.play()
+        fadeOut.play()
     }
 
     private fun load(view: Views, item: ListMenuItem) {
@@ -106,7 +142,7 @@ class MainView : View() {
 
                 if (view.equals(Views.DEVICES)) {
                     var tmp = (find((views[view]) as KClass<View>) as DevicesView)
-                    devices.numberLabel.textProperty().bind(Bindings.size(tmp.tableDevice.items).asString())
+                    //devices.numberLabel.textProperty().bind(Bindings.size(tmp.tableDevice.items).asString())
                 }
             }
         } else {

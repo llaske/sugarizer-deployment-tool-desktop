@@ -8,6 +8,7 @@ import io.reactivex.schedulers.Schedulers
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.scene.control.Alert
+import javafx.scene.input.MouseEvent
 import javafx.stage.DirectoryChooser
 import javafx.stage.FileChooser
 import javafx.stage.Stage
@@ -18,7 +19,7 @@ import java.io.File
 class AppManagerPresenter(val view: AppManagerContract.View, val jadb: JADB) : AppManagerContract.Presenter {
     val list: MutableList<File> = mutableListOf()
 
-    override fun onChooseRepositoryClick(primaryStage: Stage): EventHandler<ActionEvent> {
+    override fun onChooseRepositoryClick(primaryStage: Stage): EventHandler<MouseEvent> {
         return EventHandler {
             var fileChooser = FileChooser()
             var listFiles = fileChooser.showOpenMultipleDialog(primaryStage)
@@ -92,7 +93,7 @@ class AppManagerPresenter(val view: AppManagerContract.View, val jadb: JADB) : A
                 .subscribe()
     }
 
-    override fun onInstallClick(): EventHandler<ActionEvent> {
+    override fun onInstallClick(): EventHandler<MouseEvent> {
         return EventHandler {
             if (jadb.listJadb.size > 0) {
                 view.setInstallDisable(true)

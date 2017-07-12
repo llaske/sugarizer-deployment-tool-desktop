@@ -6,7 +6,8 @@
 <StackPane xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml"
            maxWidth="Infinity"
-           maxHeight="Infinity">
+           maxHeight="Infinity"
+           fx:controller="com.sugarizer.presentation.view.loadinstruction.LoadInstructionView">
     <children>
         <GridPane
                 fx:id="content"

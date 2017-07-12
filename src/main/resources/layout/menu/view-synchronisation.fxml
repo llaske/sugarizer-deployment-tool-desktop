@@ -8,7 +8,8 @@
 
 <TabPane xmlns="http://javafx.com/javafx"
          xmlns:fx="http://java.sun.com/JSP/Page"
-         prefHeight="400.0" prefWidth="600.0">
+         prefHeight="400.0" prefWidth="600.0"
+         fx:controller="com.sugarizer.presentation.view.synchronisation.SynchronisationView">
     <Tab text="Document" closable="false">
         <SynchronisationTab fx:id="document" maxHeight="Infinity" maxWidth="Infinity"/>
     </Tab>

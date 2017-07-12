@@ -12,40 +12,49 @@
 <?import com.jfoenix.controls.JFXRippler?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 
-<StackPane>
+<?import javafx.scene.control.ScrollPane?>
+<?import org.controlsfx.control.GridView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.layout.Pane?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml/1" stylesheets="/css/main.css">
     <BorderPane>
         <bottom>
             <HBox maxWidth="Infinity" minHeight="50">
-                <!--<padding><Insets top="10" bottom="10"/></padding>-->
                 <children>
-                    <JFXRippler position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                    <JFXRippler fx:id="deviceButton" position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS" pickOnBounds="true">
                         <StackPane>
                             <Separator maxWidth="Infinity" maxHeight="Infinity" orientation="HORIZONTAL" valignment="TOP"/>
-                            <FontAwesomeIconView glyphName="STAR" size="1.5em" pickOnBounds="true">
-                            </FontAwesomeIconView>
+                            <Pane fx:id="deviceBackground" style="-fx-background-color: #808080"/>
+                            <FontAwesomeIconView glyphName="STAR" size="1.5em" pickOnBounds="true"/>
                         </StackPane>
                     </JFXRippler>
-                    <JFXRippler position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                    <JFXRippler fx:id="applicationButton" position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                         <StackPane>
                             <Separator maxWidth="Infinity" maxHeight="Infinity" orientation="HORIZONTAL" valignment="TOP"/>
-                            <FontAwesomeIconView glyphName="SIGN-IN" size="1.5em" pickOnBounds="true"/>
-                        </StackPane>
-                    </JFXRippler>
-                    <JFXRippler position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
-                        <StackPane>
-                            <Separator maxWidth="Infinity" maxHeight="Infinity" orientation="HORIZONTAL" valignment="TOP"/>
+                            <Pane  fx:id="applicationBackground" />
                             <FontAwesomeIconView glyphName="TINT" size="1.5em" pickOnBounds="true"/>
                         </StackPane>
                     </JFXRippler>
-                    <JFXRippler position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                    <JFXRippler fx:id="createButton" position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                         <StackPane>
                             <Separator maxWidth="Infinity" maxHeight="Infinity" orientation="HORIZONTAL" valignment="TOP"/>
+                            <Pane fx:id="createBackground"/>
+                            <FontAwesomeIconView glyphName="TINT" size="1.5em" pickOnBounds="true"/>
+                        </StackPane>
+                    </JFXRippler>
+                    <JFXRippler fx:id="loadButton" position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                        <StackPane>
+                            <Separator maxWidth="Infinity" maxHeight="Infinity" orientation="HORIZONTAL" valignment="TOP"/>
+                            <Pane fx:id="loadBackground" />
                             <FontAwesomeIconView glyphName="WIFI" size="1.5em" pickOnBounds="true"/>
                         </StackPane>
                     </JFXRippler>
-                    <JFXRippler position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                    <JFXRippler fx:id="inventoryButton" position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                         <StackPane>
                             <Separator maxWidth="Infinity" maxHeight="Infinity" orientation="HORIZONTAL" valignment="TOP"/>
+                            <Pane fx:id="inventoryBackground"/>
                             <FontAwesomeIconView glyphName="USERS" size="1.5em" pickOnBounds="true"/>
                         </StackPane>
                     </JFXRippler>
@@ -65,45 +74,15 @@
             </HBox>
         </bottom>
         <center>
-            <GridPane>
-                <rowConstraints>
-                    <RowConstraints maxHeight="Infinity"/>
-                    <RowConstraints/>
-                </rowConstraints>
+            <StackPane maxWidth="Infinity" maxHeight="Infinity">
                 <children>
-                    <Separator orientation="HORIZONTAL" maxWidth="Infinity" GridPane.rowIndex="1"/>
+                    <fx:include fx:id="devicesView" source="menu/view-devices.fxml" visible="true"/>
+                    <fx:include fx:id="inventoryView" source="menu/view-inventory.fxml" visible="false"/>
+                    <fx:include fx:id="loadView" source="menu/view-load-instruction.fxml" visible="false"/>
+                    <fx:include fx:id="applicationView" source="menu/view-app-manager.fxml" visible="false"/>
+                    <fx:include fx:id="createView" source="menu/view-create-instruction.fxml" visible="false"/>
                 </children>
-            </GridPane>
-            <!--<GridPane stylesheets="@../css/main.css"-->
-                      <!--xmlns="http://javafx.com/javafx/8.0.112"-->
-                      <!--xmlns:fx="http://javafx.com/fxml/1">-->
-                <!--<columnConstraints>-->
-                    <!--<ColumnConstraints percentWidth="30.0"/>-->
-                    <!--<ColumnConstraints />-->
-                    <!--<ColumnConstraints fillWidth="true" percentWidth="70.0" />-->
-                <!--</columnConstraints>-->
-                <!--<rowConstraints>-->
-                    <!--<RowConstraints fillHeight="true" />-->
-                <!--</rowConstraints>-->
-                <!--<children>-->
-                    <!--<VBox maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0">-->
-                        <!--<children>-->
-                            <!--<ListMenuItem fx:id="home" name="Home" GridPane.columnIndex="0" GridPane.rowIndex="7" disable="false" showNumber="false"/>-->
-                            <!--<ListMenuItem fx:id="devices" name="Devices" GridPane.columnIndex="0" GridPane.rowIndex="0" visible="true" showNumber="true"/>-->
-                            <!--<ListMenuItem fx:id="inventory" name="Inventory" GridPane.columnIndex="0" GridPane.rowIndex="1" disable="true" showNumber="false"/>-->
-                            <!--<ListMenuItem fx:id="appManager" name="Application Manager" GridPane.columnIndex="0" GridPane.rowIndex="2" showNumber="false"/>-->
-                            <!--<ListMenuItem fx:id="filePusher" name="File Pusher" GridPane.columnIndex="0" GridPane.rowIndex="3" disable="true" showNumber="false"/>-->
-                            <!--<ListMenuItem fx:id="fileDeleter" name="File Remover" GridPane.columnIndex="0" GridPane.rowIndex="4" disable="true" showNumber="false"/>-->
-                            <!--<ListMenuItem fx:id="createInstruction" name="Create Instruction" GridPane.columnIndex="0" GridPane.rowIndex="5" disable="false" showNumber="false"/>-->
-                            <!--<ListMenuItem fx:id="loadInstruction" name="Instruction Loader" GridPane.columnIndex="0" GridPane.rowIndex="6" disable="false" showNumber="false"/>-->
-                            <!--<ListMenuItem fx:id="synchronisation" name="Synchronisation" GridPane.columnIndex="0" GridPane.rowIndex="7" disable="false" showNumber="false"/>-->
-                            <!--<ListMenuItem fx:id="settings" name="Settings" GridPane.columnIndex="0" GridPane.rowIndex="8" disable="true" showNumber="false"/>-->
-                        <!--</children>-->
-                    <!--</VBox>-->
-                    <!--<Separator GridPane.rowIndex="0" GridPane.columnIndex="1" orientation="VERTICAL" halignment="CENTER" valignment="CENTER"/>-->
-                    <!--<BorderPane fx:id="container" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS"/>-->
-                <!--</children>-->
-            <!--</GridPane>-->
+            </StackPane>
         </center>
     </BorderPane>
 </StackPane>

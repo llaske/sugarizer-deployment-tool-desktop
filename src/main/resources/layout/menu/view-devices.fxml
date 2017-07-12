@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import org.controlsfx.control.GridView?>
+
+<ScrollPane
+        fx:controller="com.sugarizer.presentation.view.device.DevicesView"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:id="devicesView"
+        fitToHeight="true" fitToWidth="true"
+        hbarPolicy="NEVER">
+    <GridView fx:id="devices" maxHeight="Infinity" maxWidth="Infinity"/>
+</ScrollPane>
