@@ -9,35 +9,43 @@
 <?import com.jfoenix.controls.JFXRippler?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 
+<?import com.jfoenix.controls.JFXProgressBar?>
+<?import com.jfoenix.controls.JFXSpinner?>
 <fx:root
         type="com.jfoenix.controls.JFXRippler"
+        stylesheets="@../../css/list-item/list-item-device.css"
         xmlns="http://javafx.com/javafx/8.0.112"
         xmlns:fx="http://javafx.com/fxml/1" position="BACK">
-        <GridPane style="-fx-background-color: #FFFFFF">
+    <StackPane>
+        <GridPane>
             <columnConstraints>
                 <ColumnConstraints percentWidth="30" />
                 <ColumnConstraints percentWidth="70" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints percentHeight="20" />
-                <RowConstraints percentHeight="20" />
-                <RowConstraints percentHeight="20" />
-                <RowConstraints percentHeight="40" />
+                <!--<RowConstraints percentHeight="20" />-->
+                <RowConstraints percentHeight="25" />
+                <RowConstraints percentHeight="25" />
+                <RowConstraints percentHeight="50" />
             </rowConstraints>
             <children>
-                <StackPane GridPane.rowIndex="0" GridPane.columnIndex="0" >
-                    <FontAwesomeIconView glyphName="ANDROID" size="1.5em" pickOnBounds="true"/>
+                <!--<StackPane GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="stackpane">-->
+                    <!--<FontAwesomeIconView fx:id="iconOne" glyphName="ANDROID" size="1.5em" pickOnBounds="true"/>-->
+                <!--</StackPane>-->
+                <StackPane GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="stackpane">
+                    <FontAwesomeIconView fx:id="iconTwo" glyphName="TELEVISION" size="1.5em" pickOnBounds="true"/>
                 </StackPane>
-                <StackPane GridPane.rowIndex="1" GridPane.columnIndex="0" >
-                    <FontAwesomeIconView glyphName="TELEVISION" size="1.5em" pickOnBounds="true"/>
+                <StackPane GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="stackpane">
+                    <FontAwesomeIconView fx:id="iconThree" glyphName="USB" size="1.5em" pickOnBounds="true" />
                 </StackPane>
-                <StackPane GridPane.rowIndex="2" GridPane.columnIndex="0">
-                    <FontAwesomeIconView glyphName="USB" size="1.5em" pickOnBounds="true"/>
-                </StackPane>
-                <Label fx:id="versionLabel" maxHeight="Infinity" maxWidth="Infinity" text="Test 1" GridPane.columnIndex="1" GridPane.rowIndex="0" alignment="CENTER" ellipsisString="end"/>
-                <Label fx:id="modelLabel" maxHeight="Infinity" maxWidth="Infinity" text="Test 1" GridPane.columnIndex="1" GridPane.rowIndex="1" alignment="CENTER" ellipsisString="end"/>
-                <Label fx:id="serialLabel" maxHeight="Infinity" maxWidth="Infinity" text="Test 1" GridPane.columnIndex="1" GridPane.rowIndex="2" alignment="CENTER" ellipsisString="end"/>
-                <Label fx:id="nameLabel" maxHeight="Infinity" maxWidth="Infinity" text="Name Device" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="3" alignment="CENTER" style="-fx-background-color: #808080"/>
+                <!--<Label fx:id="versionLabel" maxHeight="Infinity" maxWidth="Infinity" text="Test 1" GridPane.columnIndex="1" GridPane.rowIndex="0" alignment="CENTER" ellipsisString="end"/>-->
+                <Label fx:id="modelLabel" maxHeight="Infinity" maxWidth="Infinity" text="Test 1" GridPane.columnIndex="1" GridPane.rowIndex="0" alignment="CENTER" ellipsisString="end"/>
+                <Label fx:id="serialLabel" maxHeight="Infinity" maxWidth="Infinity" text="Test 1" GridPane.columnIndex="1" GridPane.rowIndex="1" alignment="CENTER" ellipsisString="end"/>
+                <Label fx:id="nameLabel" maxHeight="Infinity" maxWidth="Infinity" text="Name Device" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="2" alignment="CENTER"/>
             </children>
         </GridPane>
+        <StackPane fx:id="indicator" visible="false">
+            <JFXSpinner/>
+        </StackPane>
+    </StackPane>
 </fx:root>

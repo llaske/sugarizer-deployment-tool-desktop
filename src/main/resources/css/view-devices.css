@@ -1,7 +1,7 @@
-#device-table .table-column {
-    -fx-alignment: center;
+#devices {
+    -fx-background-color: #ffffff;
 }
 
-#device-table .table-cell {
-    -fx-alignment: center;
+.scroll-pane {
+    -fx-background-color: #ffffff;
 }

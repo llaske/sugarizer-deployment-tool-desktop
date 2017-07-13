@@ -1,88 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-
-<?import javafx.scene.control.Separator?>
-
 <?import javafx.scene.layout.StackPane?>
-
 <?import javafx.scene.layout.HBox?>
-<?import com.jfoenix.controls.JFXRippler?>
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 
-<?import javafx.scene.control.ScrollPane?>
-<?import org.controlsfx.control.GridView?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.layout.Pane?>
+<?import com.sugarizer.presentation.custom.ListItemMenu?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml/1" stylesheets="/css/main.css">
-    <BorderPane>
-        <bottom>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Separator?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" stylesheets="/css/main.css">
+    <bottom>
+        <VBox maxHeight="Infinity">
+            <!--<Separator maxWidth="Infinity"/>-->
             <HBox maxWidth="Infinity" minHeight="50">
                 <children>
-                    <JFXRippler fx:id="deviceButton" position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS" pickOnBounds="true">
-                        <StackPane>
-                            <Separator maxWidth="Infinity" maxHeight="Infinity" orientation="HORIZONTAL" valignment="TOP"/>
-                            <Pane fx:id="deviceBackground" style="-fx-background-color: #808080"/>
-                            <FontAwesomeIconView glyphName="STAR" size="1.5em" pickOnBounds="true"/>
-                        </StackPane>
-                    </JFXRippler>
-                    <JFXRippler fx:id="applicationButton" position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
-                        <StackPane>
-                            <Separator maxWidth="Infinity" maxHeight="Infinity" orientation="HORIZONTAL" valignment="TOP"/>
-                            <Pane  fx:id="applicationBackground" />
-                            <FontAwesomeIconView glyphName="TINT" size="1.5em" pickOnBounds="true"/>
-                        </StackPane>
-                    </JFXRippler>
-                    <JFXRippler fx:id="createButton" position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
-                        <StackPane>
-                            <Separator maxWidth="Infinity" maxHeight="Infinity" orientation="HORIZONTAL" valignment="TOP"/>
-                            <Pane fx:id="createBackground"/>
-                            <FontAwesomeIconView glyphName="TINT" size="1.5em" pickOnBounds="true"/>
-                        </StackPane>
-                    </JFXRippler>
-                    <JFXRippler fx:id="loadButton" position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
-                        <StackPane>
-                            <Separator maxWidth="Infinity" maxHeight="Infinity" orientation="HORIZONTAL" valignment="TOP"/>
-                            <Pane fx:id="loadBackground" />
-                            <FontAwesomeIconView glyphName="WIFI" size="1.5em" pickOnBounds="true"/>
-                        </StackPane>
-                    </JFXRippler>
-                    <JFXRippler fx:id="inventoryButton" position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
-                        <StackPane>
-                            <Separator maxWidth="Infinity" maxHeight="Infinity" orientation="HORIZONTAL" valignment="TOP"/>
-                            <Pane fx:id="inventoryBackground"/>
-                            <FontAwesomeIconView glyphName="USERS" size="1.5em" pickOnBounds="true"/>
-                        </StackPane>
-                    </JFXRippler>
-                    <JFXRippler position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
-                        <StackPane>
-                            <Separator maxWidth="Infinity" maxHeight="Infinity" orientation="HORIZONTAL" valignment="TOP"/>
-                            <FontAwesomeIconView glyphName="TTY" size="1.5em" pickOnBounds="true"/>
-                        </StackPane>
-                    </JFXRippler>
-                    <JFXRippler position="BACK" maxWidth="Infinity" HBox.hgrow="ALWAYS">
-                        <StackPane>
-                            <Separator maxWidth="Infinity" maxHeight="Infinity" orientation="HORIZONTAL" valignment="TOP"/>
-                            <FontAwesomeIconView glyphName="TROPHY" size="1.5em" pickOnBounds="true"/>
-                        </StackPane>
-                    </JFXRippler>
+                    <ListItemMenu fx:id="deviceItem" glyph="ANCHOR" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                    <ListItemMenu fx:id="applicationItem" glyph="ANDROID" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <ListItemMenu fx:id="createItem" glyph="TINT" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <ListItemMenu fx:id="loadItem" glyph="USERS" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <ListItemMenu fx:id="inventoryItem" glyph="WIFI" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
                 </children>
             </HBox>
-        </bottom>
-        <center>
-            <StackPane maxWidth="Infinity" maxHeight="Infinity">
-                <children>
-                    <fx:include fx:id="devicesView" source="menu/view-devices.fxml" visible="true"/>
-                    <fx:include fx:id="inventoryView" source="menu/view-inventory.fxml" visible="false"/>
-                    <fx:include fx:id="loadView" source="menu/view-load-instruction.fxml" visible="false"/>
-                    <fx:include fx:id="applicationView" source="menu/view-app-manager.fxml" visible="false"/>
-                    <fx:include fx:id="createView" source="menu/view-create-instruction.fxml" visible="false"/>
-                </children>
-            </StackPane>
-        </center>
-    </BorderPane>
-</StackPane>
+        </VBox>
+    </bottom>
+    <center>
+        <StackPane maxWidth="Infinity" maxHeight="Infinity">
+            <children>
+                <fx:include fx:id="devicesView" source="menu/view-devices.fxml" visible="true"/>
+                <fx:include fx:id="inventoryView" source="menu/view-inventory.fxml" visible="false"/>
+                <fx:include fx:id="loadView" source="menu/view-load-instruction.fxml" visible="false"/>
+                <fx:include fx:id="applicationView" source="menu/view-app-manager.fxml" visible="false"/>
+                <fx:include fx:id="createView" source="menu/view-create-instruction.fxml" visible="false"/>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>

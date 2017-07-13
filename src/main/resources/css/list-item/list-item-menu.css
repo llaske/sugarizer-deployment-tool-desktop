@@ -1,0 +1,12 @@
+.pane {
+    -fx-background-color: #FFFFFF;
+}
+
+.stackpane {
+    -fx-border-color: #607D8B;
+    -fx-border-width: 1 0 0 0;
+}
+
+#icon {
+    -fx-fill: #000000;
+}

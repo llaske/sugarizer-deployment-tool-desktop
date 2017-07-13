@@ -1,9 +1,8 @@
 package com.sugarizer.presentation.view.device
 
+import com.jfoenix.controls.JFXDialog
 import com.sugarizer.main.Main
 import io.reactivex.schedulers.Schedulers
-import javafx.scene.control.TableColumn
-import javafx.scene.control.TableView
 import javafx.scene.control.cell.PropertyValueFactory
 import javafx.scene.layout.GridPane
 import javafx.stage.Stage
@@ -13,11 +12,12 @@ import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.RxBus
 import com.sugarizer.domain.shared.StringUtils
 import com.sugarizer.presentation.custom.ListItemDevice
+import com.sugarizer.presentation.view.devicedetails.view.devicedetails.DeviceDetailsPresenter
 import javafx.application.Platform
+import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.scene.control.Button
-import javafx.scene.control.TableCell
+import javafx.scene.control.*
 import javafx.scene.layout.StackPane
 import javafx.util.Callback
 import org.controlsfx.control.GridView
@@ -36,7 +36,7 @@ class DevicesView : Initializable, DeviceContract.View {
     @FXML lateinit var devices: GridView<ListItemDevice>
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        devices.cellHeight = 200.0
+        devices.cellHeight = 150.0
         devices.cellWidth = 150.0
         devices.cellFactory =  ListItemDeviceCellFactory()
     }

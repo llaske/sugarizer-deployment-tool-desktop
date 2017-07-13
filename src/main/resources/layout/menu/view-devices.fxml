@@ -3,11 +3,16 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import org.controlsfx.control.GridView?>
 
-<ScrollPane
-        fx:controller="com.sugarizer.presentation.view.device.DevicesView"
-        xmlns:fx="http://javafx.com/fxml/1"
-        fx:id="devicesView"
-        fitToHeight="true" fitToWidth="true"
-        hbarPolicy="NEVER">
-    <GridView fx:id="devices" maxHeight="Infinity" maxWidth="Infinity"/>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.layout.StackPane?>
+<ScrollPane fx:id="devicesView" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" stylesheets="@../../css/view-devices.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.112" fx:controller="com.sugarizer.presentation.view.device.DevicesView">
+    <GridView fx:id="devices" maxHeight="Infinity" maxWidth="Infinity" />
+    <StackPane  style="-fx-background-color: #FFFFFF" visible="false">
+        <ImageView>
+            <image>
+                <Image url="/image/giphy.gif"/>
+            </image>
+        </ImageView>
+    </StackPane>
 </ScrollPane>

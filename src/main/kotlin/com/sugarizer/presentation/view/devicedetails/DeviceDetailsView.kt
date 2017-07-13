@@ -44,9 +44,9 @@ class DeviceDetailsPresenter(val device: DeviceModel) : StackPane() {
             //dialogPane.content = view
             //dialogContainer = view
 
-            PackageManager(device.jadbDevice).packages.forEach {
-                listPackage.items.add(it.toString())
-            }
+//            PackageManager(device.jadbDevice).packages.forEach {
+//                listPackage.items.add(it.toString())
+//            }
 
             name.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.product.name", ""))
             model.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.product.model", ""))

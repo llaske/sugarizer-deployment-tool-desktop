@@ -1,0 +1,37 @@
+.grid-pane {
+    -fx-background-color: #607D8B;
+}
+
+#nameLabel {
+    -fx-background-color: #03A9F4;
+    -fx-text-fill: #000000;
+}
+
+.stackpane {
+    -fx-background-color: #607D8B;
+    -fx-text-fill: #ffffff;
+}
+
+.label {
+    -fx-background-color: #607D8B;
+    -fx-text-fill: #ffffff;
+}
+
+#iconOne {
+    -glyph-name: "ANDROID";
+    -fx-fill: #FFFFFF;
+}
+
+#iconTwo {
+    -glyph-name: "TELEVISION";
+    -fx-fill: #FFFFFF;
+}
+
+#iconThree {
+    -glyph-name: "USB";
+    -fx-fill: #FFFFFF;
+}
+
+#indicator {
+    -fx-background-color: rgba(96, 125, 139, 0.7);
+}
