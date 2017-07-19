@@ -4,12 +4,9 @@ import javafx.beans.property.StringProperty
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
-import javafx.scene.control.Alert
-import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.image.ImageView
 import javafx.scene.layout.GridPane
-import javafx.stage.DirectoryChooser
 import java.io.IOException
 
 class ListItemCreateInstruction : GridPane() {
@@ -17,7 +14,7 @@ class ListItemCreateInstruction : GridPane() {
     @FXML lateinit var title: Label
 
     init {
-        val loader = FXMLLoader(javaClass.getResource("/layout/list-item-creation-instruction.fxml"))
+        val loader = FXMLLoader(javaClass.getResource("/layout/list-item/list-item-creation-instruction.fxml"))
 
         loader.setRoot(this)
         loader.setController(this)

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import com.jfoenix.controls.JFXListView?>
+
+<?import com.jfoenix.controls.JFXDialog?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import com.jfoenix.controls.JFXButton?>
+
+<?import javafx.geometry.Insets?>
+
+<?import com.jfoenix.controls.JFXCheckBox?>
+
+<fx:root
+        type="javafx.scene.layout.StackPane"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml/1">
+    <VBox>
+        <JFXButton fx:id="closeDrawer" maxWidth="Infinity" text="Close" prefHeight="100"/>
+        <JFXListView fx:id="sideList">
+            <Label fx:id="installAPK" text="Install APK"/>
+            <!--<Label fx:id="pushFile" text="Push File" />-->
+        </JFXListView>
+    </VBox>
+
+    <JFXDialog fx:id="installAPKDialog">
+        <JFXDialogLayout fx:id="dialogLayout">
+            <padding>
+                <Insets top="20" bottom="20" right="20" left="20"></Insets>
+            </padding>
+            <styleClass>
+                <String fx:value="jfx-dialog-layout"/>
+            </styleClass>
+            <heading>
+                <Label>Install APKs</Label>
+            </heading>
+            <body>
+                <HBox maxHeight="Infinity" maxWidth="Infinity">
+                    <JFXButton fx:id="selectFiles" text="Select Files" HBox.hgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" style="-fx-background-color:WHITE;-fx-font-size:14px;"/>
+                    <JFXCheckBox fx:id="forceInstall" text="Force install" GridPane.halignment="CENTER" HBox.hgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity"/>
+                </HBox>
+            </body>
+            <actions>
+                <JFXButton fx:id="launchInstallAPK">LAUNCH</JFXButton>
+            </actions>
+        </JFXDialogLayout>
+    </JFXDialog>
+</fx:root>

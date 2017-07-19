@@ -80,31 +80,31 @@ class LoadInstructionPresenter(val view: LoadInstructionContract.View) : LoadIns
 
     fun executeInstructions(index: Int): Observable<String> {
         return Observable.create { subscriber -> run {
-                view.canStart(false)
+            view.canStart(false)
 
-                zipOut.instruction?.intructions?.get(index)?.let {
-                    executeInstruction(instruction = it)
-                            .subscribeOn(Schedulers.computation())
-                            .doOnComplete {
-                                zipOut.instruction?.intructions?.size?.let {
-                                    println("CompareTo: " + index.compareTo(it))
-                                    if ((index + 1).compareTo(it) < 0) {
-                                        executeInstructions(index + 1)
-                                                .subscribeOn(Schedulers.computation())
-                                                .observeOn(JavaFxScheduler.platform())
-                                                .doOnComplete { restart() }
-                                                .subscribe()
-                                    } else {
-                                        subscriber.onComplete()
-                                    }
+            zipOut.instruction?.intructions?.get(index)?.let {
+                executeInstruction(instruction = it)
+                        .subscribeOn(Schedulers.computation())
+                        .doOnComplete {
+                            zipOut.instruction?.intructions?.size?.let {
+                                println("CompareTo: " + index.compareTo(it))
+                                if ((index + 1).compareTo(it) < 0) {
+                                    executeInstructions(index + 1)
+                                            .subscribeOn(Schedulers.computation())
+                                            .observeOn(JavaFxScheduler.platform())
+                                            .doOnComplete { restart() }
+                                            .subscribe()
+                                } else {
+                                    subscriber.onComplete()
                                 }
-
-                                it.ordre?.let { view.setProgressOnInstruction(it, false) }
                             }
-                            .doOnError { restart() }
-                            .subscribe()
-                }
+
+                            it.ordre?.let { view.setProgressOnInstruction(it, false) }
+                        }
+                        .doOnError { restart() }
+                        .subscribe()
             }
+        }
         }
     }
 
@@ -154,28 +154,28 @@ class LoadInstructionPresenter(val view: LoadInstructionContract.View) : LoadIns
         val nb = jadb.listJadb.size
 
         jadb.listJadb.forEachIndexed { index, device -> run {
-                Observable.create<Any> {
-                    when (type) {
-                        ClickInstruction.Type.CLICK -> doClick(instruction, device)
-                        ClickInstruction.Type.LONG_CLICK -> doLongClick(instruction, device)
-                        ClickInstruction.Type.SWIPE -> doSwipe(instruction, device)
-                        ClickInstruction.Type.KEY -> doKey(instruction, device)
-                        ClickInstruction.Type.TEXT -> doText(instruction, device)
-                        ClickInstruction.Type.SLEEP -> doSleep(instruction, device)
-                    }
-
-                    it.onComplete()
+            Observable.create<Any> {
+                when (type) {
+                    ClickInstruction.Type.CLICK -> doClick(instruction, device)
+                    ClickInstruction.Type.LONG_CLICK -> doLongClick(instruction, device)
+                    ClickInstruction.Type.SWIPE -> doSwipe(instruction, device)
+                    ClickInstruction.Type.KEY -> doKey(instruction, device)
+                    ClickInstruction.Type.TEXT -> doText(instruction, device)
+                    ClickInstruction.Type.SLEEP -> doSleep(instruction, device)
                 }
-                        .subscribeOn(Schedulers.computation())
-                        .observeOn(JavaFxScheduler.platform())
-                        .doOnComplete {
-                            if (index.equals(nb - 1)){
-                                view.setProgressOnInstruction(instruction.ordre as Int, false)
 
-                                subscriber.onComplete()
-                            }
+                it.onComplete()
+            }
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(JavaFxScheduler.platform())
+                    .doOnComplete {
+                        if (index.equals(nb - 1)){
+                            view.setProgressOnInstruction(instruction.ordre as Int, false)
+
+                            subscriber.onComplete()
                         }
-                        .subscribe()
+                    }
+                    .subscribe()
         }
         }
     }

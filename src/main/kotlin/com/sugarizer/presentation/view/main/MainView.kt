@@ -44,19 +44,15 @@ class MainView : View() {
     val container : BorderPane by fxid("container")
 
     val devicesView: Node by fxid("devicesView")
-    val inventoryView: Node by fxid("inventoryView")
     val loadView: Node by fxid("loadView")
     val createView: Node by fxid("createView")
-    val applicationView: Node by fxid("applicationView")
 
     val deviceItem: ListItemMenu by fxid("deviceItem")
-    val applicationItem: ListItemMenu by fxid("applicationItem")
     val loadItem: ListItemMenu by fxid("loadItem")
     val createItem: ListItemMenu by fxid("createItem")
-    val inventoryItem: ListItemMenu by fxid("inventoryItem")
 
-    var lastView: Node = applicationView
-    var lastItem: ListItemMenu = applicationItem
+    var lastView: Node = createView
+    var lastItem: ListItemMenu = createItem
 
     init {
         title = "Sugarizer Deloyment Tool - " + BuildConfig.VERSION
@@ -65,8 +61,8 @@ class MainView : View() {
 
         try {
             deviceItem.onMouseClicked = EventHandler { load(devicesView, deviceItem) }
-            inventoryItem.onMouseClicked = EventHandler { load(inventoryView, inventoryItem) }
-            applicationItem.onMouseClicked = EventHandler { load(applicationView, applicationItem) }
+//            inventoryItem.onMouseClicked = EventHandler { load(inventoryView, inventoryItem) }
+//            applicationItem.onMouseClicked = EventHandler { load(applicationView, applicationItem) }
             loadItem.onMouseClicked = EventHandler { load(loadView, loadItem) }
             createItem.onMouseClicked = EventHandler { load(createView, createItem) }
 

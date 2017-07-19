@@ -6,13 +6,94 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.layout.StackPane?>
-<ScrollPane fx:id="devicesView" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" stylesheets="@../../css/view-devices.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.112" fx:controller="com.sugarizer.presentation.view.device.DevicesView">
-    <GridView fx:id="devices" maxHeight="Infinity" maxWidth="Infinity" />
-    <StackPane  style="-fx-background-color: #FFFFFF" visible="false">
-        <ImageView>
-            <image>
-                <Image url="/image/giphy.gif"/>
-            </image>
-        </ImageView>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import com.jfoenix.controls.JFXRippler?>
+<?import com.jfoenix.controls.JFXHamburger?>
+<?import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition?>
+<?import com.jfoenix.controls.JFXDrawer?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.Label?>
+
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import com.jfoenix.controls.JFXDialog?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import java.lang.String?>
+<?import javafx.scene.layout.HBox?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXProgressBar?>
+<?import com.jfoenix.controls.JFXSpinner?>
+
+<StackPane fx:id="root"
+           xmlns:fx="http://javafx.com/fxml/1"
+           xmlns="http://javafx.com/javafx/8.0.112"
+           stylesheets="@../../css/view-devices.css"
+           fx:controller="com.sugarizer.presentation.view.device.DevicesView">
+    <JFXDrawer fx:id="drawer" defaultDrawerSize="250" direction="LEFT">
+        <children>
+            <GridPane maxWidth="Infinity" maxHeight="Infinity">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="20"/>
+                    <ColumnConstraints percentWidth="80"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints percentHeight="30"/>
+                    <RowConstraints percentHeight="70"/>
+                </rowConstraints>
+                <children>
+                    <JFXRippler GridPane.rowIndex="0" GridPane.columnIndex="0" maskType="CIRCLE" style="-fx-ripple-color:WHITE;" BorderPane.alignment="TOP_LEFT" maxWidth="Infinity">
+                        <StackPane fx:id="titleBurgerContainer">
+                            <JFXHamburger fx:id="titleBurger" minHeight="30">
+                                <padding><Insets left="10"/></padding>
+                                <HamburgerBackArrowBasicTransition/>
+                            </JFXHamburger>
+                        </StackPane>
+                    </JFXRippler>
+                    <Label fx:id="dropZone" GridPane.rowIndex="1" GridPane.columnIndex="0" text="Drop Instruction" alignment="CENTER" maxWidth="Infinity" maxHeight="Infinity">
+                        <padding><Insets left="10" top="10" right="10" bottom="10"></Insets></padding>
+                    </Label>
+                    <ScrollPane fx:id="devicesView" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER"  GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.rowSpan="2">
+                        <GridView fx:id="devices" maxHeight="Infinity" maxWidth="Infinity" />
+                        <!--<StackPane  style="-fx-background-color: #FFFFFF" visible="false">-->
+                        <!--<ImageView>-->
+                        <!--<image>-->
+                        <!--<Image url="/image/giphy.gif"/>-->
+                        <!--</image>-->
+                        <!--</ImageView>-->
+                        <!--</StackPane>-->
+                    </ScrollPane>
+                </children>
+            </GridPane>
+        </children>
+    </JFXDrawer>
+
+    <StackPane fx:id="inWork" visible="false">
+        <JFXSpinner/>
     </StackPane>
-</ScrollPane>
+
+    <JFXDialog fx:id="instructionDialog">
+        <JFXDialogLayout fx:id="dialogLayout">
+            <padding>
+                <Insets top="20" bottom="20" right="20" left="20"></Insets>
+            </padding>
+            <styleClass>
+                <String fx:value="jfx-dialog-layout"/>
+            </styleClass>
+            <heading>
+                <Label>Instructions</Label>
+            </heading>
+            <body>
+                <JFXListView fx:id="listInstruction">
+                </JFXListView>
+            </body>
+            <actions>
+                <JFXButton fx:id="launchInstruction">LAUNCH</JFXButton>
+                <JFXButton fx:id="cancelInstruction">CANCEL</JFXButton>
+            </actions>
+        </JFXDialogLayout>
+    </JFXDialog>
+</StackPane>

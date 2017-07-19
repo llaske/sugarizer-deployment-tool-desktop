@@ -36,10 +36,16 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
     var draggingButton: Node? = null
     var listInstructionTmp: MutableList<Instruction> = mutableListOf()
     var instructionModel: InstructionsModel = InstructionsModel()
-
     val map = HashMap<Node, Instruction>()
 
     @Inject lateinit var jadb: JADB
+
+    enum class STEP {
+        ONE,
+        TWO,
+        THREE,
+        FOUR
+    }
 
     init {
         Main.appComponent.inject(this)
@@ -124,7 +130,7 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
         }
     }
 
-    override fun onClickCreateInstruction(): EventHandler<ActionEvent> {
+    override fun onClickCreateInstruction(): EventHandler<MouseEvent> {
         return EventHandler {
             println("Size Instruction: " + instructionModel.intructions?.size)
             view.showProgress(true)
@@ -170,13 +176,17 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
         }
     }
 
-    override fun onClickChooseDirectory(primaryStage: Stage): EventHandler<ActionEvent> {
+    override fun onClickChooseDirectory(primaryStage: Stage): EventHandler<MouseEvent> {
         return EventHandler {
             var directory = DirectoryChooser()
             directory.title = "Choose the output directory"
             var choosedDirectory: File = directory.showDialog(primaryStage)
             view.setChoosedDirectory(choosedDirectory.absolutePath)
         }
+    }
+
+    override fun onClickStep(step: STEP) {
+        view.translateTo(step, null)
     }
 
     fun onIntallApk(): Instruction? {
@@ -258,6 +268,22 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
             map.put(tmp, tmpInstruction)
             view.onAddChildren(tmp)
         }
+    }
+
+    override fun onClickStepOne(): EventHandler<ActionEvent> {
+        return EventHandler {  }
+    }
+
+    override fun onClickStepTwo(): EventHandler<ActionEvent> {
+        return EventHandler {  }
+    }
+
+    override fun onClickStepThree(): EventHandler<ActionEvent> {
+        return EventHandler {  }
+    }
+
+    override fun onClickStepFour(): EventHandler<ActionEvent> {
+        return EventHandler {  }
     }
 
     fun createInstructionView(title: String): ListItemCreateInstructionRemove {

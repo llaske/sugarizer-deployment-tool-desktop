@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.TextField?>
 <?import com.sugarizer.presentation.custom.ListItemCreateInstruction?>
 <?import javafx.scene.control.Separator?>
 
+<?import com.jfoenix.controls.JFXDialog?>
+<?import com.jfoenix.controls.JFXDialogLayout?>
+<?import javafx.geometry.Insets?>
+<?import java.lang.String?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+
 <StackPane
+        fx:id="root"
         maxWidth="Infinity"
         maxHeight="Infinity"
         xmlns="http://javafx.com/javafx/8.0.112"
@@ -23,55 +28,93 @@
     <children>
         <GridPane fx:id="createInstruction" maxWidth="Infinity" maxHeight="Infinity">
             <columnConstraints>
-                <ColumnConstraints percentWidth="50" />
-                <ColumnConstraints percentWidth="50" />
+                <ColumnConstraints percentWidth="20" />
+                <ColumnConstraints percentWidth="80" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints percentHeight="5" />
-                <RowConstraints percentHeight="80" />
-                <RowConstraints percentHeight="15" />
+                <RowConstraints percentHeight="100"/>
             </rowConstraints>
             <children>
-                <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" text="Enabled Instructions" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" text="Available instructions" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <VBox fx:id="tab1" alignment="TOP_CENTER" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                    <children>
-                        <Separator orientation="HORIZONTAL" maxWidth="Infinity"/>
-                    </children>
+                <VBox GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <JFXButton fx:id="stepOne" text="Choose output repository" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" alignment="CENTER"/>
+                    <JFXButton fx:id="stepTwo" text="Choose name of archive" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" alignment="CENTER"/>
+                    <JFXButton fx:id="stepThree" text="Add some Instruction" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" alignment="CENTER"/>
+                    <JFXButton fx:id="stepFour" text="Create" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" alignment="CENTER"/>
                 </VBox>
-                <SplitPane GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="2" />
-                <VBox fx:id="tab2" alignment="TOP_CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" maxWidth="Infinity" fillWidth="true" >
-                    <children>
-                        <ListItemCreateInstruction fx:id="deleteFile" disable="true" maxWidth="Infinity" titleTest="Delete File" />
-                        <ListItemCreateInstruction fx:id="inputClick" disable="false" maxWidth="Infinity" titleTest="Click"/>
-                        <ListItemCreateInstruction fx:id="inputLongClick" disable="false" maxWidth="Infinity" titleTest="Long Click"/>
-                        <ListItemCreateInstruction fx:id="inputKey" disable="false" maxWidth="Infinity" titleTest="Key"/>
-                        <ListItemCreateInstruction fx:id="inputSwipe" disable="false" maxWidth="Infinity" titleTest="Swipe"/>
-                        <ListItemCreateInstruction fx:id="inputText" disable="false" maxWidth="Infinity" titleTest="Text"/>
-                        <ListItemCreateInstruction fx:id="sleep" disable="false" maxWidth="Infinity" titleTest="Sleep"/>
-                        <ListItemCreateInstruction fx:id="installApk" disable="false" maxWidth="Infinity" titleTest="Install Application" />
-                        <ListItemCreateInstruction fx:id="pushFile" titleTest="Push File" disable="true" maxWidth="Infinity"/>
-                    </children>
-                </VBox>
-                <GridPane GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.columnSpan="2">
-                    <columnConstraints>
-                        <ColumnConstraints percentWidth="50"/>
-                        <ColumnConstraints percentWidth="20"/>
-                        <ColumnConstraints percentWidth="30"/>
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints/>
-                        <RowConstraints percentHeight="50"/>
-                        <RowConstraints percentHeight="50"/>
-                    </rowConstraints>
-                    <children>
-                        <Separator orientation="HORIZONTAL" maxWidth="Infinity" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
-                        <Label fx:id="choosedDirectory" disable="false" maxHeight="Infinity" maxWidth="Infinity" text="" GridPane.columnIndex="0" GridPane.rowIndex="1" alignment="CENTER_LEFT"/>
-                        <Button fx:id="chooseDirectory" disable="false" maxHeight="Infinity" maxWidth="Infinity" text="Output location" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="1"/>
-                        <TextField fx:id="nameZip" disable="false" maxHeight="Infinity" maxWidth="Infinity" text="Name of output zip" editable="true" GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
-                        <Button fx:id="creation" disable="true" maxHeight="Infinity" maxWidth="Infinity" text="Create Instruction" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="2" />
-                    </children>
-                </GridPane>
+                <StackPane fx:id="subroot" GridPane.columnIndex="1" GridPane.rowIndex="0" maxWidth="Infinity" maxHeight="Infinity">
+                    <GridPane>
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints />
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints percentHeight="10" />
+                            <RowConstraints />
+                            <RowConstraints percentHeight="90" />
+                        </rowConstraints>
+                        <children>
+                            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" text="Enabled Instructions" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                            <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="Infinity" text="Available instructions" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                            <Separator GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="3" maxWidth="Infinity" />
+                            <Separator GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="3" maxHeight="Infinity" orientation="VERTICAL"/>
+                            <VBox fx:id="tab1" alignment="TOP_CENTER" GridPane.columnIndex="0" GridPane.rowIndex="2" maxWidth="Infinity" fillWidth="true"/>
+                            <VBox fx:id="tab2" alignment="TOP_CENTER" GridPane.columnIndex="2" GridPane.rowIndex="2" maxWidth="Infinity" fillWidth="true" >
+                                <children>
+                                    <ListItemCreateInstruction fx:id="deleteFile" disable="true" maxWidth="Infinity" titleTest="Delete File" />
+                                    <ListItemCreateInstruction fx:id="inputClick" disable="false" maxWidth="Infinity" titleTest="Click"/>
+                                    <ListItemCreateInstruction fx:id="inputLongClick" disable="false" maxWidth="Infinity" titleTest="Long Click"/>
+                                    <ListItemCreateInstruction fx:id="inputKey" disable="false" maxWidth="Infinity" titleTest="Key"/>
+                                    <ListItemCreateInstruction fx:id="inputSwipe" disable="false" maxWidth="Infinity" titleTest="Swipe"/>
+                                    <ListItemCreateInstruction fx:id="inputText" disable="false" maxWidth="Infinity" titleTest="Text"/>
+                                    <ListItemCreateInstruction fx:id="sleep" disable="false" maxWidth="Infinity" titleTest="Sleep"/>
+                                    <ListItemCreateInstruction fx:id="installApk" disable="false" maxWidth="Infinity" titleTest="Install Application" />
+                                    <ListItemCreateInstruction fx:id="pushFile" titleTest="Push File" disable="true" maxWidth="Infinity"/>
+                                </children>
+                            </VBox>
+                        </children>
+                    </GridPane>
+
+                    <JFXDialog fx:id="selectRepositoryDialog">
+                        <JFXDialogLayout>
+                            <padding>
+                                <Insets top="20" bottom="20" right="20" left="20"></Insets>
+                            </padding>
+                            <styleClass>
+                                <String fx:value="jfx-dialog-layout"/>
+                            </styleClass>
+                            <heading>
+                                <Label>Select a output directory</Label>
+                            </heading>
+                            <body>
+                                <JFXButton fx:id="selectOutputDirectory" text="Select" maxWidth="Infinity"/>
+                            </body>
+                            <actions>
+                                <JFXButton fx:id="okSelectOutput">OK</JFXButton>
+                            </actions>
+                        </JFXDialogLayout>
+                    </JFXDialog>
+
+                    <JFXDialog fx:id="selectNameDialog">
+                        <JFXDialogLayout>
+                            <padding>
+                                <Insets top="20" bottom="20" right="20" left="20"></Insets>
+                            </padding>
+                            <styleClass>
+                                <String fx:value="jfx-dialog-layout"/>
+                            </styleClass>
+                            <heading>
+                                <Label>Choose a name</Label>
+                            </heading>
+                            <body>
+                                <JFXTextField fx:id="selectName" maxWidth="Infinity"/>
+                            </body>
+                            <actions>
+                                <JFXButton fx:id="okSelectName">OK</JFXButton>
+                            </actions>
+                        </JFXDialogLayout>
+                    </JFXDialog>
+                </StackPane>
             </children>
         </GridPane>
         <VBox fx:id="progress" alignment="CENTER" visible="false">

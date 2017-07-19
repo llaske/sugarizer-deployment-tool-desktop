@@ -4,8 +4,10 @@ import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.main.Main
 import com.sugarizer.presentation.custom.ListItemApplication
+import com.sugarizer.presentation.custom.ListItemDevice
 import com.sugarizer.presentation.view.appmanager.AppManagerView
 import com.sugarizer.presentation.view.createinstruction.CreateInstructionPresenter
+import com.sugarizer.presentation.view.device.DeviceSideMenu
 import com.sugarizer.presentation.view.device.DevicesView
 import com.sugarizer.presentation.view.devicedetails.view.devicedetails.DeviceDetailsPresenter
 import com.sugarizer.presentation.view.loadinstruction.LoadInstructionPresenter
@@ -34,6 +36,10 @@ interface AppComponent {
     fun inject(createInstructionPresenter: CreateInstructionPresenter)
 
     fun inject(deviceDetailsPresenter: DeviceDetailsPresenter)
+
+    fun inject(listItemDevice: ListItemDevice)
+
+    fun inject(deviceSideMenu: DeviceSideMenu)
 
     companion object {
         fun init(application: javafx.application.Application) : AppComponent {

@@ -7,18 +7,17 @@
 <?import com.sugarizer.presentation.custom.ListItemMenu?>
 
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Separator?>
+
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" stylesheets="/css/main.css">
     <bottom>
         <VBox maxHeight="Infinity">
             <!--<Separator maxWidth="Infinity"/>-->
             <HBox maxWidth="Infinity" minHeight="50">
                 <children>
-                    <ListItemMenu fx:id="deviceItem" glyph="ANCHOR" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
-                    <ListItemMenu fx:id="applicationItem" glyph="ANDROID" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                    <ListItemMenu fx:id="createItem" glyph="TINT" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                    <ListItemMenu fx:id="loadItem" glyph="USERS" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                    <ListItemMenu fx:id="inventoryItem" glyph="WIFI" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <ListItemMenu fx:id="deviceItem" glyph="ANDROID" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                    <ListItemMenu fx:id="createItem" glyph="LIST_OL" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <ListItemMenu fx:id="loadItem" glyph="SIGN_IN" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <ListItemMenu fx:id="settingsItem" glyph="GEAR" HBox.hgrow="ALWAYS" maxWidth="Infinity" disable="true"/>
                 </children>
             </HBox>
         </VBox>
@@ -27,9 +26,9 @@
         <StackPane maxWidth="Infinity" maxHeight="Infinity">
             <children>
                 <fx:include fx:id="devicesView" source="menu/view-devices.fxml" visible="true"/>
-                <fx:include fx:id="inventoryView" source="menu/view-inventory.fxml" visible="false"/>
+                <!--<fx:include fx:id="inventoryView" source="menu/view-inventory.fxml" visible="false"/>-->
                 <fx:include fx:id="loadView" source="menu/view-load-instruction.fxml" visible="false"/>
-                <fx:include fx:id="applicationView" source="menu/view-app-manager.fxml" visible="false"/>
+                <!--<fx:include fx:id="applicationView" source="menu/view-app-manager.fxml" visible="false"/>-->
                 <fx:include fx:id="createView" source="menu/view-create-instruction.fxml" visible="false"/>
             </children>
         </StackPane>

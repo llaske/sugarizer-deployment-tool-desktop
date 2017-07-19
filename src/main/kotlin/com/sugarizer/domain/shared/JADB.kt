@@ -304,13 +304,13 @@ class JADB {
         }
     }
 
-    fun ping(jadbDevice: JadbDevice) {
-        Observable.create<Any> {
+    fun ping(jadbDevice: JadbDevice): Observable<Any> {
+        return Observable.create<Any> {
             jadbDevice.executeShell(BuildConfig.CMD_PING)
             sendLog(jadbDevice, "Ping")
+
+            it.onComplete()
         }
-                .subscribeOn(Schedulers.computation())
-                .subscribe()
     }
 
     fun sendLog(jadbDevice: JadbDevice, send: String) {

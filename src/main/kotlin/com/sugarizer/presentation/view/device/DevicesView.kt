@@ -1,6 +1,6 @@
 package com.sugarizer.presentation.view.device
 
-import com.jfoenix.controls.JFXDialog
+import com.jfoenix.controls.*
 import com.sugarizer.main.Main
 import io.reactivex.schedulers.Schedulers
 import javafx.scene.control.cell.PropertyValueFactory
@@ -27,6 +27,9 @@ import view.main.MainView
 import java.net.URL
 import java.util.*
 import javax.inject.Inject
+import javafx.scene.input.TransferMode
+import javafx.scene.input.Dragboard
+import java.io.File
 
 class DevicesView : Initializable, DeviceContract.View {
     @Inject lateinit var jadb: JADB
@@ -34,16 +37,62 @@ class DevicesView : Initializable, DeviceContract.View {
     @Inject lateinit var stringUtils: StringUtils
 
     @FXML lateinit var devices: GridView<ListItemDevice>
+    @FXML lateinit var root: StackPane
+    @FXML lateinit var titleBurgerContainer: StackPane
+    @FXML lateinit var titleBurger: JFXHamburger
+    @FXML lateinit var optionsBurger: StackPane
+    @FXML lateinit var drawer: JFXDrawer
+    @FXML lateinit var dropZone: Label
+    @FXML lateinit var instructionDialog: JFXDialog
+    @FXML lateinit var listInstruction: JFXListView<String>
+    @FXML lateinit var launchInstruction: JFXButton
+    @FXML lateinit var cancelInstruction: JFXButton
+    @FXML lateinit var inWork: StackPane
+
+    val presenter: DevicePresenter
+
+    init {
+        Main.appComponent.inject(this)
+
+        presenter = DevicePresenter(this, jadb, bus, stringUtils)
+    }
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         devices.cellHeight = 150.0
         devices.cellWidth = 150.0
         devices.cellFactory =  ListItemDeviceCellFactory()
+
+        drawer.setOnDrawerOpening { e ->
+            val animation = titleBurger.animation
+            animation.rate = 1.0
+            animation.play()
+        }
+
+        drawer.setOnDrawerClosing { e ->
+            val animation = titleBurger.animation
+            animation.rate = -1.0
+            animation.play()
+        }
+
+        titleBurgerContainer.setOnMouseClicked { e ->
+            if (drawer.isHidden || drawer.isHidding) {
+                drawer.open()
+            } else {
+                drawer.close()
+            }
+        }
+
+        drawer.setSidePane(DeviceSideMenu(this))
+
+        dropZone.onDragOver = presenter.onDragOver()
+        dropZone.onDragDropped = presenter.onDropped()
+        launchInstruction.onAction = presenter.onLaunchInstruction()
+        cancelInstruction.onAction = presenter.onCancelInstruction()
     }
 
     override fun onDeviceAdded(deviceEventModel: DeviceEventModel) {
         Platform.runLater {
-            devices.items.add(ListItemDevice(deviceEventModel.device))
+            devices.items.add(ListItemDevice(deviceEventModel.device).onItemAdded())
         }
     }
 
@@ -60,36 +109,38 @@ class DevicesView : Initializable, DeviceContract.View {
 
     override fun onDeviceRemoved(deviceEventModel: DeviceEventModel) {
         devices.items.filter { it.device.serial.get().equals(deviceEventModel.device.jadbDevice.serial) }
-                .forEach {
-                    Platform.runLater {
-                        devices.items.remove(it)
-                        devices.items.size
+                .forEach { device -> run {
+                        Platform.runLater {
+                            var tmp = device.onItemRemoved()
+
+                            tmp.setOnFinished {
+                                devices.items.remove(device)
+                                devices.items.size
+                            }
+
+                            tmp.play()
+                        }
                     }
                 }
     }
 
-    override fun test() {
+    override fun showDialog(list: List<String>) {
+        println("Size: " + list.size)
+        list.forEach { listInstruction.items.add(it) }
 
+        instructionDialog.show(root)
     }
 
-    //override val root: StackPane by fxml("/layout/view-devices.fxml")
+    override fun closeDialog() {
+        instructionDialog.close()
+    }
 
-//    val columnName: TableColumn<DeviceModel, String> by fxid(propName = "columnName")
-//    val columnStatus: TableColumn<DeviceModel, String> by fxid(propName = "columnStatus")
-//    val columnAction: TableColumn<DeviceModel, String> by fxid(propName = "columnAction")
-//    val columnPing: TableColumn<DeviceModel, String> by fxid(propName = "columnPing")
+    override fun setInWork(boolean: Boolean) {
+        inWork.isVisible = boolean
+    }
 
-//    val tableDevice: TableView<DeviceModel> by fxid(propName = "deviceTable")
-//    val devices: GridView<ListItemDevice> by fxid("devices")
-
-    val presenter: DevicePresenter
-
-    init {
-        Main.appComponent.inject(this)
-
-        presenter = DevicePresenter(this, jadb, bus, stringUtils)
-
-        presenter.start()
+    override fun getDevices(): List<ListItemDevice> {
+        return devices.items
     }
 
     override fun get(): Stage {
@@ -97,6 +148,10 @@ class DevicesView : Initializable, DeviceContract.View {
     }
 
     override fun getParent(): StackPane {
-        return StackPane()
+        return root
+    }
+
+    override fun closeDrawer(){
+        drawer.close()
     }
 }

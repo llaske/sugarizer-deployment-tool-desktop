@@ -35,9 +35,13 @@ interface CreateInstructionContract {
         fun onAddChildren(node: Node)
 
         fun onRemoveChildren(node: Node)
+
+        fun translateTo(step: CreateInstructionPresenter.STEP, runnable: Runnable?)
     }
 
     interface Presenter {
+        fun onClickStep(step: CreateInstructionPresenter.STEP)
+
         fun onCreateButtonDragDetected(button: ListItemCreateInstruction): EventHandler<MouseEvent>
 
         fun onCreateButtonDragDone(): EventHandler<DragEvent>
@@ -52,10 +56,18 @@ interface CreateInstructionContract {
 
         fun onListPaneDragDropped(): EventHandler<DragEvent>
 
-        fun onClickCreateInstruction(): EventHandler<ActionEvent>
+        fun onClickCreateInstruction(): EventHandler<MouseEvent>
 
-        fun onClickChooseDirectory(primaryStage: Stage): EventHandler<ActionEvent>
+        fun onClickChooseDirectory(primaryStage: Stage): EventHandler<MouseEvent>
 
         fun onAddInstruction(id: String, title: String)
+
+        fun onClickStepOne(): EventHandler<ActionEvent>
+
+        fun onClickStepTwo(): EventHandler<ActionEvent>
+
+        fun onClickStepThree(): EventHandler<ActionEvent>
+
+        fun onClickStepFour(): EventHandler<ActionEvent>
     }
 }

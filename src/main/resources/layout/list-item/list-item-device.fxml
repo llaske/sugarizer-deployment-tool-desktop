@@ -11,13 +11,15 @@
 
 <?import com.jfoenix.controls.JFXProgressBar?>
 <?import com.jfoenix.controls.JFXSpinner?>
+<?import javafx.scene.layout.VBox?>
+<?import com.jfoenix.controls.JFXButton?>
 <fx:root
         type="com.jfoenix.controls.JFXRippler"
         stylesheets="@../../css/list-item/list-item-device.css"
         xmlns="http://javafx.com/javafx/8.0.112"
         xmlns:fx="http://javafx.com/fxml/1" position="BACK">
     <StackPane>
-        <GridPane>
+        <GridPane fx:id="deviceItem">
             <columnConstraints>
                 <ColumnConstraints percentWidth="30" />
                 <ColumnConstraints percentWidth="70" />
@@ -44,8 +46,14 @@
                 <Label fx:id="nameLabel" maxHeight="Infinity" maxWidth="Infinity" text="Name Device" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="2" alignment="CENTER"/>
             </children>
         </GridPane>
-        <StackPane fx:id="indicator" visible="false">
+        <StackPane fx:id="indicator" visible="false" styleClass="hiden">
             <JFXSpinner/>
+        </StackPane>
+        <StackPane fx:id="ping" visible="false" styleClass="hiden">
+            <VBox fillWidth="true" maxHeight="Infinity" maxWidth="Infinity">
+                <Label fx:id="identified" alignment="CENTER" text="Identified !" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
+                <JFXButton fx:id="pingOk" text="Ok" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
+            </VBox>
         </StackPane>
     </StackPane>
 </fx:root>
