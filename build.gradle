@@ -32,6 +32,8 @@ repositories {
     jcenter()
 
     maven { url 'https://jitpack.io' }
+    maven { url 'https://mvnrepository.com/artifact/oracle/ojdbc6' }
+    maven { url 'https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc'}
 }
 
 compileKotlin {
@@ -80,6 +82,9 @@ dependencies {
     compile 'de.jensd:fontawesomefx-fontawesome:4.7.0-5'
 
     compile 'org.controlsfx:controlsfx:8.40.12'
+
+    compile 'com.oracle:ojdbc6:11.2.0.3'
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.19.3'
 
     testCompile 'junit:junit:4.12'
     testCompile 'com.google.dagger:dagger:2.11'

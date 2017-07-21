@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXRippler?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+
+<fx:root
+        type="javafx.scene.layout.GridPane"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        maxWidth="Infinity"
+        minHeight="50">
+    <columnConstraints>
+        <ColumnConstraints percentWidth="20"/>
+        <ColumnConstraints percentWidth="20"/>
+        <ColumnConstraints percentWidth="50"/>
+        <ColumnConstraints percentWidth="10"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints percentHeight="100"/>
+    </rowConstraints>
+    <children>
+        <Label fx:id="type" GridPane.rowIndex="0" GridPane.columnIndex="0" alignment="CENTER"/>
+        <Label fx:id="name" GridPane.rowIndex="0" GridPane.columnIndex="1" alignment="CENTER"/>
+        <Label fx:id="path" GridPane.rowIndex="0" GridPane.columnIndex="2" alignment="CENTER"/>
+        <JFXRippler fx:id="remove" GridPane.rowIndex="0" GridPane.columnIndex="3"  position="BACK" styleClass="icons-rippler1" maxWidth="Infinity" maxHeight="Infinity">
+            <StackPane style="-fx-padding: 5;">
+                <FontAwesomeIconView glyphName="TRASH" size="2em" styleClass="icon"/>
+            </StackPane>
+        </JFXRippler>
+    </children>
+</fx:root>

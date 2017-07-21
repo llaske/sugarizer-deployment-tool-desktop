@@ -46,10 +46,12 @@ class MainView : View() {
     val devicesView: Node by fxid("devicesView")
     val loadView: Node by fxid("loadView")
     val createView: Node by fxid("createView")
+    val synchronisationView: Node by fxid("synchronisationView")
 
     val deviceItem: ListItemMenu by fxid("deviceItem")
     val loadItem: ListItemMenu by fxid("loadItem")
     val createItem: ListItemMenu by fxid("createItem")
+    val synchronisationItem: ListItemMenu by fxid("synchronisationItem")
 
     var lastView: Node = createView
     var lastItem: ListItemMenu = createItem
@@ -61,9 +63,10 @@ class MainView : View() {
 
         try {
             deviceItem.onMouseClicked = EventHandler { load(devicesView, deviceItem) }
+            synchronisationItem.onMouseClicked = EventHandler { load(synchronisationView, synchronisationItem) }
 //            inventoryItem.onMouseClicked = EventHandler { load(inventoryView, inventoryItem) }
 //            applicationItem.onMouseClicked = EventHandler { load(applicationView, applicationItem) }
-            loadItem.onMouseClicked = EventHandler { load(loadView, loadItem) }
+//            loadItem.onMouseClicked = EventHandler { load(loadView, loadItem) }
             createItem.onMouseClicked = EventHandler { load(createView, createItem) }
 
             load(devicesView, deviceItem)

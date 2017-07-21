@@ -37,13 +37,6 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
     @FXML lateinit var progress: VBox
     @FXML lateinit var tab1: VBox
     @FXML lateinit var tab2: VBox
-    @FXML lateinit var installApk: ListItemCreateInstruction
-    @FXML lateinit var pushFile: ListItemCreateInstruction
-    @FXML lateinit var deleteFile: ListItemCreateInstruction
-    @FXML lateinit var creation: Button
-    @FXML lateinit var choosedDirectory: Label
-    @FXML lateinit var chooseDirectory: Button
-    @FXML lateinit var nameZip: TextField
 
     @FXML lateinit var root: StackPane
     @FXML lateinit var subroot: StackPane
@@ -70,6 +63,7 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
     var isInstructionAdded = false
 
     var currentStep = CreateInstructionPresenter.STEP.ONE
+    var absoluthPath = ""
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         for (tmp in  tab2.children){
@@ -80,7 +74,7 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
 
         tab1.onDragOver = presenter.onPaneDragOver()
         tab1.onDragDropped = presenter.onListPaneDragDropped()
-        tab2.onDragOver = presenter.onPaneDragOver()
+        tab2.onDragOver = EventHandler {  }
         tab2.onDragDropped = presenter.onCreatePaneDragDropped()
 
         stepOne.onMouseClicked = EventHandler { presenter.onClickStep(CreateInstructionPresenter.STEP.ONE) }
@@ -93,6 +87,8 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
         selectOutputDirectory.onAction = onClickSelectRepository()
 
         highlight.onAction = onClickStep()
+
+        canCreate(false)
 
         root.layout()
 
@@ -109,6 +105,8 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
         selectRepositoryDialog.isOverlayClose = false
 
         root.children.add(highlight)
+
+        onClickStepOne().handle(ActionEvent())
     }
 
     override fun showProgress(boolean: Boolean) {
@@ -117,39 +115,36 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
         inWork.set(boolean)
     }
 
-    override fun primaryStage(): Stage {
-        return Main.primaryStage
-    }
-
-    override fun disableCreation(boolean: Boolean) {
-        creation.isDisable = boolean
+    override fun canCreate(boolean: Boolean) {
+        stepFour.isDisable = !boolean
     }
 
     override fun reset() {
-        choosedDirectory.text = ""
-        nameZip.text = "Name of output zip"
+        translateTo(CreateInstructionPresenter.STEP.ONE)
+        selectOutputDirectory.text = "Select"
+        selectName.text = "Name"
         tab1.children.clear()
-        creation.isDisable = true
+        stepFour.isDisable = true
     }
 
     override fun isNameZipEnterred(): Boolean {
-        return nameZip.text.isNotEmpty() && !nameZip.text.equals("Name of output zip")
+        return isNameDirectoryChoosed
     }
 
     override fun getChoosedDirectory(): String {
-        return choosedDirectory.text
+        return absoluthPath
     }
 
     override fun getNameZipFile(): String {
-        return nameZip.text
+        return selectName.text
     }
 
-    override fun isDiretoryChoose(): Boolean {
-        return choosedDirectory.text.isNotEmpty()
+    override fun isOutputDirectoyChoose(): Boolean {
+        return isOutputDirectoryChoosed
     }
 
     override fun setChoosedDirectory(string: String) {
-        choosedDirectory.text = string
+        selectOutputDirectory.text = string
     }
 
     override fun onAddChildren(node: Node) {
@@ -158,6 +153,10 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
 
     override fun onRemoveChildren(node: Node) {
         tab1.children.remove(node)
+    }
+
+    override fun setIsInstructionAdded(boolean: Boolean) {
+        isInstructionAdded = true
     }
 
     override fun translateTo(step: CreateInstructionPresenter.STEP, runnable: Runnable?) {
@@ -185,8 +184,6 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
             }
 
             currentStep = step
-
-
         }
     }
 
@@ -207,7 +204,7 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
     }
 
     fun onClickStepFour(): EventHandler<ActionEvent> {
-        return EventHandler {  }
+        return EventHandler { presenter.onClickCreateInstruction().handle(ActionEvent()) }
     }
 
     fun onClickStep(): EventHandler<ActionEvent> {
@@ -227,6 +224,7 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
             directory.title = "Choose the output directory"
             var choosedDirectory: File = directory.showDialog(Main.primaryStage)
             selectOutputDirectory.text = choosedDirectory.name
+            absoluthPath = choosedDirectory.absolutePath
 
             it.consume()
         }
@@ -261,7 +259,12 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
                 isNameDirectoryChoosed = true
                 selectNameDialog.close()
 
-                translateTo(CreateInstructionPresenter.STEP.THREE, Runnable { onClickStep().handle(ActionEvent()) })
+                if (isInstructionAdded) {
+                    canCreate(true)
+                    translateTo(CreateInstructionPresenter.STEP.FOUR)
+                } else {
+                    translateTo(CreateInstructionPresenter.STEP.THREE, Runnable { onClickStep().handle(ActionEvent()) })
+                }
             } else {
                 isNameDirectoryChoosed = false
                 var alert = Alert(Alert.AlertType.ERROR)

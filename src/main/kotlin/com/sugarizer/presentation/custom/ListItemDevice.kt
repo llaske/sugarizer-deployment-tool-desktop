@@ -88,10 +88,10 @@ class ListItemDevice(val device: DeviceModel) : JFXRippler() {
             pingOk.onAction = onClickOkPing()
 
             setOnMousePressed { event -> run {
-                    if (event.isSecondaryButtonDown) {
-                        contextMenu.show(this, event.screenX, event.screenY)
-                    }
+                if (event.isSecondaryButtonDown) {
+                    contextMenu.show(this, event.screenX, event.screenY)
                 }
+            }
             }
 
             onDoubleClick { onPing().handle(ActionEvent()) }

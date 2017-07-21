@@ -26,7 +26,6 @@ class JADB {
 
     @Inject lateinit var bus: RxBus
     @Inject lateinit var stringUtils: StringUtils
-    @Inject lateinit var db: DataBase
 
     var listJadb = FXCollections.observableArrayList<JadbDevice>()
     var listDevice = mutableListOf<DeviceModel>()

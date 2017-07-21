@@ -16,15 +16,13 @@ interface CreateInstructionContract {
     interface View {
         fun showProgress(boolean: Boolean)
 
-        fun disableCreation(boolean: Boolean)
+        fun canCreate(boolean: Boolean)
 
         fun reset()
 
-        fun primaryStage(): Stage
-
         fun isNameZipEnterred(): Boolean
 
-        fun isDiretoryChoose(): Boolean
+        fun isOutputDirectoyChoose(): Boolean
 
         fun getChoosedDirectory(): String
 
@@ -32,11 +30,13 @@ interface CreateInstructionContract {
 
         fun setChoosedDirectory(string: String)
 
+        fun setIsInstructionAdded(boolean: Boolean)
+
         fun onAddChildren(node: Node)
 
         fun onRemoveChildren(node: Node)
 
-        fun translateTo(step: CreateInstructionPresenter.STEP, runnable: Runnable?)
+        fun translateTo(step: CreateInstructionPresenter.STEP, runnable: Runnable? = null)
     }
 
     interface Presenter {
@@ -56,7 +56,7 @@ interface CreateInstructionContract {
 
         fun onListPaneDragDropped(): EventHandler<DragEvent>
 
-        fun onClickCreateInstruction(): EventHandler<MouseEvent>
+        fun onClickCreateInstruction(): EventHandler<ActionEvent>
 
         fun onClickChooseDirectory(primaryStage: Stage): EventHandler<MouseEvent>
 

@@ -1,6 +1,8 @@
 package com.sugarizer.domain.model
 
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import java.io.File
 
 class InstructionsModel {
     enum class Type {
@@ -36,6 +38,24 @@ class InstallApkModel {
 
     @SerializedName("apks")
     var apks: List<String>? = null
+
+    fun toInstruction(order: Int, choosedDirectory: File): Instruction {
+        var instructionModel: Instruction = Instruction()
+        var listApk: MutableList<String> = mutableListOf()
+
+        choosedDirectory.listFiles()
+                .filter { it.isFile && it.extension.equals("apk") }
+                .mapTo(listApk) { it.absolutePath }
+
+        this.numberApk = listApk.size
+        this.apks = listApk
+
+        instructionModel.data = Gson().toJson(this)
+        instructionModel.ordre = order
+        instructionModel.type = InstructionsModel.Type.INTALL_APK
+
+        return instructionModel
+    }
 }
 
 class KeyModel(idKey: Int = 0) {

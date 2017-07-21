@@ -1,8 +1,6 @@
 package com.sugarizer.presentation.view.createinstruction
 
-import com.google.gson.Gson
 import com.sugarizer.BuildConfig
-import com.sugarizer.domain.model.ClickModel
 import com.sugarizer.domain.model.InstallApkModel
 import com.sugarizer.domain.model.Instruction
 import com.sugarizer.domain.model.InstructionsModel
@@ -16,17 +14,14 @@ import io.reactivex.Observable
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
 import javafx.event.EventHandler
-import javafx.scene.control.Button
 import javafx.scene.image.Image
 import javafx.scene.input.*
 import javafx.scene.input.TransferMode
-import javafx.scene.layout.Pane
 import javafx.event.ActionEvent
 import javafx.scene.Node
 import javafx.scene.control.Alert
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
-import se.vidstige.jadb.managers.Package
 import java.io.*
 import javax.inject.Inject
 
@@ -87,8 +82,7 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
     override fun onPaneDragOver(): EventHandler<DragEvent> {
         return EventHandler {
             val db = it.dragboard
-            if (db.hasContent(buttonFormat)
-                    && draggingButton != null) {
+            if (db.hasContent(buttonFormat) && draggingButton != null) {
                 it.acceptTransferModes(TransferMode.COPY)
             }
         }
@@ -111,7 +105,7 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
             val db = it.dragboard
             if (db.hasContent(buttonFormat)) {
                 (draggingButton as ListItemCreateInstruction)?.let {
-                    onAddInstruction(it.id, it.getTitleTest())
+                    //onAddInstruction(it.id, it.getTitleTest())
                 }
 
                 it.isDropCompleted = true
@@ -130,23 +124,18 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
         }
     }
 
-    override fun onClickCreateInstruction(): EventHandler<MouseEvent> {
+    override fun onClickCreateInstruction(): EventHandler<ActionEvent> {
         return EventHandler {
-            println("Size Instruction: " + instructionModel.intructions?.size)
             view.showProgress(true)
 
             Observable.create<String> {
-                if (view.isNameZipEnterred() && view.isDiretoryChoose()) {
-
+                if (view.isNameZipEnterred() && view.isOutputDirectoyChoose()) {
                     var zipIn = ZipInUtils(view.getChoosedDirectory() + "\\" + view.getNameZipFile() + ".zip", instructionModel)
 
                     zipIn.startZiping()
                     zipIn.finishZip()
 
                     it.onComplete()
-                } else {
-                    //throw Throwable("Test")
-                    //it.onError(Throwable("Enter a name for a Zip"))
                 }
             }
                     .subscribeOn(Schedulers.computation())
@@ -180,41 +169,33 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
         return EventHandler {
             var directory = DirectoryChooser()
             directory.title = "Choose the output directory"
-            var choosedDirectory: File = directory.showDialog(primaryStage)
-            view.setChoosedDirectory(choosedDirectory.absolutePath)
+            var choosedDirectory: File = directory.showDialog(Main.primaryStage)
+            view.setChoosedDirectory(choosedDirectory.name)
+
+            it.consume()
         }
     }
 
     override fun onClickStep(step: STEP) {
-        view.translateTo(step, null)
     }
 
     fun onIntallApk(): Instruction? {
         var directory = DirectoryChooser()
         directory.title = "Choose the apk directory"
-        var choosedDirectory = directory.showDialog(view.primaryStage())
+        var choosedDirectory = directory.showDialog(Main.primaryStage)
 
         if (choosedDirectory != null) {
-            var instructionModel: Instruction = Instruction()
             var model: InstallApkModel = InstallApkModel()
-            var listApk: MutableList<String> = mutableListOf()
+            var instruction = model.toInstruction(listInstructionTmp.size, choosedDirectory)
 
-            choosedDirectory.listFiles()
-                    .filter { it.isFile && it.extension.equals("apk") }
-                    .mapTo(listApk) { it.absolutePath }
+            listInstructionTmp.add(instruction)
+            view.setIsInstructionAdded(true)
+            if (view.isNameZipEnterred() && view.isOutputDirectoyChoose()) {
+                view.canCreate(true)
+                view.translateTo(STEP.FOUR)
+            }
 
-            model.numberApk = listApk.size
-            model.apks = listApk
-
-            instructionModel.data = Gson().toJson(model)
-            instructionModel.ordre = listInstructionTmp.size
-            instructionModel.type = InstructionsModel.Type.INTALL_APK
-
-            listInstructionTmp.add(instructionModel)
-
-            view.disableCreation(false)
-
-            return instructionModel
+            return instruction
         } else {
             return null
         }
@@ -243,8 +224,11 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
         instruction.ordre = listInstructionTmp.size
 
         listInstructionTmp.add(instruction)
-
-        view.disableCreation(false)
+        view.setIsInstructionAdded(true)
+        if (view.isNameZipEnterred() && view.isOutputDirectoyChoose()) {
+            view.canCreate(true)
+            view.translateTo(STEP.FOUR)
+        }
 
         return instruction
     }
@@ -303,12 +287,12 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
         listInstructionTmp.remove(map[tmp])
         map.remove(tmp)
 
-        resetOrdre()
+        if (listInstructionTmp.isNotEmpty()) {
+            resetOrdre()
+        }
     }
 
     fun resetOrdre(){
-        println("Last : " + listInstructionTmp.last().ordre)
-
         Observable.create<Any> {
             listInstructionTmp.forEachIndexed { index, instruction -> instruction.ordre = index }
 
