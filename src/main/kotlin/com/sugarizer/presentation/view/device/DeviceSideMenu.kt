@@ -19,6 +19,7 @@ import javafx.scene.control.Label
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane
 import javafx.stage.FileChooser
+import sun.rmi.runtime.Log
 import tornadofx.selectedItem
 import java.io.File
 import java.io.IOException
@@ -109,16 +110,23 @@ class DeviceSideMenu(val view: DeviceContract.View) : StackPane() {
 
     fun onInstallLaunch(): EventHandler<ActionEvent> {
         return EventHandler {
+            println("ListAPK :" + listAPKs.size)
             installAPKDialog.close()
 
-            selectFiles.text = "Select Files"
-            forceInstall.isSelected = false
-            listAPKs.clear()
-
-            view.getDevices().forEach {
-                it.onItemStartWorking()
-                installAPK(it, 0)
+            Observable.create<Any> {
+                view.getDevices().forEach {
+                    it.onItemStartWorking()
+                    installAPK(it, 0)
+                }
             }
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(JavaFxScheduler.platform())
+                    .doOnComplete {
+                        selectFiles.text = "Select Files"
+                        forceInstall.isSelected = false
+                        listAPKs.clear()
+                    }
+                    .subscribe()
         }
     }
 
@@ -126,6 +134,7 @@ class DeviceSideMenu(val view: DeviceContract.View) : StackPane() {
         jadb.installAPK(device.device.jadbDevice, listAPKs[index], forceInstall.isSelected)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(JavaFxScheduler.platform())
+                .doOnError { device.onItemStopWorking() }
                 .doOnComplete {
                     if (index.equals(listAPKs.size - 1)) {
                         device.onItemStopWorking()

@@ -2,11 +2,13 @@ package com.sugarizer.presentation.custom
 
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXDialog
+import com.jfoenix.controls.JFXPopup
 import com.jfoenix.controls.JFXRippler
 import com.jfoenix.effects.JFXDepthManager
 import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.main.Main
+import com.sugarizer.presentation.view.device.DevicesView
 import com.sugarizer.presentation.view.devicedetails.view.devicedetails.DeviceDetailsPresenter
 import com.sugarizer.presentation.view.devicedetails.view.devicedetails.DeviceDetailsView
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
@@ -87,9 +89,12 @@ class ListItemDevice(val device: DeviceModel) : JFXRippler() {
 
             pingOk.onAction = onClickOkPing()
 
+            var popup = JFXPopup(FXMLLoader.load(javaClass.getResource("/layout/popup.fxml")))
+
             setOnMousePressed { event -> run {
                 if (event.isSecondaryButtonDown) {
-                    contextMenu.show(this, event.screenX, event.screenY)
+                    //contextMenu.show(this, event.screenX, event.screenY)
+                    popup.show(this, JFXPopup.PopupVPosition.TOP, JFXPopup.PopupHPosition.LEFT)
                 }
             }
             }

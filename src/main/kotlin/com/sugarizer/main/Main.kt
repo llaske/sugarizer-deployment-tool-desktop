@@ -2,7 +2,10 @@ package com.sugarizer.main
 
 import javafx.stage.Stage
 import com.sugarizer.domain.shared.JADB
+import com.sugarizer.domain.shared.database.DBUtil
+import com.sugarizer.domain.shared.database.FileSynchroniser
 import com.sugarizer.inject.AppComponent
+import io.reactivex.schedulers.Schedulers
 import tornadofx.App
 import tornadofx.UIComponent
 import view.main.MainView
@@ -12,6 +15,7 @@ import kotlin.reflect.KClass
 class Main : App(MainView::class) {
 
     @Inject lateinit var jadb: JADB
+    @Inject lateinit var dbUtils: DBUtil
 
     companion object {
         lateinit var appComponent: AppComponent
@@ -21,13 +25,12 @@ class Main : App(MainView::class) {
 
     init {
         appComponent = AppComponent.init(this)
+        appComponent.inject(this)
     }
 
     override fun start(stage: Stage) {
         primaryStage = stage
         super.start(stage)
-
-        appComponent.inject(this)
 
         stage.isResizable = false
         stage.height = 480.0
@@ -39,6 +42,7 @@ class Main : App(MainView::class) {
     override fun stop() {
         jadb.stopADB()
         jadb.stopWatching()
+        dbUtils.dbDisconnect()
 
         super.stop()
     }

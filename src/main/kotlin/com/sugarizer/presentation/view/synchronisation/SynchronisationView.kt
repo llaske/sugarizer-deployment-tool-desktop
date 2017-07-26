@@ -99,13 +99,17 @@ class SynchronisationView : Initializable, SynchronisationContract.View {
 
     fun onOkClick(): EventHandler<ActionEvent> {
         return EventHandler {
-            Observable.create<Any> {
+            Observable.create<Any> { subscriber ->
                 typeRepository.selectedItem?.let {
                     if (!selectRepository.text.equals("Select") && selectRepository.text.isNotEmpty()){
                         repositoryDAO.insertRep(selectRepository.text, path, getIntFromType(it))
+                                .subscribeOn(Schedulers.computation())
+                                .doOnComplete { subscriber.onComplete() }
+                                .subscribe()
+                    } else {
+                        subscriber.onComplete()
                     }
                 }
-                it.onComplete()
             }
                     .subscribeOn(Schedulers.computation())
                     .observeOn(JavaFxScheduler.platform())

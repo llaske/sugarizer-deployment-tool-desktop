@@ -17,7 +17,7 @@ class InstructionsModel {
         SLEEP
     }
 
-    @SerializedName("instrcutions")
+    @SerializedName("instructions")
     var intructions: List<Instruction>? = null
 }
 

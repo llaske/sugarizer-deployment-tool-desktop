@@ -6,6 +6,7 @@ import io.reactivex.Observable
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
+import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import java.sql.ResultSet
@@ -20,6 +21,11 @@ class MusicDAO {
         ADDED,
         CHANGED,
         REMOVED
+    }
+
+    enum class StateSearch {
+        FOUND,
+        NOT_FOUND
     }
 
     var bus: PublishSubject<Pair<State, MusicModel>> = PublishSubject.create()
@@ -58,16 +64,19 @@ class MusicDAO {
     }
 
     @Throws(SQLException::class, ClassNotFoundException::class)
-    fun searchMusicByPath(path: String): Observable<MusicModel> {
+    fun searchMusicByPath(path: String): Observable<Pair<StateSearch, MusicModel>> {
         return Observable.create { subscriber ->
             val selectStmt = "SELECT * FROM " + MusicModel.NAME_TABLE + " WHERE " + MusicModel.MUSIC_PATH + "= ?;"
             try {
                 val rsEmps = dbUtils.dbExecuteQuery(selectStmt, arrayListOf(Pair(DBUtil.Type.STRING, path)))
                 val music = getMusicFromResultSet(rsEmps)
 
-                music?.let {
-                    subscriber.onNext(it)
+                if (music == null) {
+                    subscriber.onNext(Pair(StateSearch.NOT_FOUND, MusicModel("", "", 0)))
+                } else {
+                    subscriber.onNext(Pair(StateSearch.FOUND, music))
                 }
+
                 subscriber.onComplete()
             } catch (e: SQLException) {
                 println("SQL select operation has been failed: " + e)
@@ -114,26 +123,38 @@ class MusicDAO {
     }
 
     @Throws(SQLException::class, ClassNotFoundException::class)
-    fun insertMusic(music: MusicModel) { searchMusicByPath(music.musicPath)
-            .subscribeOn(Schedulers.computation())
-            .observeOn(JavaFxScheduler.platform())
-            .subscribe { music ->
-                Observable.create<Any> {
-                    try {
-                        val updateStmt = "INSERT INTO " + MusicModel.NAME_TABLE + " (" + MusicModel.MUSIC_NAME + "," + MusicModel.MUSIC_PATH + "," + MusicModel.MUSIC_DURATION + ") VALUES (?, ?, ?);"
-                        println(updateStmt)
-                        dbUtils.dbExecuteUpdate(updateStmt, arrayListOf(Pair(DBUtil.Type.STRING, music.musicName), Pair(DBUtil.Type.STRING, music.musicPath), Pair(DBUtil.Type.INTEGER, music.musicDuration)))
-                    } catch (e: SQLException) {
-                        print("Error occurred while INSERT Operation: " + e)
-                    }
+    fun insertMusic(music: MusicModel): Observable<MusicModel> {
+        return Observable.create { subscriber ->
+            searchMusicByPath(music.musicPath)
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(JavaFxScheduler.platform())
+                    .subscribe { (first, second) ->
+                        when (first) {
+                            StateSearch.NOT_FOUND -> {
+                                println("Music not found.")
+                                Observable.create<Any> {
+                                    try {
+                                        val updateStmt = "INSERT INTO " + MusicModel.NAME_TABLE + " (" + MusicModel.MUSIC_NAME + "," + MusicModel.MUSIC_PATH + "," + MusicModel.MUSIC_DURATION + ") VALUES (?, ?, ?);"
+                                        dbUtils.dbExecuteUpdate(updateStmt, arrayListOf(Pair(DBUtil.Type.STRING, music.musicName), Pair(DBUtil.Type.STRING, music.musicPath), Pair(DBUtil.Type.INTEGER, music.musicDuration)))
+                                    } catch (e: SQLException) {
+                                        e.printStackTrace()
+                                    }
 
-                    it.onComplete()
-                }
-                        .subscribeOn(Schedulers.computation())
-                        .observeOn(JavaFxScheduler.platform())
-                        .doOnComplete { bus.onNext(Pair(State.ADDED, music)) }
-                        .subscribe()
-            }
+                                    it.onComplete()
+                                }
+                                        .subscribeOn(Schedulers.computation())
+                                        .observeOn(JavaFxScheduler.platform())
+                                        .doOnComplete {
+                                            println("Music Inserted")
+                                            Platform.runLater { bus.onNext(Pair(State.ADDED, music)) }
+                                            subscriber.onComplete()
+                                        }
+                                        .subscribe()
+                            }
+                            StateSearch.FOUND -> subscriber.onComplete()
+                        }
+                    }
+        }
     }
 
     @Throws(SQLException::class)

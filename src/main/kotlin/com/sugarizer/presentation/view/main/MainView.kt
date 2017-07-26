@@ -3,9 +3,12 @@ package view.main
 import com.sugarizer.BuildConfig
 import javafx.scene.layout.BorderPane
 import com.sugarizer.domain.shared.JADB
+import com.sugarizer.domain.shared.database.DBUtil
+import com.sugarizer.domain.shared.database.FileSynchroniser
 import com.sugarizer.main.Main
 import com.sugarizer.presentation.custom.ListItemDevice
 import com.sugarizer.presentation.custom.ListItemMenu
+import io.reactivex.schedulers.Schedulers
 import javafx.animation.FadeTransition
 import javafx.event.EventHandler
 import javafx.scene.Node
@@ -37,9 +40,11 @@ class ListItemDeviceCell : GridCell<ListItemDevice>() {
 }
 
 class MainView : View() {
-    override val root : BorderPane by fxml("/layout/main.fxml")
+    override val root : StackPane by fxml("/layout/main.fxml")
 
     @Inject lateinit var jadb: JADB
+    @Inject lateinit var fileSync: FileSynchroniser
+    @Inject lateinit var dbUtils: DBUtil
 
     val container : BorderPane by fxid("container")
 
@@ -61,12 +66,14 @@ class MainView : View() {
 
         Main.appComponent.inject(this)
 
+        dbUtils.dbConnect()
+        fileSync.startSearching()
+                .observeOn(Schedulers.computation())
+                .subscribe()
+
         try {
             deviceItem.onMouseClicked = EventHandler { load(devicesView, deviceItem) }
             synchronisationItem.onMouseClicked = EventHandler { load(synchronisationView, synchronisationItem) }
-//            inventoryItem.onMouseClicked = EventHandler { load(inventoryView, inventoryItem) }
-//            applicationItem.onMouseClicked = EventHandler { load(applicationView, applicationItem) }
-//            loadItem.onMouseClicked = EventHandler { load(loadView, loadItem) }
             createItem.onMouseClicked = EventHandler { load(createView, createItem) }
 
             load(devicesView, deviceItem)

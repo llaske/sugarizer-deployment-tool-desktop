@@ -1,5 +1,6 @@
 package com.sugarizer.domain.shared.database
 
+import com.sugarizer.domain.model.DeviceDBModel
 import com.sugarizer.domain.model.MusicModel
 import com.sugarizer.domain.model.RepositoryModel
 import com.sun.rowset.CachedRowSetImpl;
@@ -25,39 +26,38 @@ class DBUtil {
     private val JDBC_DRIVER: String = "org.sqlite.JDBC"
     private var conn: Connection? = null
 
-    //Connect to DB
-    fun dbConnect() { // throws SQLException, ClassNotFoundException
-        //Setting Oracle JDBC Driver
+    init {
+        dbConnect()
+
         try {
-            Class.forName(JDBC_DRIVER);
-        } catch (e: ClassNotFoundException) {
-            System.out.println("Where is your Oracle JDBC Driver?");
-            e.printStackTrace();
-            throw e;
-        }
-
-        System.out.println("Oracle JDBC Driver Registered!");
-
-        //Establish the Oracle Connection using Connection String
-        try {
-            conn = DriverManager.getConnection(connStr)
-
             conn?.let {
                 var stmt = it.createStatement()
-                println("Creation - S")
                 stmt.executeUpdate(RepositoryModel.sqlCreate)
                 stmt.executeUpdate(MusicModel.sqlCreate)
+                stmt.executeUpdate(DeviceDBModel.sqlCreate)
                 stmt.close()
-                println("Creation - E")
             }
         } catch (e: SQLException) {
-            System.out.println("Connection Failed! Check output console" + e);
             e.printStackTrace();
             throw e;
         }
     }
 
-    //Close Connection
+    fun dbConnect() {
+        try {
+            Class.forName(JDBC_DRIVER);
+        } catch (e: ClassNotFoundException) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        try {
+            conn = DriverManager.getConnection(connStr)
+        } catch (e: SQLException) {
+            e.printStackTrace();
+        }
+    }
+
     fun dbDisconnect() {
         try {
             conn?.let {
@@ -66,7 +66,7 @@ class DBUtil {
                 }
             }
         } catch (e: Exception){
-           throw e;
+           e.printStackTrace()
         }
     }
 
@@ -77,7 +77,6 @@ class DBUtil {
         var prep: PreparedStatement? = null
 
         try {
-            dbConnect();
             System.out.println("Select statement: " + queryStmt + "\n");
             conn?.let { prep = it.prepareStatement(queryStmt) }
             prep?.let { args.forEachIndexed { index, s ->
@@ -87,7 +86,6 @@ class DBUtil {
                     Type.BOOLEAN -> it.setBoolean(index + 1, s.second as Boolean)
                 }
             }
-
                 resultSet = it.executeQuery()
             }
 
@@ -99,7 +97,6 @@ class DBUtil {
         } finally {
             resultSet?.let { it.close(); }
             stmt?.let { it.close() }
-            //dbDisconnect();
         }
         return crs as ResultSet
     }
@@ -107,8 +104,9 @@ class DBUtil {
     fun dbExecuteUpdate(sqlStmt: String, args: ArrayList<Pair<Type, Any>>) {
         var stmt: PreparedStatement? = null
 
+        println(sqlStmt)
+
         try {
-            dbConnect();
             conn?.let { stmt = it.prepareStatement(sqlStmt) }
             stmt?.let { args.forEachIndexed { index, s ->
                     when (s.first) {
@@ -125,7 +123,6 @@ class DBUtil {
             throw e;
         } finally {
             stmt?.let { it.close() }
-            //dbDisconnect();
         }
     }
 }

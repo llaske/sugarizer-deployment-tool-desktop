@@ -9,10 +9,10 @@
 <?import com.jfoenix.controls.JFXRippler?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 
-<?import com.jfoenix.controls.JFXProgressBar?>
 <?import com.jfoenix.controls.JFXSpinner?>
 <?import javafx.scene.layout.VBox?>
 <?import com.jfoenix.controls.JFXButton?>
+
 <fx:root
         type="com.jfoenix.controls.JFXRippler"
         stylesheets="@../../css/list-item/list-item-device.css"

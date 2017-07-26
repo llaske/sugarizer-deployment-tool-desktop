@@ -3,6 +3,8 @@ package com.sugarizer.domain.shared.database
 import com.sugarizer.domain.model.MusicModel
 import com.sugarizer.main.Main
 import io.reactivex.Observable
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
+import io.reactivex.schedulers.Schedulers
 import java.io.File
 import javax.inject.Inject
 
@@ -22,9 +24,11 @@ class FileSynchroniser {
 
     fun startSearching(): Observable<State> {
         return Observable.create { subscriber ->
+            println("Research started !")
             subscriber.onNext(State.ONGOING)
 
             var list = repDAO.searchRepositories()
+
 
             list.forEach { item ->
                 println("Item: " + item.repositoryName)
@@ -32,24 +36,30 @@ class FileSynchroniser {
 
                 println("Size Rep: " + repository.listFiles().size)
                 if (repository.listFiles().size > 0) {
-                    repository.listFiles().forEach { music ->
-                        println("Music Name: " + music.name)
-                        println("Music Ext: " + music.extension)
-                        if (!music.isDirectory && music.exists() && MusicModel.extensions.contains(music.extension)) {
-                            println("Music detected")
-                            if (musicDAO.searchMusicByPath(music.absolutePath) == null) {
-                                musicDAO.insertMusic(MusicModel(music.name, music.absolutePath, 0))
-                                subscriber.onNext(State.NEW_FILE)
-
-                                println("Music Added")
-                            }
-                        }
-                    }
+                    insertFile(repository.listFiles(), 0)
                 }
             }
 
             subscriber.onNext(State.FINISH)
             subscriber.onComplete()
+        }
+    }
+
+    fun insertFile(list: Array<File>, index: Int){
+        val music = list[index]
+
+//        println("Music Name: " + music.name)
+//        println("Music Ext: " + music.extension)
+
+        if (!music.isDirectory && music.exists() && MusicModel.extensions.contains(music.extension)) {
+//            println("Music detected")
+            musicDAO.insertMusic(MusicModel(music.name, music.absolutePath, 0))
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(JavaFxScheduler.platform())
+                    .doOnComplete { if (index < list.size - 1) insertFile(list, index + 1)}
+                    .subscribe()
+        } else if (index < list.size - 1) {
+            insertFile(list, index + 1)
         }
     }
 }

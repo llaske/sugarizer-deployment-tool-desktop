@@ -184,7 +184,8 @@ class RepositoryDAO {
     }
 
     @Throws(SQLException::class, ClassNotFoundException::class)
-    fun insertRep(name: String, path: String, type: Int) {
+    fun insertRep(name: String, path: String, type: Int): Observable<Any> {
+        return Observable.create { subscriber ->
         Observable.create<RepositoryModel> {
             try {
                 val updateStmt = "INSERT INTO " + RepositoryModel.NAME_TABLE + " (" + RepositoryModel.REPOSITORY_NAME + "," + RepositoryModel.REPOSITORY_PATH + "," + RepositoryModel.REPOSITORY_CATEGORY_ID + ") VALUES (?, ?, ?);"
@@ -201,9 +202,13 @@ class RepositoryDAO {
                 .doOnComplete { searchRepositoryByPath(path)
                         .subscribeOn(Schedulers.computation())
                         .observeOn(JavaFxScheduler.platform())
-                        .subscribe { bus.onNext(Pair(State.ADDED, it)) }
+                        .subscribe {
+                            bus.onNext(Pair(State.ADDED, it))
+                            subscriber.onComplete()
+                        }
                 }
                 .subscribe()
+        }
     }
 
     fun toObservable() : Observable<Pair<State, RepositoryModel>> {

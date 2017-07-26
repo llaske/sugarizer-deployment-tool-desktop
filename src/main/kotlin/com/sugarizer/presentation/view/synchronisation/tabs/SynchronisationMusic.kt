@@ -5,6 +5,7 @@ import com.sugarizer.domain.model.MusicModel
 import com.sugarizer.domain.shared.database.MusicDAO
 import com.sugarizer.main.Main
 import com.sugarizer.presentation.view.synchronisation.SynchronisationView
+import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.layout.GridPane
@@ -43,9 +44,15 @@ class SynchronisationMusic : GridPane() {
     }
 
     fun onAdded(musicModel: MusicModel) {
-        if (!list.items.contains(musicModel.musicName)){
+        println("onAdded Music")
+
+        if (list.items.size == 0 || !list.items.contains(musicModel.musicName)){
+            println("Music added to Tab - 1")
             list.items.add(musicModel.musicName)
+            println("Music added to Tab - 2")
         }
+
+        println("onAdded Music end")
     }
 
     fun onChanged(musicModel: MusicModel) {
@@ -53,6 +60,8 @@ class SynchronisationMusic : GridPane() {
     }
 
     fun onRemoved(musicModel: MusicModel) {
+        println("onAdded Music")
+
         if (list.items.contains(musicModel.musicName)){
             list.items.remove(musicModel.musicName)
         }

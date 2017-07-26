@@ -1,5 +1,6 @@
 package com.sugarizer.domain.model
 
+import com.jfoenix.controls.JFXPopup
 import com.sugarizer.BuildConfig
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.StringUtils
@@ -9,6 +10,7 @@ import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
 import javafx.beans.property.SimpleStringProperty
+import javafx.fxml.FXMLLoader
 import se.vidstige.jadb.JadbDevice
 import se.vidstige.jadb.JadbException
 import se.vidstige.jadb.RemoteFile
@@ -29,6 +31,7 @@ class DeviceModel(device: JadbDevice) {
     val model = SimpleStringProperty("model")
     val version = SimpleStringProperty("version")
     val serial = SimpleStringProperty("serial")
+    var udid = SimpleStringProperty("udid")
 
     init {
         Main.appComponent.inject(this)
@@ -73,6 +76,9 @@ class DeviceModel(device: JadbDevice) {
             name.set(jadb.convertStreamToString(jadbDevice.executeShell("getprop ro.product.name", "")))
             model.set(jadb.convertStreamToString(jadbDevice.executeShell("getprop ro.product.model", "")))
             version.set(jadb.convertStreamToString(jadbDevice.executeShell("getprop ro.build.version.sdk", "")))
+            udid.set(jadb.convertStreamToString(jadbDevice.executeShell("settings get secure android_id")))
+
+            println("UDID: " + udid.get())
         } catch (e: JadbException) {
             e.printStackTrace()
         }

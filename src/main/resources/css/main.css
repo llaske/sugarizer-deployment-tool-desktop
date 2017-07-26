@@ -7,3 +7,8 @@
 .border-pane {
     -fx-background-color: "#FFFFFF";
 }
+
+#synchronisationLayout {
+    -fx-background-color: #FFFFFF;
+    /*-fx-background-color: rgba(96, 125, 139, 0.7);*/
+}

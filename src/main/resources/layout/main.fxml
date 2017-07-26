@@ -8,28 +8,54 @@
 
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" stylesheets="/css/main.css">
-    <bottom>
-        <VBox maxHeight="Infinity">
-            <!--<Separator maxWidth="Infinity"/>-->
-            <HBox maxWidth="Infinity" minHeight="50">
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import com.jfoenix.controls.JFXSpinner?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml/1" stylesheets="/css/main.css">
+    <BorderPane StackPane.alignment="CENTER">
+        <bottom>
+            <VBox maxHeight="Infinity">
+                <!--<Separator maxWidth="Infinity"/>-->
+                <HBox maxWidth="Infinity" minHeight="50">
+                    <children>
+                        <ListItemMenu fx:id="deviceItem" glyph="ANDROID" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                        <ListItemMenu fx:id="createItem" glyph="LIST_OL" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <ListItemMenu fx:id="synchronisationItem" glyph="CLOUD_UPLOAD" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                        <!--<ListItemMenu fx:id="loadItem" glyph="SIGN_IN" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>-->
+                        <ListItemMenu fx:id="settingsItem" glyph="GEAR" HBox.hgrow="ALWAYS" maxWidth="Infinity" disable="true"/>
+                    </children>
+                </HBox>
+            </VBox>
+        </bottom>
+        <center>
+            <StackPane maxWidth="Infinity" maxHeight="Infinity">
                 <children>
-                    <ListItemMenu fx:id="deviceItem" glyph="ANDROID" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
-                    <ListItemMenu fx:id="createItem" glyph="LIST_OL" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                    <ListItemMenu fx:id="synchronisationItem" glyph="CLOUD_UPLOAD" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
-                    <!--<ListItemMenu fx:id="loadItem" glyph="SIGN_IN" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>-->
-                    <ListItemMenu fx:id="settingsItem" glyph="GEAR" HBox.hgrow="ALWAYS" maxWidth="Infinity" disable="true"/>
+                    <fx:include fx:id="devicesView" source="menu/view-devices.fxml" visible="true"/>
+                    <fx:include fx:id="createView" source="menu/view-create-instruction.fxml" visible="false"/>
+                    <fx:include fx:id="synchronisationView" source="menu/view-synchronisation.fxml" visible="false"/>
                 </children>
-            </HBox>
-        </VBox>
-    </bottom>
-    <center>
-        <StackPane maxWidth="Infinity" maxHeight="Infinity">
+            </StackPane>
+        </center>
+    </BorderPane>
+
+    <StackPane StackPane.alignment="TOP_RIGHT" maxWidth="200" maxHeight="50" visible="false">
+        <padding>
+            <Insets left="10" right="10" top="10" bottom="10"/>
+        </padding>
+        <GridPane fx:id="synchronisationLayout">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="30"/>
+                <ColumnConstraints percentWidth="70"/>
+            </columnConstraints>
             <children>
-                <fx:include fx:id="devicesView" source="menu/view-devices.fxml" visible="true"/>
-                <fx:include fx:id="createView" source="menu/view-create-instruction.fxml" visible="false"/>
-                <fx:include fx:id="synchronisationView" source="menu/view-synchronisation.fxml" visible="false"/>
+                <JFXSpinner GridPane.columnIndex="0">
+                    <padding><Insets top="10" left="10" bottom="10" right="10"/></padding>
+                </JFXSpinner>
+                <Label text="Synchronisation" GridPane.columnIndex="1" alignment="CENTER" maxHeight="Infinity"/>
             </children>
-        </StackPane>
-    </center>
-</BorderPane>
+        </GridPane>
+    </StackPane>
+</StackPane>

@@ -2,6 +2,7 @@ package com.sugarizer.inject
 
 import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.domain.shared.JADB
+import com.sugarizer.domain.shared.database.DeviceDAO
 import com.sugarizer.domain.shared.database.FileSynchroniser
 import com.sugarizer.domain.shared.database.MusicDAO
 import com.sugarizer.domain.shared.database.RepositoryDAO
@@ -57,6 +58,8 @@ interface AppComponent {
     fun inject(listItemRepository: ListItemRepository)
 
     fun inject(synchronisationMusic: SynchronisationMusic)
+
+    fun inject(deviceDAO: DeviceDAO)
 
     companion object {
         fun init(application: javafx.application.Application) : AppComponent {
