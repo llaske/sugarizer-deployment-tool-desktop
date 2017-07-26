@@ -24,8 +24,7 @@
                         <ListItemMenu fx:id="deviceItem" glyph="ANDROID" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
                         <ListItemMenu fx:id="createItem" glyph="LIST_OL" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
                         <ListItemMenu fx:id="synchronisationItem" glyph="CLOUD_UPLOAD" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
-                        <!--<ListItemMenu fx:id="loadItem" glyph="SIGN_IN" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>-->
-                        <ListItemMenu fx:id="settingsItem" glyph="GEAR" HBox.hgrow="ALWAYS" maxWidth="Infinity" disable="true"/>
+                        <ListItemMenu fx:id="settingsItem" glyph="GEAR" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
                     </children>
                 </HBox>
             </VBox>
@@ -36,6 +35,7 @@
                     <fx:include fx:id="devicesView" source="menu/view-devices.fxml" visible="true"/>
                     <fx:include fx:id="createView" source="menu/view-create-instruction.fxml" visible="false"/>
                     <fx:include fx:id="synchronisationView" source="menu/view-synchronisation.fxml" visible="false"/>
+                    <fx:include fx:id="settingsView" source="menu/view-settings.fxml" visible="false"/>
                 </children>
             </StackPane>
         </center>
