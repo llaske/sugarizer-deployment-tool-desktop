@@ -13,16 +13,15 @@ import com.sugarizer.presentation.view.createinstruction.instructions.ClickInstr
 import io.reactivex.Observable
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
-import javafx.event.EventHandler
-import javafx.scene.image.Image
-import javafx.scene.input.*
-import javafx.scene.input.TransferMode
 import javafx.event.ActionEvent
+import javafx.event.EventHandler
 import javafx.scene.Node
 import javafx.scene.control.Alert
+import javafx.scene.image.Image
+import javafx.scene.input.*
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
-import java.io.*
+import java.io.File
 import javax.inject.Inject
 
 class CreateInstructionPresenter(val view: CreateInstructionContract.View) : CreateInstructionContract.Presenter {
@@ -130,7 +129,7 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
 
             Observable.create<String> {
                 if (view.isNameZipEnterred() && view.isOutputDirectoyChoose()) {
-                    var zipIn = ZipInUtils(view.getChoosedDirectory() + "\\" + view.getNameZipFile() + ".zip", instructionModel)
+                    var zipIn = ZipInUtils(view.getChoosedDirectory() + "\\" + view.getNameZipFile() + ".spk", instructionModel)
 
                     zipIn.startZiping()
                     zipIn.finishZip()

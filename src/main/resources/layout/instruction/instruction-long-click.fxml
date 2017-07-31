@@ -2,7 +2,6 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 <fx:root
         type="javafx.scene.layout.GridPane"
         xmlns="http://javafx.com/javafx"

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXRippler?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<fx:root
+        type="StackPane"
+        stylesheets="@../../css/list-item/list-item-spk.css"
+        xmlns="http://javafx.com/javafx/8.0.112"
+        xmlns:fx="http://javafx.com/fxml/1">
+    <!--<padding><Insets bottom="10" left="10" right="10"/></padding>-->
+    <StackPane>
+        <GridPane fx:id="deviceItem" minHeight="100">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="30" />
+                <ColumnConstraints percentWidth="70" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints percentHeight="70" />
+                <RowConstraints percentHeight="30" />
+            </rowConstraints>
+            <children>
+                <StackPane GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="stackpane">
+                    <FontAwesomeIconView fx:id="iconTwo" glyphName="ARCHIVE" size="1.5em" pickOnBounds="true"/>
+                </StackPane>
+                <Label fx:id="nameLabel" maxHeight="Infinity" maxWidth="Infinity" text="Name" GridPane.columnIndex="1" GridPane.rowIndex="0" alignment="CENTER" ellipsisString="end"/>
+                <JFXRippler fx:id="flash" position="BACK" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1" maxHeight="Infinity" maxWidth="Infinity">
+                    <StackPane>
+                        <Label text="Flash" alignment="CENTER" style="-fx-background-color: #4CAF50; -fx-text-fill: #000000" maxHeight="Infinity" maxWidth="Infinity"/>
+                    </StackPane>
+                </JFXRippler>
+            </children>
+        </GridPane>
+    </StackPane>
+</fx:root>

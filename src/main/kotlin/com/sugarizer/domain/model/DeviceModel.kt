@@ -1,21 +1,11 @@
 package com.sugarizer.domain.model
 
-import com.jfoenix.controls.JFXPopup
-import com.sugarizer.BuildConfig
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.StringUtils
 import com.sugarizer.main.Main
-import com.sun.org.apache.xpath.internal.operations.Bool
-import io.reactivex.Observable
-import io.reactivex.Scheduler
-import io.reactivex.schedulers.Schedulers
 import javafx.beans.property.SimpleStringProperty
-import javafx.fxml.FXMLLoader
 import se.vidstige.jadb.JadbDevice
 import se.vidstige.jadb.JadbException
-import se.vidstige.jadb.RemoteFile
-import se.vidstige.jadb.managers.PackageManager
-import java.io.File
 import javax.inject.Inject
 
 class DeviceModel(device: JadbDevice) {

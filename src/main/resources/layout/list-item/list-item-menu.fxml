@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-
 <?import com.jfoenix.controls.JFXRippler?>
-
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
-
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 <fx:root
         type="com.jfoenix.controls.JFXRippler"
         xmlns="http://javafx.com/javafx"

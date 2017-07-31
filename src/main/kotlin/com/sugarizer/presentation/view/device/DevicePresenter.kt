@@ -1,35 +1,33 @@
 package com.sugarizer.presentation.view.device
 
 import com.google.gson.Gson
-import com.jfoenix.controls.JFXDialog
-import com.jfoenix.controls.JFXPopup
+import com.jfoenix.controls.events.JFXDialogEvent
+import com.sugarizer.BuildConfig
 import com.sugarizer.domain.model.*
-import com.sugarizer.presentation.view.devicedetails.view.devicedetails.DeviceDetailsView
-import com.sugarizer.domain.shared.JADB
-import com.sugarizer.domain.shared.RxBus
-import com.sugarizer.domain.shared.StringUtils
-import com.sugarizer.domain.shared.ZipOutUtils
+import com.sugarizer.domain.shared.*
+import com.sugarizer.main.Main
 import com.sugarizer.presentation.custom.ListItemDevice
 import com.sugarizer.presentation.view.createinstruction.instructions.ClickInstruction
-import com.sugarizer.presentation.view.devicedetails.view.devicedetails.DeviceDetailsPresenter
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
-import javafx.scene.control.Alert
-import javafx.scene.control.Label
 import javafx.scene.input.DragEvent
 import javafx.scene.input.TransferMode
-import se.vidstige.jadb.JadbDevice
-import tornadofx.useMaxSize
 import java.io.File
+import java.nio.file.Files
+import javax.inject.Inject
 
 class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: RxBus, val stringUtils: StringUtils) : DeviceContract.Presenter {
+    @Inject lateinit var notifBus: NotificationBus
+
     val zipOut: ZipOutUtils = ZipOutUtils()
 
     init {
+        Main.appComponent.inject(this)
+
         jadb.watcher()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(Schedulers.io())
@@ -60,7 +58,7 @@ class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: 
             val db = it.dragboard
             if (db.hasFiles()) {
                 for (tmp in db.files) {
-                    if (!tmp.extension.equals("zip")) {
+                    if (!tmp.extension.equals("spk") && !tmp.extension.equals("apk")) {
                         it.consume()
                         return@EventHandler
                     }
@@ -76,41 +74,79 @@ class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: 
         return EventHandler {
             val db = it.dragboard
             var success = false
-            if (db.hasFiles() && db.files.size == 1) {
-                success = true
-                zipOut.loadZip(db.files[0].absolutePath)
-                        .subscribeOn(Schedulers.computation())
-                        .observeOn(JavaFxScheduler.platform())
-                        .doOnComplete {
-                            var list = mutableListOf<String>()
-                            println("Size: " + zipOut.instruction?.intructions?.size)
 
-                            zipOut.instruction?.intructions?.forEach {
-                                list.add(it.ordre as Int, it.type.toString())
-                            }
+            if (db.hasFiles()) {
+                var listAPK = mutableListOf<File>()
+                var listSPK = mutableListOf<File>()
 
-                            view.showDialog(list)
-                        }
-                        .subscribe {
-                            when (it) {
-                                ZipOutUtils.STATUS.NOT_COMPLETE -> { view.setInWork(false) }
-                                ZipOutUtils.STATUS.IN_PROGRESS -> { view.setInWork(true) }
-                                ZipOutUtils.STATUS.COMPLETE -> { view.setInWork(false) }
-                            }
-                        }
-            } else if (db.hasFiles() && db.files.size == 1) {
-                var alert = Alert(Alert.AlertType.ERROR)
+                db.files.forEach {
+                    when (it.extension) {
+                        "spk" -> listSPK.add(it)
+                        "apk" -> listAPK.add(it)
+                    }
+                }
 
-                alert.title = "Error"
-                alert.headerText = null
-                alert.contentText = "Only file can be dropped"
-
-                alert.showAndWait()
+                if (listSPK.size > 0) { copySPK(listSPK, 0) }
+                if (listAPK.size > 0) { view.showDialog(listAPK) }
+                println("Size APK: " + listAPK.size)
+                println("Size SPK: " + listSPK.size)
             }
 
+//                success = true
+//                zipOut.loadZip(db.files[0].absolutePath)
+//                        .subscribeOn(Schedulers.computation())
+//                        .observeOn(JavaFxScheduler.platform())
+//                        .doOnComplete {
+//                            var list = mutableListOf<String>()
+//                            println("Size: " + zipOut.instruction?.intructions?.size)
+//
+//                            zipOut.instruction?.intructions?.forEach {
+//                                list.add(it.ordre as Int, it.type.toString())
+//                            }
+//
+//                            view.showDialog(list)
+//                        }
+//                        .subscribe {
+//                            when (it) {
+//                                ZipOutUtils.STATUS.NOT_COMPLETE -> { view.setInWork(false) }
+//                                ZipOutUtils.STATUS.IN_PROGRESS -> { view.setInWork(true) }
+//                                ZipOutUtils.STATUS.COMPLETE -> { view.setInWork(false) }
+//                            }
+//                        }
+//            } else if (db.hasFiles() && db.files.size == 1) {
+//                var alert = Alert(Alert.AlertType.ERROR)
+//
+//                alert.title = "Error"
+//                alert.headerText = null
+//                alert.contentText = "Only file can be dropped"
+//
+//                alert.showAndWait()
+//            }
+//
             it.isDropCompleted = success
             it.consume()
         }
+    }
+
+    private fun copySPK(list: List<File>, index: Int) {
+        Observable.create<Any> {
+            println("Start - Copy")
+            Files.copy(list[index].toPath(), File(BuildConfig.SPK_LOCATION + list[index].name).toPath())
+
+            println("End - Copy")
+            it.onComplete()
+        }
+                .subscribeOn(Schedulers.io())
+                .observeOn(JavaFxScheduler.platform())
+                .subscribe({}, { println(it.message) }, {
+                    notifBus.send(list[index].nameWithoutExtension + " Copied !")
+
+                    if (index < list.size - 1) {
+                        copySPK(list, index + 1)
+                    } else {
+                        println("Copy finish")
+                    }
+                })
     }
 
     override fun onLaunchInstruction(): EventHandler<ActionEvent> {
@@ -129,6 +165,13 @@ class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: 
     }
 
     override fun onCancelInstruction(): EventHandler<ActionEvent> {
+        return EventHandler {
+            zipOut.deleteTmp()
+            view.closeDialog()
+        }
+    }
+
+    override fun onDialogClosed(): EventHandler<JFXDialogEvent> {
         return EventHandler {
             zipOut.deleteTmp()
             view.closeDialog()

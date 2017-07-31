@@ -1,30 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.HBox?>
-
-<?import com.sugarizer.presentation.custom.ListItemMenu?>
-
-<?import javafx.scene.layout.VBox?>
-
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
 <?import com.jfoenix.controls.JFXSpinner?>
+<?import com.sugarizer.presentation.custom.ListItemMenu?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-
-<StackPane xmlns:fx="http://javafx.com/fxml/1" stylesheets="/css/main.css">
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.ListView?>
+<StackPane
+        fx:id="root"
+        xmlns:fx="http://javafx.com/fxml/1"
+        stylesheets="@./../css/main.css">
     <BorderPane StackPane.alignment="CENTER">
         <bottom>
             <VBox maxHeight="Infinity">
-                <!--<Separator maxWidth="Infinity"/>-->
                 <HBox maxWidth="Infinity" minHeight="50">
                     <children>
                         <ListItemMenu fx:id="deviceItem" glyph="ANDROID" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
                         <ListItemMenu fx:id="createItem" glyph="LIST_OL" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                        <ListItemMenu fx:id="synchronisationItem" glyph="CLOUD_UPLOAD" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
-                        <ListItemMenu fx:id="settingsItem" glyph="GEAR" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
                     </children>
                 </HBox>
             </VBox>
@@ -34,8 +26,9 @@
                 <children>
                     <fx:include fx:id="devicesView" source="menu/view-devices.fxml" visible="true"/>
                     <fx:include fx:id="createView" source="menu/view-create-instruction.fxml" visible="false"/>
-                    <fx:include fx:id="synchronisationView" source="menu/view-synchronisation.fxml" visible="false"/>
-                    <fx:include fx:id="settingsView" source="menu/view-settings.fxml" visible="false"/>
+
+                    <ListView fx:id="notification" StackPane.alignment="BOTTOM_RIGHT" maxWidth="250" style="-fx-background-color: rgba(0, 0, 0, 0)">
+                    </ListView>
                 </children>
             </StackPane>
         </center>

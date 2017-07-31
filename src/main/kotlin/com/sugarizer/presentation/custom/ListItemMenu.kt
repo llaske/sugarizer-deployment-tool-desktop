@@ -5,9 +5,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView
 import javafx.beans.property.ObjectProperty
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
-import javafx.scene.control.Separator
 import javafx.scene.layout.Pane
-import javafx.scene.layout.StackPane
 import java.io.IOException
 
 class ListItemMenu : JFXRippler() {

@@ -5,12 +5,9 @@ import com.sugarizer.presentation.custom.ListItemCreateInstructionRemove
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.scene.Node
-import javafx.scene.control.Button
 import javafx.scene.input.DragEvent
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.Pane
 import javafx.stage.Stage
-import jdk.nashorn.internal.ir.CallNode
 
 interface CreateInstructionContract {
     interface View {

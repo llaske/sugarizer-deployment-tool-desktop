@@ -1,17 +1,13 @@
 package com.sugarizer.presentation.view.devicedetails.view.devicedetails
 
-import com.jfoenix.controls.JFXDialog
 import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.main.Main
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
-import javafx.scene.control.Dialog
 import javafx.scene.control.Label
 import javafx.scene.control.ListView
-import javafx.scene.layout.GridPane
 import javafx.scene.layout.StackPane
-import se.vidstige.jadb.managers.PackageManager
 import java.io.IOException
 import javax.inject.Inject
 

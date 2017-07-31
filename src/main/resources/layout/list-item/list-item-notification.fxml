@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<fx:root
+        type="StackPane"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        maxWidth="Infinity" minHeight="25">
+    <padding><Insets left="20" right="20" top="10" bottom="10"/></padding>
+    <Label fx:id="message" text="Message" alignment="CENTER_LEFT" ellipsisString="end" maxWidth="Infinity" style="-fx-background-color: #FFFFFF">
+        <padding><Insets left="10" right="10" top="10" bottom="10"/></padding>
+    </Label>
+</fx:root>

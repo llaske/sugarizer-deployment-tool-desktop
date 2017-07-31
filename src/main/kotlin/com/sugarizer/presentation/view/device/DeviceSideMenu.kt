@@ -19,7 +19,6 @@ import javafx.scene.control.Label
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane
 import javafx.stage.FileChooser
-import sun.rmi.runtime.Log
 import tornadofx.selectedItem
 import java.io.File
 import java.io.IOException

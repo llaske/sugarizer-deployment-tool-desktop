@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
-
-<?import com.jfoenix.controls.JFXRippler?>
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
-
-<?import com.jfoenix.controls.JFXSpinner?>
-<?import javafx.scene.layout.VBox?>
 <?import com.jfoenix.controls.JFXButton?>
-
+<?import com.jfoenix.controls.JFXRippler?>
+<?import com.jfoenix.controls.JFXSpinner?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
 <fx:root
         type="com.jfoenix.controls.JFXRippler"
         stylesheets="@../../css/list-item/list-item-device.css"
@@ -25,25 +18,22 @@
                 <ColumnConstraints percentWidth="70" />
             </columnConstraints>
             <rowConstraints>
-                <!--<RowConstraints percentHeight="20" />-->
-                <RowConstraints percentHeight="25" />
-                <RowConstraints percentHeight="25" />
-                <RowConstraints percentHeight="50" />
+                <RowConstraints percentHeight="40" />
+                <RowConstraints percentHeight="40" />
+                <RowConstraints percentHeight="20" />
             </rowConstraints>
             <children>
-                <!--<StackPane GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="stackpane">-->
-                    <!--<FontAwesomeIconView fx:id="iconOne" glyphName="ANDROID" size="1.5em" pickOnBounds="true"/>-->
-                <!--</StackPane>-->
-                <StackPane GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="stackpane">
-                    <FontAwesomeIconView fx:id="iconTwo" glyphName="TELEVISION" size="1.5em" pickOnBounds="true"/>
-                </StackPane>
+                <Label fx:id="nameLabel" maxHeight="Infinity" maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2" alignment="CENTER" ellipsisString="end"/>
+
                 <StackPane GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="stackpane">
-                    <FontAwesomeIconView fx:id="iconThree" glyphName="USB" size="1.5em" pickOnBounds="true" />
+                    <FontAwesomeIconView fx:id="iconThree" glyphName="TABLET" size="1.5em" pickOnBounds="true" />
                 </StackPane>
-                <!--<Label fx:id="versionLabel" maxHeight="Infinity" maxWidth="Infinity" text="Test 1" GridPane.columnIndex="1" GridPane.rowIndex="0" alignment="CENTER" ellipsisString="end"/>-->
-                <Label fx:id="modelLabel" maxHeight="Infinity" maxWidth="Infinity" text="Test 1" GridPane.columnIndex="1" GridPane.rowIndex="0" alignment="CENTER" ellipsisString="end"/>
-                <Label fx:id="serialLabel" maxHeight="Infinity" maxWidth="Infinity" text="Test 1" GridPane.columnIndex="1" GridPane.rowIndex="1" alignment="CENTER" ellipsisString="end"/>
-                <Label fx:id="nameLabel" maxHeight="Infinity" maxWidth="Infinity" text="Name Device" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="2" alignment="CENTER"/>
+                <Label fx:id="modelLabel" maxHeight="Infinity" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1" alignment="CENTER" ellipsisString="end"/>
+
+                <StackPane GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                    <Label fx:id="state" maxHeight="Infinity" maxWidth="Infinity" text="State" alignment="CENTER"/>
+                    <!--<JFXProgressBar progress="50" maxWidth="Infinity"/>-->
+                </StackPane>
             </children>
         </GridPane>
         <StackPane fx:id="indicator" visible="false" styleClass="hiden">

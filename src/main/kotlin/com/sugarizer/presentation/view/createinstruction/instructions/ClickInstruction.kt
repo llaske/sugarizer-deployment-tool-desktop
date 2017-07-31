@@ -13,7 +13,6 @@ import javafx.scene.control.TextField
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.VBox
 import java.io.IOException
-import kotlin.coroutines.experimental.ContinuationInterceptor
 
 class ClickInstruction(val type: Type) : Dialog<String>() {
     @FXML lateinit var cancel: Button

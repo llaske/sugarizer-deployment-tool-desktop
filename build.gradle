@@ -120,6 +120,8 @@ buildConfig {
     buildConfigField 'String', 'APP_PACKAGE', "com.sugarizer.sugarizerdeploymenttoolapp"
     buildConfigField 'String', 'APK_LOCATION', "apk/app-debug.apk"
 
+    buildConfigField 'String', 'SPK_LOCATION', "spks/"
+
     buildConfigField 'String', 'CMD_LIST_PACKAGE',  "pm list packages"
     buildConfigField 'String', 'CMD_PING',  "am broadcast -a com.sugarizer.sugarizerdeploymentoolapp.Broadcast.ACTION_PING"
     buildConfigField 'String', 'CMD_LOG',  "am broadcast -a com.sugarizer.sugarizerdeploymentoolapp.Broadcast.ACTION_LOG"

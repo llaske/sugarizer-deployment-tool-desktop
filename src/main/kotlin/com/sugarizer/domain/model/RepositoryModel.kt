@@ -1,6 +1,5 @@
 package com.sugarizer.domain.model
 
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject
 import javafx.beans.property.*
 
 class RepositoryModel {

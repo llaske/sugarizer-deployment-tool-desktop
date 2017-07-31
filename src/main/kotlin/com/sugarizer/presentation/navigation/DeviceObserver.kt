@@ -1,8 +1,8 @@
 package navigation
 
+import com.sugarizer.domain.model.DeviceModel
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
-import com.sugarizer.domain.model.DeviceModel
 
 class DeviceObserver : Observer<DeviceModel> {
     override fun onError(e: Throwable?) {

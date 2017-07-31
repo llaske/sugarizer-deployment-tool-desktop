@@ -2,95 +2,83 @@ package view.main
 
 import com.sugarizer.BuildConfig
 import com.sugarizer.domain.model.MusicModel
-import javafx.scene.layout.BorderPane
 import com.sugarizer.domain.shared.JADB
-import com.sugarizer.domain.shared.database.DBUtil
-import com.sugarizer.domain.shared.database.FileSynchroniser
-import com.sugarizer.domain.shared.database.MusicDAO
+import com.sugarizer.domain.shared.NotificationBus
 import com.sugarizer.main.Main
-import com.sugarizer.presentation.custom.ListItemDevice
 import com.sugarizer.presentation.custom.ListItemMenu
+import com.sugarizer.presentation.custom.ListItemNotification
 import io.reactivex.Observable
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import javafx.animation.FadeTransition
+import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.scene.Node
+import javafx.scene.control.ListView
+import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
-import javafx.util.Callback
 import javafx.util.Duration
-import org.controlsfx.control.GridCell
-import org.controlsfx.control.GridView
 import se.vidstige.jadb.JadbDevice
 import se.vidstige.jadb.RemoteFile
-import tornadofx.*
+import tornadofx.View
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
-import kotlin.reflect.KClass
-
-class ListItemDeviceCellFactory : Callback<GridView<ListItemDevice>, GridCell<ListItemDevice>> {
-    override fun call(param: GridView<ListItemDevice>?): GridCell<ListItemDevice> {
-        return ListItemDeviceCell()
-    }
-}
-
-class ListItemDeviceCell : GridCell<ListItemDevice>() {
-    override fun updateItem(item: ListItemDevice?, empty: Boolean) {
-        super.updateItem(item, empty)
-        if (empty || item == null) {
-            graphic = null
-        } else {
-            graphic = item
-        }
-    }
-}
 
 class MainView : View() {
     override val root : StackPane by fxml("/layout/main.fxml")
 
     @Inject lateinit var jadb: JADB
-    @Inject lateinit var fileSync: FileSynchroniser
-    @Inject lateinit var dbUtils: DBUtil
-    @Inject lateinit var musicDAO: MusicDAO
+    @Inject lateinit var notifBus: NotificationBus
 
     val container : BorderPane by fxid("container")
 
     val devicesView: Node by fxid("devicesView")
-    val settingsView: Node by fxid("settingsView")
     val createView: Node by fxid("createView")
-    val synchronisationView: Node by fxid("synchronisationView")
 
     val deviceItem: ListItemMenu by fxid("deviceItem")
-    val settingsItem: ListItemMenu by fxid("settingsItem")
     val createItem: ListItemMenu by fxid("createItem")
-    val synchronisationItem: ListItemMenu by fxid("synchronisationItem")
+
+    val notification: ListView<ListItemNotification> by fxid("notification")
 
     var lastView: Node = createView
     var lastItem: ListItemMenu = createItem
+
+    companion object {
+        lateinit var root: StackPane
+    }
 
     init {
         title = "Sugarizer Deloyment Tool - " + BuildConfig.VERSION
 
         Main.appComponent.inject(this)
 
-        dbUtils.dbConnect()
-        fileSync.startSearching()
-                .observeOn(Schedulers.computation())
-                .doOnComplete {
-                    var list = musicDAO.searchMusic()
-
-                    pushOnDevice(jadb.listJadb, 0, list, 0)
-                }
-                .subscribe()
-
         try {
-            deviceItem.onMouseClicked = EventHandler { load(devicesView, deviceItem) }
-            synchronisationItem.onMouseClicked = EventHandler { load(synchronisationView, synchronisationItem) }
+            deviceItem.onMouseClicked = EventHandler {
+                load(devicesView, deviceItem)
+
+                notifBus.send("I'm a Test !")
+            }
             createItem.onMouseClicked = EventHandler { load(createView, createItem) }
-            settingsItem.onMouseClicked = EventHandler { load(settingsView, settingsItem) }
 
             load(devicesView, deviceItem)
+
+            notifBus.toObservable()
+                    .observeOn(JavaFxScheduler.platform())
+                    .subscribe {
+                        var item = ListItemNotification(it)
+                        var fadeIn = item.onItemAdded()
+                        var fadeOut = item.onItemRemoved()
+
+                        fadeOut.setOnFinished { Platform.runLater { notification.items.remove(item) } }
+                        fadeIn.setOnFinished { fadeOut.play() }
+
+                        notification.items.add(item)
+                        fadeIn.play()
+                    }
+
+            MainView.root = root
         } catch (e: IOException) {
             e.printStackTrace()
         }

@@ -6,16 +6,6 @@
     -fx-background-color: #ffffff;
 }
 
-#dialogLayout {
-    -fx-padding: 24px 24px 16px 24px;
-    -fx-text-fill: rgba(0.0, 0.0, 0.0, 0.87);
-}
-
-.jfx-dialog-layout {
-    -fx-padding: 24px 24px 16px 24px;
-    -fx-text-fill: rgba(0.0, 0.0, 0.0, 0.87);
-}
-
 .jfx-layout-heading {
     -fx-font-size: 20px;
     -fx-font-weight: BOLD;
@@ -27,4 +17,14 @@
     -fx-font-size: 14px;
     -fx-pref-width: 400px;
     -fx-wrap-text: true;
+}
+
+.spk .list-cell:even {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
+
+.list-view .list-cell:odd {
+    -fx-background-color: white;
+    -fx-text-fill: black;
 }

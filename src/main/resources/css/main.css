@@ -12,3 +12,15 @@
     -fx-background-color: #FFFFFF;
     /*-fx-background-color: rgba(96, 125, 139, 0.7);*/
 }
+
+#notification {
+    -fx-background-color: rgba(0, 0, 0, 0);
+}
+
+#notification .list-cell:odd {
+    -fx-background-color: rgba(0, 0, 0, 0);
+}
+
+#notification .list-cell:even {
+    -fx-background-color: rgba(0, 0, 0, 0);
+}

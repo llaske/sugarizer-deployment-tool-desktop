@@ -5,21 +5,16 @@ import com.sugarizer.domain.model.DeviceEventModel
 import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.main.Main
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
 import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import javafx.scene.control.Alert
 import net.dongliu.apk.parser.ApkFile
-import net.dongliu.apk.parser.ApkParsers
 import se.vidstige.jadb.*
 import se.vidstige.jadb.managers.Package
 import se.vidstige.jadb.managers.PackageManager
 import java.io.File
 import java.net.ConnectException
-import java.sql.SQLData
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class JADB {

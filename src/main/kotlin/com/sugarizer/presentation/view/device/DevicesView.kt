@@ -1,46 +1,42 @@
 package com.sugarizer.presentation.view.device
 
-import com.jfoenix.controls.*
-import com.sugarizer.main.Main
-import io.reactivex.schedulers.Schedulers
-import javafx.scene.control.cell.PropertyValueFactory
-import javafx.scene.layout.GridPane
-import javafx.stage.Stage
+import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXDialog
+import com.jfoenix.controls.JFXDrawer
+import com.jfoenix.controls.JFXListView
 import com.sugarizer.domain.model.DeviceEventModel
-import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.domain.shared.JADB
 import com.sugarizer.domain.shared.RxBus
+import com.sugarizer.domain.shared.SpkManager
 import com.sugarizer.domain.shared.StringUtils
+import com.sugarizer.main.Main
 import com.sugarizer.presentation.custom.ListItemDevice
-import com.sugarizer.presentation.view.devicedetails.view.devicedetails.DeviceDetailsPresenter
+import com.sugarizer.presentation.custom.ListItemSpk
+import com.sugarizer.presentation.view.device.cellfactory.ListItemDeviceCellFactory
+import com.sugarizer.presentation.view.device.cellfactory.ListItemSpkCellFactory
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.scene.control.*
+import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
-import javafx.util.Callback
+import javafx.stage.Stage
 import org.controlsfx.control.GridView
-import tornadofx.*
-import view.main.ListItemDeviceCellFactory
 import view.main.MainView
+import java.io.File
 import java.net.URL
 import java.util.*
 import javax.inject.Inject
-import javafx.scene.input.TransferMode
-import javafx.scene.input.Dragboard
-import java.io.File
 
 class DevicesView : Initializable, DeviceContract.View {
     @Inject lateinit var jadb: JADB
     @Inject lateinit var bus: RxBus
     @Inject lateinit var stringUtils: StringUtils
+    @Inject lateinit var spkManager: SpkManager
 
     @FXML lateinit var devices: GridView<ListItemDevice>
     @FXML lateinit var root: StackPane
-    @FXML lateinit var titleBurgerContainer: StackPane
-    @FXML lateinit var titleBurger: JFXHamburger
-    @FXML lateinit var optionsBurger: StackPane
     @FXML lateinit var drawer: JFXDrawer
     @FXML lateinit var dropZone: Label
     @FXML lateinit var instructionDialog: JFXDialog
@@ -48,6 +44,8 @@ class DevicesView : Initializable, DeviceContract.View {
     @FXML lateinit var launchInstruction: JFXButton
     @FXML lateinit var cancelInstruction: JFXButton
     @FXML lateinit var inWork: StackPane
+
+    @FXML lateinit var spk: GridView<ListItemSpk>
 
     val presenter: DevicePresenter
 
@@ -62,32 +60,28 @@ class DevicesView : Initializable, DeviceContract.View {
         devices.cellWidth = 150.0
         devices.cellFactory =  ListItemDeviceCellFactory()
 
-        drawer.setOnDrawerOpening { e ->
-            val animation = titleBurger.animation
-            animation.rate = 1.0
-            animation.play()
-        }
-
-        drawer.setOnDrawerClosing { e ->
-            val animation = titleBurger.animation
-            animation.rate = -1.0
-            animation.play()
-        }
-
-        titleBurgerContainer.setOnMouseClicked { e ->
-            if (drawer.isHidden || drawer.isHidding) {
-                drawer.open()
-            } else {
-                drawer.close()
-            }
-        }
-
-        drawer.setSidePane(DeviceSideMenu(this))
+        spk.cellWidthProperty().bind(spk.widthProperty())
+        spk.cellHeight = 100.0
+        spk.horizontalCellSpacing = 20.0
+        spk.cellFactory = ListItemSpkCellFactory()
 
         dropZone.onDragOver = presenter.onDragOver()
         dropZone.onDragDropped = presenter.onDropped()
         launchInstruction.onAction = presenter.onLaunchInstruction()
         cancelInstruction.onAction = presenter.onCancelInstruction()
+        instructionDialog.onDialogClosed = presenter.onDialogClosed()
+
+        spkManager.toObservable()
+                .observeOn(JavaFxScheduler.platform())
+                .subscribe { file ->
+                    when (file.first) {
+                        SpkManager.State.CREATE -> onSpkAdded(file.second)
+                        SpkManager.State.MODIFY -> println("Modified")
+                        SpkManager.State.DELETE -> onSpkRemoved(file.second)
+                    }
+                }
+
+        spkManager.startWatching()
     }
 
     override fun onDeviceAdded(deviceEventModel: DeviceEventModel) {
@@ -124,11 +118,11 @@ class DevicesView : Initializable, DeviceContract.View {
                 }
     }
 
-    override fun showDialog(list: List<String>) {
+    override fun showDialog(list: List<File>) {
         println("Size: " + list.size)
-        list.forEach { listInstruction.items.add(it) }
+        list.forEach { listInstruction.items.add(it.nameWithoutExtension) }
 
-        instructionDialog.show(root)
+        instructionDialog.show(MainView.root)
     }
 
     override fun closeDialog() {
@@ -153,5 +147,33 @@ class DevicesView : Initializable, DeviceContract.View {
 
     override fun closeDrawer(){
         drawer.close()
+    }
+
+    fun onSpkAdded(file: File) {
+        val contains = spk.items.any { it.file.equals(file) }
+
+        if (!contains) {
+            spk.items.add(ListItemSpk(file).onItemAdded())
+        }
+    }
+
+    fun onSpkRemoved(file: File) {
+        println("Delete")
+
+        var tmp: ListItemSpk? = null
+
+        for (item in spk.items) {
+            println("try find")
+            if (item.file.nameWithoutExtension.equals(file.nameWithoutExtension)) {
+                println("Finded ?")
+                tmp = item
+            }
+        }
+
+        tmp?.let {
+            var fade = it.onItemRemoved()
+            fade.setOnFinished { Platform.runLater { spk.items.remove(tmp) } }
+            fade.play()
+        }
     }
 }

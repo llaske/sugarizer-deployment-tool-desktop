@@ -12,16 +12,12 @@
     -fx-text-fill: #ffffff;
 }
 
-#iconThree {
-    -glyph-name: "TABLET";
+#iconTwo {
+    -glyph-name: "ARCHIVE";
     -fx-fill: #FFFFFF;
 }
 
 #state {
     -fx-background-color: #03A9F4;
     -fx-text-fill: #000000;
-}
-
-#nameLabel {
-    -fx-font-size: 24px;
 }

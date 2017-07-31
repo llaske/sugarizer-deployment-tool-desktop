@@ -5,8 +5,8 @@ import com.google.gson.reflect.TypeToken
 import com.sugarizer.domain.model.InstructionsModel
 import io.reactivex.Observable
 import java.io.*
-import java.util.zip.ZipInputStream
 import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 
 class ZipOutUtils {
     enum class STATUS {

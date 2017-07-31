@@ -1,16 +1,15 @@
 package com.sugarizer.presentation.view.device
 
+import com.jfoenix.controls.events.JFXDialogEvent
 import com.sugarizer.domain.model.DeviceEventModel
 import com.sugarizer.domain.model.DeviceModel
 import com.sugarizer.presentation.custom.ListItemDevice
 import javafx.event.ActionEvent
-import javafx.event.Event
 import javafx.event.EventHandler
-import javafx.scene.control.Button
 import javafx.scene.input.DragEvent
 import javafx.scene.layout.StackPane
 import javafx.stage.Stage
-import javax.swing.text.TableView
+import java.io.File
 
 interface DeviceContract {
     interface View {
@@ -20,7 +19,7 @@ interface DeviceContract {
 
         fun onDeviceRemoved(deviceEventModel: DeviceEventModel)
 
-        fun showDialog(list: List<String>)
+        fun showDialog(list: List<File>)
 
         fun closeDialog()
 
@@ -46,6 +45,6 @@ interface DeviceContract {
 
         fun onCancelInstruction(): EventHandler<ActionEvent>
 
-
+        fun onDialogClosed(): EventHandler<JFXDialogEvent>
     }
 }
