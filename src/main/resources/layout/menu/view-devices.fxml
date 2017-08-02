@@ -10,7 +10,7 @@
            xmlns:fx="http://javafx.com/fxml/1"
            xmlns="http://javafx.com/javafx/8.0.112"
            stylesheets="@../../css/view-devices.css"
-           fx:controller="com.sugarizer.presentation.view.device.DevicesView">
+           fx:controller="com.sugarizer.view.device.DevicesView">
     <GridPane style="-fx-background-color: #FFFFFF">
         <columnConstraints>
             <ColumnConstraints percentWidth="29"/>
@@ -23,14 +23,23 @@
             <RowConstraints percentHeight="29"/>
         </rowConstraints>
         <children>
-            <GridView fx:id="spk" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" focusTraversable="false" style="-fx-background-insets: 0; -fx-padding: 0;" maxWidth="Infinity" maxHeight="Infinity">
+            <GridView fx:id="spk" focusTraversable="false" style="-fx-background-insets: 0; -fx-padding: 0;" maxWidth="Infinity" maxHeight="Infinity" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                 <padding><Insets right="20"/></padding>
             </GridView>
             <Separator GridPane.rowIndex="1" valignment="CENTER" orientation="HORIZONTAL" GridPane.columnSpan="1" maxHeight="Infinity" maxWidth="Infinity" style="-fx-background-color: transparent"/>
             <Label fx:id="dropZone" GridPane.rowIndex="2" GridPane.columnIndex="0" text="Drop APK / SPK" alignment="CENTER" maxHeight="Infinity" maxWidth="Infinity">
                 <padding><Insets left="10" right="10" top="10" bottom="10"/></padding>
             </Label>
+
+            <VBox fx:id="flashProgressLayout" style="-fx-background-color: rgba(255, 255, 255, 0.7)" fillWidth="true" visible="false" maxHeight="Infinity" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.rowSpan="3" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                <Label fx:id="flashProgressLabel" text="Flash : 0.0%" alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity"/>
+                <StackPane VBox.vgrow="ALWAYS" maxHeight="Infinity">
+                    <JFXSpinner alignment="CENTER"/>
+                </StackPane>
+            </VBox>
+
             <Separator GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.rowSpan="3" orientation="VERTICAL" halignment="CENTER"/>
+
             <ScrollPane fx:id="devicesView" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER"  GridPane.rowIndex="0" GridPane.columnIndex="2" GridPane.rowSpan="3">
                 <GridView fx:id="devices" maxHeight="Infinity" maxWidth="Infinity" />
                 <!--<StackPane  style="-fx-background-color: #FFFFFF" visible="false">-->
@@ -44,21 +53,35 @@
         </children>
     </GridPane>
 
-    <StackPane fx:id="inWork" visible="false">
-        <JFXSpinner/>
-    </StackPane>
-
-    <JFXDialog fx:id="instructionDialog" maxWidth="Infinity" maxHeight="Infinity">
+    <JFXDialog
+            fx:id="instructionDialog"
+            maxWidth="Infinity"
+            maxHeight="Infinity">
         <JFXDialogLayout fx:id="dialogLayout">
+            <heading>
+                <Label>Spk Instruction</Label>
+            </heading>
+            <body>
+                <JFXListView fx:id="instructionList"/>
+            </body>
+            <actions>
+                <JFXButton fx:id="instructionLaunch">LAUNCH</JFXButton>
+                <JFXButton fx:id="instructionCancel">CANCEL</JFXButton>
+            </actions>
+        </JFXDialogLayout>
+    </JFXDialog>
+
+    <JFXDialog fx:id="apkDialog" maxWidth="Infinity" maxHeight="Infinity">
+        <JFXDialogLayout>
             <heading>
                 <Label>Apk's</Label>
             </heading>
             <body>
-                <JFXListView fx:id="listInstruction"/>
+                <JFXListView fx:id="apkList"/>
             </body>
             <actions>
-                <JFXButton fx:id="launchInstruction">INSTALL</JFXButton>
-                <JFXButton fx:id="cancelInstruction">CANCEL</JFXButton>
+                <JFXButton fx:id="apkLaunch">INSTALL</JFXButton>
+                <JFXButton fx:id="apkCancel">CANCEL</JFXButton>
             </actions>
         </JFXDialogLayout>
     </JFXDialog>

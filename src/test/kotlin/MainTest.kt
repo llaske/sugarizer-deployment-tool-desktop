@@ -1,4 +1,4 @@
-import com.sugarizer.domain.shared.JADB
+import com.sugarizer.utils.shared.JADB
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mockito.Mockito

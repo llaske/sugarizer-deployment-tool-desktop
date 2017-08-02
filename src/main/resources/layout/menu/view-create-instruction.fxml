@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.*?>
-<?import com.sugarizer.presentation.custom.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.lang.String?>
+<?import com.sugarizer.listitem.ListItemCreateInstruction?>
 <StackPane
         fx:id="root"
         maxWidth="Infinity"
@@ -13,7 +13,7 @@
         xmlns="http://javafx.com/javafx/8.0.112"
         xmlns:fx="http://javafx.com/fxml/1"
         stylesheets="@../../css/view-create-instruction.css"
-        fx:controller="com.sugarizer.presentation.view.createinstruction.CreateInstructionView">
+        fx:controller="com.sugarizer.view.createinstruction.CreateInstructionView">
     <children>
         <GridPane fx:id="createInstruction" maxWidth="Infinity" maxHeight="Infinity">
             <columnConstraints>

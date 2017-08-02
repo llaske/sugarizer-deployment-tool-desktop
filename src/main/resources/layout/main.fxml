@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXSpinner?>
-<?import com.sugarizer.presentation.custom.ListItemMenu?>
+<?import com.sugarizer.listitem.ListItemMenu?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>

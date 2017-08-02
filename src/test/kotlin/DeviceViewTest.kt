@@ -1,11 +1,5 @@
-import com.sugarizer.domain.shared.JADB
-import com.sugarizer.domain.shared.RxBus
-import com.sugarizer.domain.shared.StringUtils
-import com.sugarizer.presentation.view.device.DeviceContract
-import com.sugarizer.presentation.view.device.DevicePresenter
 import junit.framework.TestCase
 import org.junit.Test
-import org.mockito.Mockito.*
 
 class DeviceViewTest : TestCase() {
     @Test

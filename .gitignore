@@ -37,3 +37,7 @@ captures/
 # Keystore files
 *.jks
 *.rnd
+
+tmp/apks/
+
+spks/
