@@ -6,6 +6,7 @@
 <?import javafx.geometry.Insets?>
 <fx:root
         type="StackPane"
+        pickOnBounds="false"
         xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
         maxWidth="Infinity" minHeight="25">

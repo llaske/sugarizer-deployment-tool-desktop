@@ -1,6 +1,7 @@
 package com.sugarizer.view.createinstruction.instructions
 
 import com.google.gson.Gson
+import com.sugarizer.listitem.ListItemInstruction
 import com.sugarizer.model.*
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
@@ -14,7 +15,7 @@ import javafx.scene.layout.GridPane
 import javafx.scene.layout.VBox
 import java.io.IOException
 
-class ClickInstruction(val type: Type) : Dialog<String>() {
+class ClickInstruction(val type: ListItemInstruction.Type) : Dialog<String>() {
     @FXML lateinit var cancel: Button
     @FXML lateinit var ok: Button
     @FXML lateinit var x: TextField
@@ -27,25 +28,16 @@ class ClickInstruction(val type: Type) : Dialog<String>() {
     @FXML lateinit var boxTwo: VBox
     @FXML lateinit var boxThree: VBox
 
-    enum class Type {
-        CLICK,
-        LONG_CLICK,
-        KEY,
-        TEXT,
-        SWIPE,
-        SLEEP
-    }
-
     init {
         var resource = String()
 
         when (type) {
-            Type.CLICK -> { resource = "/layout/instruction/instruction-click.fxml" }
-            Type.LONG_CLICK -> { resource = "/layout/instruction/instruction-long-click.fxml" }
-            Type.KEY -> { resource = "/layout/instruction/instruction-key.fxml" }
-            Type.TEXT -> { resource = "/layout/instruction/instruction-text.fxml" }
-            Type.SWIPE -> { resource = "/layout/instruction/instruction-swipe.fxml" }
-            Type.SLEEP -> resource = "/layout/instruction/instruction-sleep.fxml"
+            ListItemInstruction.Type.CLICK -> { resource = "/layout/instruction/instruction-click.fxml" }
+            ListItemInstruction.Type.LONGCLICK -> { resource = "/layout/instruction/instruction-long-click.fxml" }
+            ListItemInstruction.Type.KEY -> { resource = "/layout/instruction/instruction-key.fxml" }
+            ListItemInstruction.Type.TEXT -> { resource = "/layout/instruction/instruction-text.fxml" }
+            ListItemInstruction.Type.SWIPE -> { resource = "/layout/instruction/instruction-swipe.fxml" }
+            ListItemInstruction.Type.SLEEP -> resource = "/layout/instruction/instruction-sleep.fxml"
         }
 
         val loader = FXMLLoader(javaClass.getResource(resource))
@@ -74,7 +66,7 @@ class ClickInstruction(val type: Type) : Dialog<String>() {
             cancel.onAction = onClickCancel()
 
             when (type) {
-                Type.KEY -> { (boxOne.children[0] as RadioButton).isSelected = true }
+                ListItemInstruction.Type.KEY -> { (boxOne.children[0] as RadioButton).isSelected = true }
             }
         } catch (e: IOException) {
             e.printStackTrace()
@@ -109,12 +101,12 @@ class ClickInstruction(val type: Type) : Dialog<String>() {
 
     fun getStringFromModel(): String {
         when (type) {
-            Type.CLICK -> { return Gson().toJson(ClickModel(x.text.toInt(), y.text.toInt())) }
-            Type.LONG_CLICK -> { return Gson().toJson(LongClickModel(x.text.toInt(), y.text.toInt(), duration.text.toInt())) }
-            Type.SWIPE -> { return Gson().toJson(SwipeModel(x.text.toInt(), y.text.toInt(), x2.text.toInt(), y2.text.toInt(), duration.text.toInt())) }
-            Type.KEY -> { return Gson().toJson(KeyModel(getSelectedButton())) }
-            Type.TEXT -> { return  Gson().toJson(TextModel(text.text)) }
-            Type.SLEEP -> return Gson().toJson(SleepModel(duration.text.toLong()))
+            ListItemInstruction.Type.CLICK -> { return Gson().toJson(ClickModel(x.text.toInt(), y.text.toInt())) }
+            ListItemInstruction.Type.LONGCLICK -> { return Gson().toJson(LongClickModel(x.text.toInt(), y.text.toInt(), duration.text.toInt())) }
+            ListItemInstruction.Type.SWIPE -> { return Gson().toJson(SwipeModel(x.text.toInt(), y.text.toInt(), x2.text.toInt(), y2.text.toInt(), duration.text.toInt())) }
+            ListItemInstruction.Type.KEY -> { return Gson().toJson(KeyModel(getSelectedButton())) }
+            ListItemInstruction.Type.TEXT -> { return  Gson().toJson(TextModel(text.text)) }
+            ListItemInstruction.Type.SLEEP -> return Gson().toJson(SleepModel(duration.text.toLong()))
         }
 
         return ""

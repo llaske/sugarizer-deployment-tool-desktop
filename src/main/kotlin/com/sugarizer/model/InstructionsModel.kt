@@ -2,28 +2,17 @@ package com.sugarizer.model
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import com.sugarizer.listitem.ListItemInstruction
 import java.io.File
 
 class InstructionsModel {
-    enum class Type {
-        INTALL_APK,
-        PUSH_FILE,
-        DELETE_FILE,
-        INSTRUCTION_KEY,
-        INSTRUCTION_CLICK,
-        INSTRUCTION_LONG_CLICK,
-        INSTRUCTION_SWIPE,
-        INSTRUCTION_TEXT,
-        SLEEP
-    }
-
     @SerializedName("instructions")
     var intructions: List<Instruction>? = null
 }
 
 class Instruction {
     @SerializedName("type")
-    var type: InstructionsModel.Type? = null
+    var type: ListItemInstruction.Type? = null
 
     @SerializedName("ordre")
     var ordre: Int? = null
@@ -52,7 +41,7 @@ class InstallApkModel {
 
         instructionModel.data = Gson().toJson(this)
         instructionModel.ordre = order
-        instructionModel.type = InstructionsModel.Type.INTALL_APK
+        instructionModel.type = ListItemInstruction.Type.APK
 
         return instructionModel
     }

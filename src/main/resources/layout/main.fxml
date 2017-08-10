@@ -27,7 +27,7 @@
                     <fx:include fx:id="devicesView" source="menu/view-devices.fxml" visible="true"/>
                     <fx:include fx:id="createView" source="menu/view-create-instruction.fxml" visible="false"/>
 
-                    <ListView fx:id="notification" StackPane.alignment="BOTTOM_RIGHT" maxWidth="250" style="-fx-background-color: rgba(0, 0, 0, 0)">
+                    <ListView fx:id="notification" mouseTransparent="true" StackPane.alignment="BOTTOM_RIGHT" maxWidth="250" pickOnBounds="false" style="-fx-background-color: rgba(0, 0, 0, 0)">
                     </ListView>
                 </children>
             </StackPane>

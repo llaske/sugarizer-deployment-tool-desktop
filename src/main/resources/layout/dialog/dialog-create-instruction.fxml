@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import com.jfoenix.controls.JFXListView?>
+
+<?import com.sugarizer.listitem.ListItemInstruction?>
+
+<?import com.jfoenix.controls.JFXButton?>
+
+<?import javafx.scene.control.TextField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<fx:root
+        fx:id="root"
+        type="StackPane"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        prefHeight="400.0" prefWidth="600.0">
+    <GridPane maxWidth="Infinity" maxHeight="Infinity">
+        <rowConstraints>
+            <RowConstraints percentHeight="90"/>
+            <RowConstraints percentHeight="10"/>
+        </rowConstraints>
+        <columnConstraints>
+            <ColumnConstraints fx:id="columnOne" percentWidth="50"/>
+            <ColumnConstraints fx:id="columnTwo" percentWidth="25"/>
+            <ColumnConstraints fx:id="columnThree" percentWidth="25"/>
+        </columnConstraints>
+        <children>
+            <JFXListView fx:id="choosenInstruction" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <JFXListView fx:id="instructionList" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.columnSpan="2">
+                <ListItemInstruction name="APK's" icon="ARCHIVE" type="APK"/>
+                <ListItemInstruction name="Click" icon="ARCHIVE" type="CLICK"/>
+                <ListItemInstruction name="Long Click" icon="ARCHIVE" type="LONGCLICK"/>
+                <ListItemInstruction name="Key" icon="ARCHIVE" type="KEY"/>
+                <ListItemInstruction name="Swipe" icon="ARCHIVE" type="SWIPE"/>
+                <ListItemInstruction name="Text" icon="ARCHIVE" type="TEXT"/>
+                <ListItemInstruction name="Push File" icon="ARCHIVE" type="PUSH"/>
+                <ListItemInstruction name="Delete File" icon="ARCHIVE" type="DELETE"/>
+            </JFXListView>
+
+            <JFXTextField fx:id="instructionName" promptText="Name" GridPane.rowIndex="1" GridPane.columnIndex="0" maxHeight="Infinity" maxWidth="Infinity"/>
+            <JFXButton fx:id="instructionCreate" text="Create" GridPane.rowIndex="1" GridPane.columnIndex="1" maxWidth="Infinity" maxHeight="Infinity"/>
+            <JFXButton fx:id="instructionCancel" text="Cancel" GridPane.rowIndex="1" GridPane.columnIndex="2" maxWidth="Infinity" maxHeight="Infinity"/>
+        </children>
+    </GridPane>
+</fx:root>

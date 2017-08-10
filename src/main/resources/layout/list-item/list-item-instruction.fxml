@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.control.Label?>
+
+<?import com.jfoenix.controls.JFXRippler?>
+<?import com.jfoenix.controls.JFXButton?>
+<fx:root
+        type="StackPane"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        maxWidth="Infinity">
+    <GridPane>
+        <columnConstraints>
+            <ColumnConstraints percentWidth="10"/>
+            <ColumnConstraints percentWidth="20"/>
+            <ColumnConstraints percentWidth="70"/>
+        </columnConstraints>
+        <children>
+            <StackPane GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS" GridPane.hgrow="ALWAYS" pickOnBounds="true" maxHeight="Infinity" maxWidth="Infinity">
+                <FontAwesomeIconView glyphName="ARROW_LEFT" size="1.5em"/>
+                <JFXButton fx:id="add" />
+            </StackPane>
+
+            <StackPane GridPane.rowIndex="0" GridPane.columnIndex="1" maxHeight="Infinity">
+                <FontAwesomeIconView fx:id="icon" glyphName="ARCHIVE"/>
+            </StackPane>
+
+            <Label fx:id="nameLabel" text="Instruction" GridPane.columnIndex="2" GridPane.rowIndex="0" alignment="CENTER_LEFT" maxHeight="Infinity"/>
+        </children>
+    </GridPane>
+</fx:root>

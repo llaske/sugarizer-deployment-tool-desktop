@@ -39,6 +39,8 @@ interface DeviceContract {
         fun get(): Stage
 
         fun closeDrawer()
+
+        fun onDeviceUnauthorized(deviceEvent: DeviceEventModel)
     }
 
     interface Presenter {

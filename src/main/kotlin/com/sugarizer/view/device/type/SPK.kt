@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.jfoenix.controls.events.JFXDialogEvent
 import com.sugarizer.Main
 import com.sugarizer.listitem.ListItemDevice
+import com.sugarizer.listitem.ListItemInstruction
 import com.sugarizer.model.*
 import com.sugarizer.utils.shared.JADB
 import com.sugarizer.utils.shared.JADB_MembersInjector
@@ -70,18 +71,15 @@ class SPK(private val view: DeviceContract.View) {
 
     fun launchInstruction(): EventHandler<ActionEvent> {
         return EventHandler {
-            println("Launch Instruction - S")
-            view.showProgressFlash("Flash: 0.0 %")
+            view.showProgressFlash("Flash: 0 %")
             view.closeDialog(DeviceContract.Dialog.SPK)
             executeOnDevice()
                         .subscribeOn(Schedulers.computation())
                         .observeOn(JavaFxScheduler.platform())
                         .subscribe({}, {}, {
-                            println("Launch Instruction - onComplete")
                             view.hideProgressFlash()
                             notifBus.send("Flash completed")
                         })
-            println("Launch Instruction - E")
         }
     }
 
@@ -101,7 +99,6 @@ class SPK(private val view: DeviceContract.View) {
 
     fun executeOnDevice(): Observable<Any> {
         return Observable.create { subscriber ->
-            println("Execute On Device - S")
             var numberEnded = 0
 
             zipOut.instruction?.intructions?.let {
@@ -114,16 +111,9 @@ class SPK(private val view: DeviceContract.View) {
                             .observeOn(JavaFxScheduler.platform())
                             .subscribe({
                                 ++numberInstruc
-                                println("NumberInstruct: " + numberInstruc)
-                                println("MaxInstruc: " + maxIntstruc)
-                                println("on Next instruct: " + (numberInstruc / maxIntstruc) * 100 )
-                                view.showProgressFlash("Flash: " + (numberInstruc / maxIntstruc) * 100 + " %")
+                                view.showProgressFlash("Flash: " + Math.round((numberInstruc / maxIntstruc) * 100) + " %")
                             }, { it.printStackTrace() }, {
-                                println("onNextDevice Ended")
                                 ++numberEnded
-
-                                println("Number: " + numberEnded)
-                                println("Size: " + listDevice.size)
 
                                 if (numberEnded == listDevice.size) {
                                     subscriber.onComplete()
@@ -131,151 +121,104 @@ class SPK(private val view: DeviceContract.View) {
                             })
                 }
             }
-            println("Execute On Device - E")
         }
     }
 
     fun newExecute(device: ListItemDevice): Observable<String> {
         return Observable.create { deviceSubscriber ->
-            println("NewExecute - S")
             device.changeState(ListItemDevice.State.WORKING)
 
-            zipOut.instruction?.let { executeInstruction(it.intructions as List<Instruction>, 0, device, deviceSubscriber) }
-            println("NewExecute - E")
-        }
-    }
-
-    fun executeInstruction(list: List<Instruction>, index: Int, device: ListItemDevice, deviceSubscriber: ObservableEmitter<String>) {
-        println("Execute Instruction ! - S - S")
-        Observable.create<String> { subscriber -> run {
-            println("Execute Instruction ! - S")
-            var instruction = list[index]
-            println("Execute Instruction: " + instruction.type)
-
-            when (instruction.type) {
-                InstructionsModel.Type.INTALL_APK -> doInstallApk(subscriber, instruction, device)
-                InstructionsModel.Type.PUSH_FILE -> TODO()
-                InstructionsModel.Type.DELETE_FILE -> TODO()
-                InstructionsModel.Type.INSTRUCTION_KEY -> doInput(subscriber, instruction, ClickInstruction.Type.KEY, device)
-                InstructionsModel.Type.INSTRUCTION_CLICK -> doInput(subscriber, instruction, ClickInstruction.Type.CLICK, device)
-                InstructionsModel.Type.INSTRUCTION_LONG_CLICK -> doInput(subscriber, instruction, ClickInstruction.Type.LONG_CLICK, device)
-                InstructionsModel.Type.INSTRUCTION_SWIPE -> doInput(subscriber, instruction, ClickInstruction.Type.SWIPE, device)
-                InstructionsModel.Type.INSTRUCTION_TEXT -> doInput(subscriber, instruction, ClickInstruction.Type.TEXT, device)
-                InstructionsModel.Type.SLEEP -> {
-                    println("SLEEP EXECUTE ? - S")
-                    doInput(subscriber, instruction, ClickInstruction.Type.SLEEP, device)
-                    println("SLEEP EXECUTE ? - E")}
-                else -> {
-                    println("type not found")
-                    subscriber.onComplete()
-                }
-            }
-
-            println("Execute Instruction ! - E")
-        }
-        }
-                .subscribeOn(Schedulers.computation())
-                .subscribe({}, { it.printStackTrace() }, {
-                    println("executeInstruction - onComplete")
-                    println("spk on complete")
+            zipOut.instruction?.let {
+                Observable.fromIterable(it.intructions).subscribe({
+                    executeOneInstruction(it, device)
                     deviceSubscriber.onNext("")
-                    if (index < list.size - 1) {
-                        println("spk on complete - continue")
-                        executeInstruction(list, index + 1, device, deviceSubscriber)
-                    } else {
-                        println("spk on complete - finish")
-                        deviceSubscriber.onComplete()
-                        device.changeState(ListItemDevice.State.FINISH)
-                    }
+                },{},{
+                    deviceSubscriber.onComplete()
+                    device.changeState(ListItemDevice.State.FINISH)
                 })
-        println("Execute Instruction ! - E - E")
+            }
+        }
     }
 
-    fun doInstallApk(subscriber: ObservableEmitter<String>, instruction: Instruction, device: ListItemDevice){
+    fun executeOneInstruction(instruction: Instruction, device: ListItemDevice) {
+        when (instruction.type) {
+            ListItemInstruction.Type.APK -> doInstallApk(instruction, device)
+            ListItemInstruction.Type.PUSH -> TODO()
+            ListItemInstruction.Type.DELETE -> TODO()
+            ListItemInstruction.Type.KEY -> doInput(instruction, ListItemInstruction.Type.KEY, device)
+            ListItemInstruction.Type.CLICK -> doInput(instruction, ListItemInstruction.Type.CLICK, device)
+            ListItemInstruction.Type.LONGCLICK -> doInput(instruction,ListItemInstruction.Type.LONGCLICK, device)
+            ListItemInstruction.Type.SWIPE -> doInput(instruction, ListItemInstruction.Type.SWIPE, device)
+            ListItemInstruction.Type.TEXT -> doInput(instruction, ListItemInstruction.Type.TEXT, device)
+            ListItemInstruction.Type.SLEEP -> doInput(instruction, ListItemInstruction.Type.SLEEP, device)
+        }
+    }
+
+    fun doInstallApk(instruction: Instruction, device: ListItemDevice){
         val install = Gson().fromJson(instruction.data, InstallApkModel::class.java)
 
         install.apks?.forEach { apk ->
-            println("Install - S")
             jadb.installAPK(device.device.jadbDevice, File("tmp\\" + apk), false)
                     .subscribeOn(Schedulers.computation())
                     .observeOn(JavaFxScheduler.platform())
-                    .subscribe({},{},{ subscriber.onComplete() })
-            println("Install - E")
+                    .subscribe({},{},{})
         }
     }
 
-    fun doInput(subscriber: ObservableEmitter<String>, instruction: Instruction, type: ClickInstruction.Type, device: ListItemDevice){
-        println("doInput - S")
+    fun doInput(instruction: Instruction, type: ListItemInstruction.Type, device: ListItemDevice){
         when (type) {
-            ClickInstruction.Type.CLICK -> doClick(instruction, device, subscriber)
-            ClickInstruction.Type.LONG_CLICK -> doLongClick(instruction, device, subscriber)
-            ClickInstruction.Type.SWIPE -> doSwipe(instruction, device, subscriber)
-            ClickInstruction.Type.KEY -> doKey(instruction, device, subscriber)
-            ClickInstruction.Type.TEXT -> doText(instruction, device, subscriber)
-            ClickInstruction.Type.SLEEP -> doSleep(instruction, device, subscriber)
-            else -> subscriber.onComplete()
+            ListItemInstruction.Type.CLICK -> doClick(instruction, device)
+            ListItemInstruction.Type.LONGCLICK -> doLongClick(instruction, device)
+            ListItemInstruction.Type.SWIPE -> doSwipe(instruction, device)
+            ListItemInstruction.Type.KEY -> doKey(instruction, device)
+            ListItemInstruction.Type.TEXT -> doText(instruction, device)
+            ListItemInstruction.Type.SLEEP -> doSleep(instruction, device)
         }
-        println("doInput - E")
     }
 
-    fun doClick(instruction: Instruction, device: ListItemDevice, subscriber: ObservableEmitter<String>){
+    fun doClick(instruction: Instruction, device: ListItemDevice){
         val click = Gson().fromJson(instruction.data, ClickModel::class.java)
 
         device.device.jadbDevice.executeShell("input tap " + click.x + " " + click.y, "")
 
         Thread.sleep(1000)
-
-        subscriber.onComplete()
     }
 
-    fun doLongClick(instruction: Instruction, device: ListItemDevice, subscriber: ObservableEmitter<String>){
+    fun doLongClick(instruction: Instruction, device: ListItemDevice){
         val click = Gson().fromJson(instruction.data, LongClickModel::class.java)
 
         device.device.jadbDevice.executeShell("input swipe " + click.x + " " + click.y + " " + click.x + " " + click.y + " " + click.duration, "")
 
         Thread.sleep(click.duration.toLong())
-
-        subscriber.onComplete()
     }
 
-    fun doSwipe(instruction: Instruction, device: ListItemDevice, subscriber: ObservableEmitter<String>){
+    fun doSwipe(instruction: Instruction, device: ListItemDevice){
         val click = Gson().fromJson(instruction.data, SwipeModel::class.java)
 
         device.device.jadbDevice.executeShell("input swipe " + click.x1 + " " + click.y1 + " " + click.x2 + " " + click.y2 + " " + click.duration, "")
 
         Thread.sleep(click.duration.toLong())
-
-        subscriber.onComplete()
     }
 
-    fun doKey(instruction: Instruction, device: ListItemDevice, subscriber: ObservableEmitter<String>){
+    fun doKey(instruction: Instruction, device: ListItemDevice){
         val click = Gson().fromJson(instruction.data, KeyModel::class.java)
 
         device.device.jadbDevice.executeShell("input keyevent " + click.idKey, "")
 
         Thread.sleep(1000)
-
-        subscriber.onComplete()
     }
 
-    fun doText(instruction: Instruction, device: ListItemDevice, subscriber: ObservableEmitter<String>){
+    fun doText(instruction: Instruction, device: ListItemDevice){
         val click = Gson().fromJson(instruction.data, TextModel::class.java)
 
         device.device.jadbDevice.executeShell("input text " + click.text, "")
 
         Thread.sleep(1000)
-
-        subscriber.onComplete()
     }
 
-    fun doSleep(instruction: Instruction, device: ListItemDevice, subscriber: ObservableEmitter<String>){
+    fun doSleep(instruction: Instruction, device: ListItemDevice){
         val click = Gson().fromJson(instruction.data, SleepModel::class.java)
 
-        println("Sleep - S")
         Thread.sleep(click.duration)
-        println("Sleep - E")
-
-        subscriber.onComplete()
-        println("Sleep - Complete")
     }
 }

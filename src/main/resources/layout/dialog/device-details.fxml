@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import com.jfoenix.controls.JFXRippler?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import com.jfoenix.controls.JFXListView?>
+<fx:root
+        type="javafx.scene.layout.StackPane"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://java.sun.com/JSP/Page">
+    <GridPane>
+        <columnConstraints>
+            <ColumnConstraints percentWidth="75"/>
+            <ColumnConstraints percentWidth="25"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints percentHeight="10"/>
+            <RowConstraints percentHeight="10"/>
+            <RowConstraints percentHeight="10"/>
+            <RowConstraints percentHeight="70" />
+        </rowConstraints>
+        <children>
+            <Label fx:id="name" text="Name" alignment="CENTER_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <JFXRippler fx:id="ping" GridPane.rowIndex="0" GridPane.columnIndex="1" position="BACK">
+                <StackPane>
+                    <FontAwesomeIconView glyphName="CROSSHAIRS" size="1.5em" pickOnBounds="true" />
+                </StackPane>
+            </JFXRippler>
+
+            <Label fx:id="deviceID" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2"/>
+
+            <Label fx:id="macAddress" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2"/>
+
+            <JFXListView fx:id="listPackage" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="2"/>
+        </children>
+    </GridPane>
+</fx:root>

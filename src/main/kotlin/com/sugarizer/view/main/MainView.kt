@@ -7,6 +7,7 @@ import com.sugarizer.utils.shared.NotificationBus
 import com.sugarizer.Main
 import com.sugarizer.listitem.ListItemMenu
 import com.sugarizer.listitem.ListItemNotification
+import com.sugarizer.utils.shared.SpkManager
 import io.reactivex.Observable
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
@@ -30,6 +31,7 @@ class MainView : View() {
 
     @Inject lateinit var jadb: JADB
     @Inject lateinit var notifBus: NotificationBus
+    @Inject lateinit var spkManager: SpkManager
 
     val container : BorderPane by fxid("container")
 
@@ -77,6 +79,8 @@ class MainView : View() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
+
+        spkManager.startWatching()
     }
 
     fun pushingFile(list: List<MusicModel>, index: Int, device: JadbDevice)

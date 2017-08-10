@@ -36,6 +36,7 @@ class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: 
                         when (deviceEvent.status) {
                             DeviceEventModel.Status.ADDED -> { view.onDeviceAdded(deviceEvent) }
                             DeviceEventModel.Status.REMOVED -> { view.onDeviceRemoved(deviceEvent) }
+                            DeviceEventModel.Status.UNAUTHORIZED -> { view.onDeviceUnauthorized(deviceEvent) }
                             else -> { }
                         }
                     }

@@ -7,6 +7,7 @@ class DeviceEventModel(status: DeviceEventModel.Status, device: DeviceModel) {
     enum class Status {
         REMOVED,
         ADDED,
-        CHANGED
+        CHANGED,
+        UNAUTHORIZED
     }
 }

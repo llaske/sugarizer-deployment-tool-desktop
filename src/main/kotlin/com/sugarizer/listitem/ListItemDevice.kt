@@ -19,6 +19,7 @@ import javafx.fxml.JavaFXBuilderFactory
 import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
 import javafx.util.Duration
+import tornadofx.onDoubleClick
 import tornadofx.useMaxSize
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -35,7 +36,8 @@ class ListItemDevice(val device: DeviceModel) : JFXRippler() {
     enum class State {
         IDLE,
         WORKING,
-        FINISH
+        FINISH,
+        UNAUTHORIZED
     }
 
     var isWorking = false
@@ -61,19 +63,14 @@ class ListItemDevice(val device: DeviceModel) : JFXRippler() {
             modelLabel.text = device.model.get()
 
             state.text = currentState.toString()
+
+            onDoubleClick {
+                var dialog = DeviceDetailsPresenter(device)
+
+                dialog.show()
+            }
         } catch (e: IOException) {
             e.printStackTrace()
-        }
-    }
-
-    fun onClickDetails(): EventHandler<ActionEvent> {
-        return EventHandler {
-            println("Show - 1")
-            var dialog = JFXDialog(null, DeviceDetailsPresenter(device), JFXDialog.DialogTransition.TOP)
-            dialog.useMaxSize = false
-
-            dialog.show()
-            println("Show - 2")
         }
     }
 

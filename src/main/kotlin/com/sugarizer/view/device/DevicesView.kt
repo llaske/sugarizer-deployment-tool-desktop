@@ -8,13 +8,16 @@ import com.sugarizer.model.DeviceEventModel
 import com.sugarizer.Main
 import com.sugarizer.listitem.ListItemDevice
 import com.sugarizer.listitem.ListItemSpk
+import com.sugarizer.model.DeviceModel
 import com.sugarizer.model.Instruction
 import com.sugarizer.model.InstructionsModel
 import com.sugarizer.utils.shared.*
 import com.sugarizer.view.device.cellfactory.ListItemDeviceCellFactory
 import com.sugarizer.view.device.cellfactory.ListItemSpkCellFactory
+import com.sugarizer.view.devicedetails.view.devicedetails.DeviceDetailsPresenter
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.application.Platform
+import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.Node
@@ -22,6 +25,7 @@ import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 import org.controlsfx.control.GridView
+import tornadofx.onDoubleClick
 import view.main.MainView
 import java.io.File
 import java.net.URL
@@ -93,8 +97,6 @@ class DevicesView : Initializable, DeviceContract.View {
                         SpkManager.State.DELETE -> onSpkRemoved(file.second)
                     }
                 }
-
-        spkManager.startWatching()
     }
 
     override fun onDeviceAdded(deviceEventModel: DeviceEventModel) {
@@ -114,20 +116,30 @@ class DevicesView : Initializable, DeviceContract.View {
 //                }
     }
 
+    override fun onDeviceUnauthorized(deviceEvent: DeviceEventModel) {
+        devices.items.filter { it.device.serial.get().equals(deviceEvent.device.jadbDevice.serial) }
+                .forEach { device -> run {
+                    Platform.runLater {
+                        device.changeState(ListItemDevice.State.UNAUTHORIZED)
+                    }
+                }
+                }
+    }
+
     override fun onDeviceRemoved(deviceEventModel: DeviceEventModel) {
         devices.items.filter { it.device.serial.get().equals(deviceEventModel.device.jadbDevice.serial) }
                 .forEach { device -> run {
-                        Platform.runLater {
-                            var tmp = device.onItemRemoved()
+                    Platform.runLater {
+                        var tmp = device.onItemRemoved()
 
-                            tmp.setOnFinished {
-                                devices.items.remove(device)
-                                devices.items.size
-                            }
-
-                            tmp.play()
+                        tmp.setOnFinished {
+                            devices.items.remove(device)
+                            devices.items.size
                         }
+
+                        tmp.play()
                     }
+                }
                 }
     }
 

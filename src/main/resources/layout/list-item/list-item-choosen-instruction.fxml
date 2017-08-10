@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.control.Label?>
+
+<?import com.jfoenix.controls.JFXRippler?>
+<?import javafx.geometry.Insets?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<fx:root
+        type="StackPane"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml">
+    <GridPane>
+        <columnConstraints>
+            <ColumnConstraints percentWidth="70"/>
+            <ColumnConstraints percentWidth="30"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints percentHeight="50"/>
+            <RowConstraints percentHeight="50"/>
+        </rowConstraints>
+        <children>
+            <StackPane fx:id="card" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.rowSpan="2" style="-fx-background-color: rgba(153,149,143,0.81)">
+                <padding>
+                    <Insets topRightBottomLeft="10"/>
+                </padding>
+                <GridPane>
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="70"/>
+                        <ColumnConstraints percentWidth="30"/>
+                    </columnConstraints>
+                    <children>
+                        <Label fx:id="nameLabel" text="Testttt" GridPane.columnIndex="0" GridPane.rowIndex="0" alignment="CENTER_LEFT" maxHeight="Infinity" maxWidth="Infinity" ellipsisString="..."/>
+
+                        <StackPane GridPane.rowIndex="0" GridPane.columnIndex="1"  pickOnBounds="true" maxHeight="Infinity" maxWidth="Infinity" GridPane.vgrow="ALWAYS" GridPane.hgrow="ALWAYS">
+                            <FontAwesomeIconView glyphName="TRASH" size="1.5em"/>
+                            <JFXButton fx:id="delete" maxHeight="Infinity" maxWidth="Infinity"/>
+                        </StackPane>
+                        <JFXRippler>
+                            <StackPane>
+                            </StackPane>
+                        </JFXRippler>
+                    </children>
+                </GridPane>
+            </StackPane>
+
+            <StackPane GridPane.columnIndex="1" GridPane.rowIndex="0" pickOnBounds="true" maxHeight="Infinity" maxWidth="Infinity">
+                <FontAwesomeIconView glyphName="ARROW_UP" size="1.5em"/>
+                <JFXButton fx:id="arrowUp" maxHeight="Infinity" maxWidth="Infinity"/>
+            </StackPane>
+
+            <StackPane GridPane.columnIndex="1" GridPane.rowIndex="1" pickOnBounds="true" maxHeight="Infinity" maxWidth="Infinity">
+                <FontAwesomeIconView glyphName="ARROW_DOWN" size="1.5em"/>
+                <JFXButton fx:id="arrowDown" maxHeight="Infinity" maxWidth="Infinity"/>
+            </StackPane>
+        </children>
+    </GridPane>
+</fx:root>

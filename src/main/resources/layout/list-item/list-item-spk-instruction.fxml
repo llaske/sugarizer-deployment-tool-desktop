@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXRippler?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+
+<fx:root
+        type="StackPane"
+        stylesheets="@../../css/list-item/list-item-spk.css"
+        xmlns="http://javafx.com/javafx/8.0.112"
+        xmlns:fx="http://javafx.com/fxml/1" maxHeight="Infinity" maxWidth="Infinity">
+    <StackPane>
+        <GridPane fx:id="deviceItem" minHeight="100" maxHeight="Infinity" maxWidth="Infinity">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="25" />
+                <ColumnConstraints percentWidth="25" />
+                <ColumnConstraints percentWidth="25" />
+                <ColumnConstraints percentWidth="25" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints percentHeight="70" />
+                <RowConstraints percentHeight="30" />
+            </rowConstraints>
+            <children>
+                <StackPane GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="stackpane">
+                    <FontAwesomeIconView fx:id="iconTwo" glyphName="ARCHIVE" size="1.5em" pickOnBounds="true"/>
+                </StackPane>
+                <Label fx:id="nameLabel" maxHeight="Infinity" maxWidth="Infinity" text="Name" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3" alignment="CENTER" ellipsisString="end"/>
+
+                <JFXRippler fx:id="delete" position="BACK" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1" maxHeight="Infinity" maxWidth="Infinity">
+                    <StackPane>
+                        <Label text="Delete" alignment="CENTER" style="-fx-background-color: rgba(175,8,0,0.82); -fx-text-fill: #000000" maxHeight="Infinity" maxWidth="Infinity"/>
+                    </StackPane>
+                </JFXRippler>
+
+                <JFXRippler fx:id="edit" position="BACK" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1" maxHeight="Infinity" maxWidth="Infinity">
+                    <StackPane>
+                        <Label text="Edit" alignment="CENTER" style="-fx-background-color: rgba(0,3,175,0.81); -fx-text-fill: #000000" maxHeight="Infinity" maxWidth="Infinity"/>
+                    </StackPane>
+                </JFXRippler>
+            </children>
+        </GridPane>
+
+        <StackPane fx:id="addNewSpk" style="-fx-background-color: rgba(0,0,0,0.44)" visible="false">
+            <FontAwesomeIconView glyphName="PLUS" size="1.5em"/>
+        </StackPane>
+    </StackPane>
+</fx:root>

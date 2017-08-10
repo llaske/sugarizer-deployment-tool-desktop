@@ -1,0 +1,187 @@
+package com.sugarizer.view.devicedetails.view.devicedetails
+
+import com.jfoenix.controls.*
+import com.sugarizer.BuildConfig
+import com.sugarizer.model.DeviceModel
+import com.sugarizer.utils.shared.JADB
+import com.sugarizer.Main
+import com.sugarizer.listitem.ListItemChoosenInstruction
+import com.sugarizer.listitem.ListItemInstruction
+import com.sugarizer.model.InstallApkModel
+import com.sugarizer.model.Instruction
+import com.sugarizer.model.InstructionsModel
+import com.sugarizer.utils.shared.ZipInUtils
+import com.sugarizer.view.createinstruction.CreateInstructionPresenter
+import com.sugarizer.view.createinstruction.instructions.ClickInstruction
+import io.reactivex.Observable
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
+import io.reactivex.schedulers.Schedulers
+import javafx.event.ActionEvent
+import javafx.event.EventHandler
+import javafx.fxml.FXML
+import javafx.fxml.FXMLLoader
+import javafx.scene.Node
+import javafx.scene.control.*
+import javafx.scene.input.MouseEvent
+import javafx.scene.layout.ColumnConstraints
+import javafx.scene.layout.StackPane
+import javafx.stage.DirectoryChooser
+import javafx.stage.Stage
+import javafx.util.Callback
+import org.controlsfx.control.GridView
+import se.vidstige.jadb.managers.PackageManager
+import tornadofx.hide
+import tornadofx.selectedItem
+import java.io.IOException
+import javax.inject.Inject
+
+
+class CreateInstructionDialog() : Dialog<String>() {
+
+    @Inject lateinit var jadb: JADB
+
+    @FXML lateinit var root: StackPane
+    @FXML lateinit var instructionList: JFXListView<ListItemInstruction>
+    @FXML lateinit var choosenInstruction: JFXListView<ListItemChoosenInstruction>
+    @FXML lateinit var instructionCreate: JFXButton
+    @FXML lateinit var instructionCancel: JFXButton
+    @FXML lateinit var instructionName: JFXTextField
+
+    var listInstructionTmp: MutableList<Instruction> = mutableListOf()
+    var instructionModel: InstructionsModel = InstructionsModel()
+    val map = HashMap<Node, Instruction>()
+
+    init {
+        //Main.appComponent.inject(this)
+        instructionModel.intructions = listInstructionTmp as List<Instruction>
+
+        val loader = FXMLLoader(javaClass.getResource("/layout/dialog/dialog-create-instruction.fxml"))
+
+        var view = CreateInstructionDialogView()
+        loader.setRoot(view)
+        loader.setController(this)
+
+        //dialogPane.buttonTypes.add(ButtonType.CANCEL)
+        dialogPane.scene.window.setOnCloseRequest {
+        }
+
+        title = "Create / Edit Instruction"
+
+        try {
+            loader.load<StackPane>()
+            dialogPane.content = view
+
+            instructionList.items.forEach { it.setAdd(this) }
+
+            instructionCancel.onAction = EventHandler { (dialogPane.scene.window as Stage).close() }
+            instructionCreate.onAction = onClickCreateInstruction()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun onArrowUp(item: ListItemChoosenInstruction) {
+        val tmp = choosenInstruction.items
+                .takeWhile { !it.equals(item) }
+                .count()
+
+        if (tmp > 0) {
+            choosenInstruction.items.removeAt(tmp)
+            choosenInstruction.items.size
+            choosenInstruction.items.add(tmp - 1, item)
+        }
+    }
+
+    fun onArrowDown(item: ListItemChoosenInstruction) {
+        val tmp = choosenInstruction.items
+                .takeWhile { !it.equals(item) }
+                .count()
+
+        if (tmp < choosenInstruction.items.size - 1) {
+            choosenInstruction.items.removeAt(tmp)
+            choosenInstruction.items.size
+            choosenInstruction.items.add(tmp + 1, item)
+        }
+    }
+
+    fun onDeleteChoosenInstruction(item: ListItemChoosenInstruction) {
+        listInstructionTmp.remove(item.instruction)
+        choosenInstruction.items.remove(item)
+    }
+
+    fun addInstruction(type: ListItemInstruction.Type){
+        println("Type:" + type)
+        var tmpInstruction: Instruction? = null
+
+        when (type) {
+            ListItemInstruction.Type.APK -> { tmpInstruction = onIntallApk() }
+            else -> { tmpInstruction = onInput(type) }
+        }
+
+        if (tmpInstruction != null) {
+            choosenInstruction.items.add(ListItemChoosenInstruction(choosenInstruction.widthProperty().subtract(40), this, tmpInstruction))
+        }
+    }
+
+    fun onInput(type: ListItemInstruction.Type): Instruction? {
+        var click = ClickInstruction(type)
+        var tmp = click.showAndWait()
+
+        if (tmp.get().equals("RESULT_CANCEL")){
+            return null
+        }
+
+        var instruction: Instruction = Instruction()
+
+        instruction.type = type
+        instruction.data = tmp.get()
+        instruction.ordre = listInstructionTmp.size
+
+        listInstructionTmp.add(instruction)
+
+        return instruction
+    }
+
+    fun onIntallApk(): Instruction? {
+        var directory = DirectoryChooser()
+        directory.title = "Choose the apk directory"
+        var choosedDirectory = directory.showDialog(Main.primaryStage)
+
+        if (choosedDirectory != null) {
+            var model: InstallApkModel = InstallApkModel()
+            var instruction = model.toInstruction(listInstructionTmp.size, choosedDirectory)
+
+            listInstructionTmp.add(instruction)
+
+            return instruction
+        } else {
+            return null
+        }
+    }
+
+    fun onClickCreateInstruction(): EventHandler<ActionEvent> {
+        return EventHandler {
+            if (instructionName.text.isNotEmpty() && listInstructionTmp.size > 0) {
+                Observable.create<String> {
+                    var zipIn = ZipInUtils(BuildConfig.SPK_LOCATION + "\\" + instructionName.text + ".spk", instructionModel)
+
+                    zipIn.startZiping()
+                    zipIn.finishZip()
+
+                    it.onComplete()
+                }
+                        .subscribeOn(Schedulers.computation())
+                        .observeOn(JavaFxScheduler.platform())
+                        .subscribe({}, {}, {
+                            println("Closed ?")
+                            listInstructionTmp.clear()
+                            (dialogPane.scene.window as Stage).close()
+                        })
+            }
+        }
+    }
+}
+
+class CreateInstructionDialogView() : StackPane() {
+
+}

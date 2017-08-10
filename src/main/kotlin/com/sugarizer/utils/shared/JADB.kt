@@ -137,6 +137,13 @@ class JADB {
                                         Observable.create<String> {
                                             while (isDeviceOffline(deviceModel.jadbDevice)) {
                                                 println("Device Offline")
+                                                checkAuthorization(deviceModel.jadbDevice)
+                                                        .subscribeOn(Schedulers.computation())
+                                                        .observeOn(JavaFxScheduler.platform())
+                                                        .subscribe {
+                                                            println("Check Status: " + it)
+                                                            subscriber.onNext(DeviceEventModel(DeviceEventModel.Status.UNAUTHORIZED, deviceModel))
+                                                        }
                                                 Thread.sleep(1000)
                                             }
 
@@ -348,6 +355,41 @@ class JADB {
     fun stopWatching(){
         watcher?.let {
             it.stop()
+        }
+    }
+
+    fun checkAuthorization(device: JadbDevice): Observable<String> {
+        return Observable.create<String> { subscriber ->
+            var process: Process? = null
+
+            when (OsCheck.operatingSystemType) {
+                OsCheck.OSType.Windows -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_WINDOWS_PATH, "devices")) }
+                OsCheck.OSType.Linux -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_LINUX_PATH, "devices")) }
+                OsCheck.OSType.MacOS -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_MAC_PATH, "devices")) }
+                OsCheck.OSType.Other -> { println("OS invalid") }
+            }
+
+            process?.let {
+                var tmp = convertStreamToString(it.inputStream)
+
+                println(tmp)
+
+                println("########################")
+
+                var indexOfDevice = tmp.indexOf(device.serial)
+                var indexOfN = tmp.indexOf("\n", indexOfDevice)
+                var line = tmp.substring(indexOfDevice, indexOfN)
+                var status = line.substring(line.indexOf("\t") + 1, line.length)
+
+                println("Device Serial: " + device.serial)
+                println("Device find: " + indexOfDevice)
+                println("Device n: " + indexOfN)
+                println("Line: " + line)
+                println("Status: " + status)
+
+                subscriber.onNext(status)
+                subscriber.onComplete()
+            }
         }
     }
 }
