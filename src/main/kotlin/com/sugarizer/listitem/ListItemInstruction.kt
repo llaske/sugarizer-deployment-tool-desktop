@@ -7,6 +7,7 @@ import com.jfoenix.effects.JFXDepthManager
 import com.sugarizer.model.DeviceModel
 import com.sugarizer.utils.shared.JADB
 import com.sugarizer.Main
+import com.sugarizer.view.createinstruction.CreateInstructionView
 import com.sugarizer.view.device.type.APK
 import com.sugarizer.view.devicedetails.view.devicedetails.CreateInstructionDialog
 import com.sugarizer.view.devicedetails.view.devicedetails.DeviceDetailsPresenter
@@ -27,6 +28,7 @@ import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
 import javafx.util.Duration
 import tornadofx.onDoubleClick
+import tornadofx.toProperty
 import tornadofx.useMaxSize
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -39,19 +41,7 @@ class ListItemInstruction() : StackPane() {
 
     @Inject lateinit var jadb: JADB
 
-    enum class Type {
-        APK,
-        CLICK,
-        LONGCLICK,
-        SWIPE,
-        TEXT,
-        KEY,
-        PUSH,
-        DELETE,
-        SLEEP
-    }
-
-    var type = SimpleObjectProperty<Type>()
+    var type = SimpleObjectProperty<CreateInstructionView.Type>()
 
     init {
         Main.appComponent.inject(this)
@@ -87,26 +77,26 @@ class ListItemInstruction() : StackPane() {
     }
 
     fun getIcon(): String {
-        return icon.glyphName
+        return icon.glyphNameProperty().get()
     }
 
     fun setIcon(name: String) {
-        icon.glyphName = name
+        icon.glyphNameProperty().set(name)
     }
 
     fun iconProperty(): ObjectProperty<String> {
         return icon.glyphNameProperty()
     }
 
-    fun getType(): Type {
+    fun getType(): CreateInstructionView.Type {
         return type.get()
     }
 
-    fun setType(typeNew: Type) {
+    fun setType(typeNew: CreateInstructionView.Type) {
         type.set(typeNew)
     }
 
-    fun typeProperty(): ObjectProperty<Type> {
+    fun typeProperty(): ObjectProperty<CreateInstructionView.Type> {
         return type
     }
 }

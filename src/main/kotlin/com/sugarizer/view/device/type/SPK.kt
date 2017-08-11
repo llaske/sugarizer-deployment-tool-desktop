@@ -10,6 +10,7 @@ import com.sugarizer.utils.shared.JADB
 import com.sugarizer.utils.shared.JADB_MembersInjector
 import com.sugarizer.utils.shared.NotificationBus
 import com.sugarizer.utils.shared.ZipOutUtils
+import com.sugarizer.view.createinstruction.CreateInstructionView
 import com.sugarizer.view.createinstruction.instructions.ClickInstruction
 import com.sugarizer.view.device.DeviceContract
 import io.reactivex.Observable
@@ -142,15 +143,15 @@ class SPK(private val view: DeviceContract.View) {
 
     fun executeOneInstruction(instruction: Instruction, device: ListItemDevice) {
         when (instruction.type) {
-            ListItemInstruction.Type.APK -> doInstallApk(instruction, device)
-            ListItemInstruction.Type.PUSH -> TODO()
-            ListItemInstruction.Type.DELETE -> TODO()
-            ListItemInstruction.Type.KEY -> doInput(instruction, ListItemInstruction.Type.KEY, device)
-            ListItemInstruction.Type.CLICK -> doInput(instruction, ListItemInstruction.Type.CLICK, device)
-            ListItemInstruction.Type.LONGCLICK -> doInput(instruction,ListItemInstruction.Type.LONGCLICK, device)
-            ListItemInstruction.Type.SWIPE -> doInput(instruction, ListItemInstruction.Type.SWIPE, device)
-            ListItemInstruction.Type.TEXT -> doInput(instruction, ListItemInstruction.Type.TEXT, device)
-            ListItemInstruction.Type.SLEEP -> doInput(instruction, ListItemInstruction.Type.SLEEP, device)
+            CreateInstructionView.Type.APK -> doInstallApk(instruction, device)
+            CreateInstructionView.Type.PUSH -> TODO()
+            CreateInstructionView.Type.DELETE -> TODO()
+            CreateInstructionView.Type.KEY -> doInput(instruction, CreateInstructionView.Type.KEY, device)
+            CreateInstructionView.Type.CLICK -> doInput(instruction, CreateInstructionView.Type.CLICK, device)
+            CreateInstructionView.Type.LONGCLICK -> doInput(instruction,CreateInstructionView.Type.LONGCLICK, device)
+            CreateInstructionView.Type.SWIPE -> doInput(instruction, CreateInstructionView.Type.SWIPE, device)
+            CreateInstructionView.Type.TEXT -> doInput(instruction, CreateInstructionView.Type.TEXT, device)
+            CreateInstructionView.Type.SLEEP -> doInput(instruction, CreateInstructionView.Type.SLEEP, device)
         }
     }
 
@@ -165,14 +166,14 @@ class SPK(private val view: DeviceContract.View) {
         }
     }
 
-    fun doInput(instruction: Instruction, type: ListItemInstruction.Type, device: ListItemDevice){
+    fun doInput(instruction: Instruction, type: CreateInstructionView.Type, device: ListItemDevice){
         when (type) {
-            ListItemInstruction.Type.CLICK -> doClick(instruction, device)
-            ListItemInstruction.Type.LONGCLICK -> doLongClick(instruction, device)
-            ListItemInstruction.Type.SWIPE -> doSwipe(instruction, device)
-            ListItemInstruction.Type.KEY -> doKey(instruction, device)
-            ListItemInstruction.Type.TEXT -> doText(instruction, device)
-            ListItemInstruction.Type.SLEEP -> doSleep(instruction, device)
+            CreateInstructionView.Type.CLICK -> doClick(instruction, device)
+            CreateInstructionView.Type.LONGCLICK -> doLongClick(instruction, device)
+            CreateInstructionView.Type.SWIPE -> doSwipe(instruction, device)
+            CreateInstructionView.Type.KEY -> doKey(instruction, device)
+            CreateInstructionView.Type.TEXT -> doText(instruction, device)
+            CreateInstructionView.Type.SLEEP -> doSleep(instruction, device)
         }
     }
 

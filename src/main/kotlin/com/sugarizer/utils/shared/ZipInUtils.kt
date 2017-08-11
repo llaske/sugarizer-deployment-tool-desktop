@@ -5,6 +5,7 @@ import com.sugarizer.listitem.ListItemInstruction
 import com.sugarizer.model.InstallApkModel
 import com.sugarizer.model.Instruction
 import com.sugarizer.model.InstructionsModel
+import com.sugarizer.view.createinstruction.CreateInstructionView
 import java.io.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -28,12 +29,12 @@ class ZipInUtils(val name: String, val instructionsModel: InstructionsModel) {
     fun startZiping(){
         instructionsModel.intructions?.forEach {
             when (it.type) {
-                ListItemInstruction.Type.APK -> { zipInstallApk(Gson().fromJson(it.data, InstallApkModel::class.java), it?.ordre!!) }
-                ListItemInstruction.Type.PUSH -> {  }
-                ListItemInstruction.Type.DELETE -> {  }
-                ListItemInstruction.Type.SWIPE, ListItemInstruction.Type.TEXT,
-                ListItemInstruction.Type.KEY, ListItemInstruction.Type.LONGCLICK,
-                ListItemInstruction.Type.CLICK, ListItemInstruction.Type.SLEEP
+                CreateInstructionView.Type.APK -> { zipInstallApk(Gson().fromJson(it.data, InstallApkModel::class.java), it?.ordre!!) }
+                CreateInstructionView.Type.PUSH -> {  }
+                CreateInstructionView.Type.DELETE -> {  }
+                CreateInstructionView.Type.SWIPE, CreateInstructionView.Type.TEXT,
+                CreateInstructionView.Type.KEY, CreateInstructionView.Type.LONGCLICK,
+                CreateInstructionView.Type.CLICK, CreateInstructionView.Type.SLEEP
                 -> { (instruction.intructions as MutableList).add(it) }
             }
         }
@@ -91,7 +92,7 @@ class ZipInUtils(val name: String, val instructionsModel: InstructionsModel) {
         var tmp = Instruction()
 
         tmp.data = Gson().toJson(installApk)
-        tmp.type = ListItemInstruction.Type.APK
+        tmp.type = CreateInstructionView.Type.APK
         tmp.ordre = ordre
 
         (instruction.intructions as MutableList).add(tmp)

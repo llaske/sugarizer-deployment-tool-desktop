@@ -36,6 +36,7 @@
                 <ListItemInstruction name="Text" icon="ARCHIVE" type="TEXT"/>
                 <ListItemInstruction name="Push File" icon="ARCHIVE" type="PUSH"/>
                 <ListItemInstruction name="Delete File" icon="ARCHIVE" type="DELETE"/>
+                <ListItemInstruction name="Sleep" icon="ARCHIVE" type="SLEEP"/>
             </JFXListView>
 
             <JFXTextField fx:id="instructionName" promptText="Name" GridPane.rowIndex="1" GridPane.columnIndex="0" maxHeight="Infinity" maxWidth="Infinity"/>

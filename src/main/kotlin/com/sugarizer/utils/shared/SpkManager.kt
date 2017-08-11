@@ -15,7 +15,7 @@ class SpkManager {
     var watcher: WatchService
     var isRunning: Boolean = false
     var bus: PublishSubject<Pair<State, File>> = PublishSubject.create()
-    var file: File = File(BuildConfig.SPK_LOCATION + "\\")
+    var file: File = File(BuildConfig.SPK_LOCATION)
 
     enum class State {
         CREATE,

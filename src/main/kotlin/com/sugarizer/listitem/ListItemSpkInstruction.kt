@@ -1,10 +1,13 @@
 package com.sugarizer.listitem
 
+import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXRippler
 import com.jfoenix.effects.JFXDepthManager
 import com.sugarizer.view.createinstruction.CreateInstructionContract
 import com.sugarizer.view.device.DeviceContract
+import com.sugarizer.view.devicedetails.view.devicedetails.CreateInstructionDialog
 import javafx.animation.FadeTransition
+import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -20,6 +23,8 @@ class ListItemSpkInstruction(val file: File, val presenter: CreateInstructionCon
     @FXML lateinit var flash: JFXRippler
     @FXML lateinit var addNewSpk: StackPane
     @FXML lateinit var deviceItem: GridPane
+    @FXML lateinit var delete: JFXButton
+    @FXML lateinit var edit: JFXButton
 
     init {
         val loader = FXMLLoader(javaClass.getResource("/layout/list-item/list-item-spk-instruction.fxml"))
@@ -36,6 +41,8 @@ class ListItemSpkInstruction(val file: File, val presenter: CreateInstructionCon
                 JFXDepthManager.setDepth(this, 4)
 
                 nameLabel.text = file.nameWithoutExtension
+                delete.onAction = onDelete()
+                edit.onAction = onEdit()
             } else {
                 addNewSpk.isVisible = true
                 deviceItem.isVisible = false
@@ -65,5 +72,17 @@ class ListItemSpkInstruction(val file: File, val presenter: CreateInstructionCon
         fadeOut.toValue = 0.0
 
         return fadeOut
+    }
+
+    fun onDelete(): EventHandler<ActionEvent> {
+        return EventHandler {
+            file.delete()
+        }
+    }
+
+    fun onEdit(): EventHandler<ActionEvent> {
+        return EventHandler {
+            CreateInstructionDialog(file).showAndWait()
+        }
     }
 }

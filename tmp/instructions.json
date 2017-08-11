@@ -1,1 +1,1 @@
-{"instructions":[{"type":"SLEEP","ordre":0,"data":"{\"duration\":1000}"},{"type":"SLEEP","ordre":1,"data":"{\"duration\":1000}"},{"type":"SLEEP","ordre":2,"data":"{\"duration\":1000}"},{"type":"SLEEP","ordre":3,"data":"{\"duration\":1000}"},{"type":"SLEEP","ordre":4,"data":"{\"duration\":1000}"},{"type":"SLEEP","ordre":5,"data":"{\"duration\":1000}"},{"type":"SLEEP","ordre":6,"data":"{\"duration\":1000}"}]}
+{"instructions":[{"type":"TEXT","ordre":0,"data":"{\"text\":\"text\"}"},{"type":"TEXT","ordre":1,"data":"{\"text\":\"zertyujik\"}"}]}

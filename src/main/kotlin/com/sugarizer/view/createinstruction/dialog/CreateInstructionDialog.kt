@@ -11,7 +11,9 @@ import com.sugarizer.model.InstallApkModel
 import com.sugarizer.model.Instruction
 import com.sugarizer.model.InstructionsModel
 import com.sugarizer.utils.shared.ZipInUtils
+import com.sugarizer.utils.shared.ZipOutUtils
 import com.sugarizer.view.createinstruction.CreateInstructionPresenter
+import com.sugarizer.view.createinstruction.CreateInstructionView
 import com.sugarizer.view.createinstruction.instructions.ClickInstruction
 import io.reactivex.Observable
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
@@ -30,13 +32,15 @@ import javafx.stage.Stage
 import javafx.util.Callback
 import org.controlsfx.control.GridView
 import se.vidstige.jadb.managers.PackageManager
+import tornadofx.add
 import tornadofx.hide
 import tornadofx.selectedItem
+import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
 
-class CreateInstructionDialog() : Dialog<String>() {
+class CreateInstructionDialog(val file: File?) : Dialog<String>() {
 
     @Inject lateinit var jadb: JADB
 
@@ -75,6 +79,22 @@ class CreateInstructionDialog() : Dialog<String>() {
 
             instructionCancel.onAction = EventHandler { (dialogPane.scene.window as Stage).close() }
             instructionCreate.onAction = onClickCreateInstruction()
+
+            file?.let {
+                var zipOut = ZipOutUtils()
+
+                instructionName.text = file.nameWithoutExtension
+
+                zipOut.loadZip(it.absolutePath)
+                        .subscribeOn(Schedulers.computation())
+                        .observeOn(JavaFxScheduler.platform())
+                        .subscribe({},{},{
+                            zipOut.instruction?.intructions?.forEach {
+                                listInstructionTmp.add(it.ordre as Int, it)
+                                choosenInstruction.items.add(ListItemChoosenInstruction(choosenInstruction.widthProperty().subtract(40), this, it))
+                            }
+                        })
+            }
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -109,12 +129,12 @@ class CreateInstructionDialog() : Dialog<String>() {
         choosenInstruction.items.remove(item)
     }
 
-    fun addInstruction(type: ListItemInstruction.Type){
+    fun addInstruction(type: CreateInstructionView.Type){
         println("Type:" + type)
         var tmpInstruction: Instruction? = null
 
         when (type) {
-            ListItemInstruction.Type.APK -> { tmpInstruction = onIntallApk() }
+            CreateInstructionView.Type.APK -> { tmpInstruction = onIntallApk() }
             else -> { tmpInstruction = onInput(type) }
         }
 
@@ -123,7 +143,7 @@ class CreateInstructionDialog() : Dialog<String>() {
         }
     }
 
-    fun onInput(type: ListItemInstruction.Type): Instruction? {
+    fun onInput(type: CreateInstructionView.Type): Instruction? {
         var click = ClickInstruction(type)
         var tmp = click.showAndWait()
 
@@ -162,6 +182,9 @@ class CreateInstructionDialog() : Dialog<String>() {
     fun onClickCreateInstruction(): EventHandler<ActionEvent> {
         return EventHandler {
             if (instructionName.text.isNotEmpty() && listInstructionTmp.size > 0) {
+                file?.let {
+                    it.delete()
+                }
                 Observable.create<String> {
                     var zipIn = ZipInUtils(BuildConfig.SPK_LOCATION + "\\" + instructionName.text + ".spk", instructionModel)
 

@@ -3,6 +3,7 @@ package com.sugarizer.model
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.sugarizer.listitem.ListItemInstruction
+import com.sugarizer.view.createinstruction.CreateInstructionView
 import java.io.File
 
 class InstructionsModel {
@@ -12,7 +13,7 @@ class InstructionsModel {
 
 class Instruction {
     @SerializedName("type")
-    var type: ListItemInstruction.Type? = null
+    var type: CreateInstructionView.Type? = null
 
     @SerializedName("ordre")
     var ordre: Int? = null
@@ -41,7 +42,7 @@ class InstallApkModel {
 
         instructionModel.data = Gson().toJson(this)
         instructionModel.ordre = order
-        instructionModel.type = ListItemInstruction.Type.APK
+        instructionModel.type = CreateInstructionView.Type.APK
 
         return instructionModel
     }

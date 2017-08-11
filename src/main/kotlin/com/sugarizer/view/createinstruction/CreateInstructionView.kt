@@ -45,6 +45,18 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
     @FXML lateinit var root: StackPane
     @FXML lateinit var listSpk: GridView<ListItemSpkInstruction>
 
+    enum class Type {
+        APK,
+        CLICK,
+        LONGCLICK,
+        SWIPE,
+        TEXT,
+        KEY,
+        PUSH,
+        DELETE,
+        SLEEP
+    }
+
     val presenter: CreateInstructionPresenter = CreateInstructionPresenter(this)
 
     init {
@@ -70,7 +82,7 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
                     }
                 }
 
-        fake.setOnMouseClicked { CreateInstructionDialog().showAndWait() }
+        fake.setOnMouseClicked { CreateInstructionDialog(null).showAndWait() }
     }
 
     fun onSpkAdded(file: File) {
