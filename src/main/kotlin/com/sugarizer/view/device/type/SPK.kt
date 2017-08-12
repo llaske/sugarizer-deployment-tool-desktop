@@ -6,10 +6,7 @@ import com.sugarizer.Main
 import com.sugarizer.listitem.ListItemDevice
 import com.sugarizer.listitem.ListItemInstruction
 import com.sugarizer.model.*
-import com.sugarizer.utils.shared.JADB
-import com.sugarizer.utils.shared.JADB_MembersInjector
-import com.sugarizer.utils.shared.NotificationBus
-import com.sugarizer.utils.shared.ZipOutUtils
+import com.sugarizer.utils.shared.*
 import com.sugarizer.view.createinstruction.CreateInstructionView
 import com.sugarizer.view.createinstruction.instructions.ClickInstruction
 import com.sugarizer.view.device.DeviceContract
@@ -29,12 +26,14 @@ class SPK(private val view: DeviceContract.View) {
 
     @Inject lateinit var jadb: JADB
     @Inject lateinit var notifBus: NotificationBus
+    @Inject lateinit var fileUtils: FileUtils
 
-    private val zipOut: ZipOutUtils = ZipOutUtils()
+    private val zipOut: ZipOutUtils
     private val listDevice: MutableList<ListItemDevice> = mutableListOf()
 
     init {
         Main.appComponent.inject(this)
+        zipOut = ZipOutUtils(fileUtils)
     }
 
     fun init(file: File, list: List<ListItemDevice>){
@@ -159,7 +158,7 @@ class SPK(private val view: DeviceContract.View) {
         val install = Gson().fromJson(instruction.data, InstallApkModel::class.java)
 
         install.apks?.forEach { apk ->
-            jadb.installAPK(device.device.jadbDevice, File("tmp\\" + apk), false)
+            jadb.installAPK(device.device.jadbDevice, File("tmp" + fileUtils.separator + apk), false)
                     .subscribeOn(Schedulers.computation())
                     .observeOn(JavaFxScheduler.platform())
                     .subscribe({},{},{})

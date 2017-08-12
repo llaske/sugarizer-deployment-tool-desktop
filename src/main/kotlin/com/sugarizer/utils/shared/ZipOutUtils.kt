@@ -8,7 +8,7 @@ import java.io.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
-class ZipOutUtils {
+class ZipOutUtils(val fileUtils: FileUtils) {
     enum class STATUS {
         NOT_COMPLETE,
         IN_PROGRESS,
@@ -21,7 +21,6 @@ class ZipOutUtils {
     var instruction: InstructionsModel? = null
 
     init {
-
     }
 
     fun loadZip(path: String): Observable<STATUS> {
@@ -33,9 +32,9 @@ class ZipOutUtils {
             unzip(path, "tmp")
 
             val turnsType = object : TypeToken<InstructionsModel>() {}.type
-            instruction = Gson().fromJson(getStringFromFile("tmp\\instructions.json"), turnsType)
+            instruction = Gson().fromJson(getStringFromFile("tmp" + fileUtils.separator + "instructions.json"), turnsType)
 
-            println(getStringFromFile("tmp\\instructions.json"))
+            println(getStringFromFile("tmp" + fileUtils.separator + "instructions.json"))
 
             it.onNext(STATUS.COMPLETE)
             it.onComplete()
@@ -54,7 +53,7 @@ class ZipOutUtils {
         while (entry != null) {
             val filePath = destDirectory + File.separator + entry.name
             println(filePath)
-            if (entry.isDirectory || filePath[filePath.lastIndex].toString() == "\\") {
+            if (entry.isDirectory || filePath[filePath.lastIndex].toString() == fileUtils.separator) {
                 println("Directory")
                 // if the entry is a directory, make the directory
                 val dir = File(filePath)

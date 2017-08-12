@@ -3,15 +3,13 @@ package com.sugarizer.view.devicedetails.view.devicedetails
 import com.jfoenix.controls.*
 import com.sugarizer.BuildConfig
 import com.sugarizer.model.DeviceModel
-import com.sugarizer.utils.shared.JADB
 import com.sugarizer.Main
 import com.sugarizer.listitem.ListItemChoosenInstruction
 import com.sugarizer.listitem.ListItemInstruction
 import com.sugarizer.model.InstallApkModel
 import com.sugarizer.model.Instruction
 import com.sugarizer.model.InstructionsModel
-import com.sugarizer.utils.shared.ZipInUtils
-import com.sugarizer.utils.shared.ZipOutUtils
+import com.sugarizer.utils.shared.*
 import com.sugarizer.view.createinstruction.CreateInstructionPresenter
 import com.sugarizer.view.createinstruction.CreateInstructionView
 import com.sugarizer.view.createinstruction.instructions.ClickInstruction
@@ -43,6 +41,7 @@ import javax.inject.Inject
 class CreateInstructionDialog(val file: File?) : Dialog<String>() {
 
     @Inject lateinit var jadb: JADB
+    @Inject lateinit var fileUtils: FileUtils
 
     @FXML lateinit var root: StackPane
     @FXML lateinit var instructionList: JFXListView<ListItemInstruction>
@@ -81,7 +80,7 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
             instructionCreate.onAction = onClickCreateInstruction()
 
             file?.let {
-                var zipOut = ZipOutUtils()
+                var zipOut = ZipOutUtils(fileUtils)
 
                 instructionName.text = file.nameWithoutExtension
 
@@ -186,7 +185,15 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
                     it.delete()
                 }
                 Observable.create<String> {
-                    var zipIn = ZipInUtils(BuildConfig.SPK_LOCATION + "\\" + instructionName.text + ".spk", instructionModel)
+
+                    val separator = when (OsCheck.operatingSystemType) {
+                        OsCheck.OSType.Windows -> { BuildConfig.FILE_SEPARATOR_WINDOWS }
+                        OsCheck.OSType.Linux -> { BuildConfig.FILE_SEPARATOR_LINUX }
+                        OsCheck.OSType.MacOS -> { BuildConfig.FILE_SEPARATOR_MAC }
+                        else -> { BuildConfig.FILE_SEPARATOR_LINUX }
+                    }
+
+                    var zipIn = ZipInUtils(BuildConfig.SPK_LOCATION + separator + instructionName.text + ".spk", instructionModel, fileUtils)
 
                     zipIn.startZiping()
                     zipIn.finishZip()
