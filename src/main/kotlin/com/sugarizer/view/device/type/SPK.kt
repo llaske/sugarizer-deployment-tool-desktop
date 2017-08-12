@@ -109,7 +109,7 @@ class SPK(private val view: DeviceContract.View) {
 
                 listDevice.forEach {
                     newExecute(it)
-                            .subscribeOn(Schedulers.computation())
+                            .subscribeOn(Schedulers.newThread())
                             .observeOn(JavaFxScheduler.platform())
                             .subscribe({
                                 ++numberInstruc
