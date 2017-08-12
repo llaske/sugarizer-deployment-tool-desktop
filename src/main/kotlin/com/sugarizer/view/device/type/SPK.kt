@@ -37,6 +37,7 @@ class SPK(private val view: DeviceContract.View) {
     }
 
     fun init(file: File, list: List<ListItemDevice>){
+        listDevice.clear()
         if (list.size > 0) {
             view.showProgressFlash("Preparing instructions...")
             listDevice.addAll(list)
@@ -48,15 +49,15 @@ class SPK(private val view: DeviceContract.View) {
                         println(it.message)
                         view.hideProgressFlash()
                     },{
-                        var list = mutableListOf<String>()
+                        var listInstructions = mutableListOf<String>()
                         println("Size: " + zipOut.instruction?.intructions?.size)
 
                         zipOut.instruction?.intructions?.forEach {
-                            list.add(it.ordre as Int, it.type.toString())
+                            listInstructions.add(it.ordre as Int, it.type.toString())
                         }
 
                         view.showProgressFlash("Instructions ready")
-                        view.showDialog(list, DeviceContract.Dialog.SPK)
+                        view.showDialog(listInstructions, DeviceContract.Dialog.SPK)
                     })
         } else {
             var alert = Alert(Alert.AlertType.ERROR)
@@ -94,6 +95,7 @@ class SPK(private val view: DeviceContract.View) {
         return EventHandler {
             zipOut.deleteTmp()
             view.closeDialog(DeviceContract.Dialog.SPK)
+            view.hideProgressFlash()
         }
     }
 

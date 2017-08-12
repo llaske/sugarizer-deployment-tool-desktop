@@ -154,6 +154,7 @@ class DevicesView : Initializable, DeviceContract.View {
                 apkDialog.show(MainView.root)
             }
             DeviceContract.Dialog.SPK -> {
+                instructionList.items.clear()
                 instructionList.items.addAll(list as List<String>)
 
                 instructionDialog.show(MainView.root)
@@ -163,8 +164,8 @@ class DevicesView : Initializable, DeviceContract.View {
 
     override fun closeDialog(type: DeviceContract.Dialog) {
         when (type) {
-            DeviceContract.Dialog.APK -> apkDialog.close()
-            DeviceContract.Dialog.SPK -> instructionDialog.close()
+            DeviceContract.Dialog.APK -> if (apkDialog.isVisible) apkDialog.close()
+            DeviceContract.Dialog.SPK -> if (instructionDialog.isVisible) instructionDialog.close()
         }
     }
 
