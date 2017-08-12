@@ -28,6 +28,7 @@ class ClickInstruction(val type: CreateInstructionView.Type) : Dialog<String>() 
     @FXML lateinit var boxOne: VBox
     @FXML lateinit var boxTwo: VBox
     @FXML lateinit var boxThree: VBox
+    @FXML lateinit var packageName: TextField
 
     init {
         var resource = String()
@@ -39,6 +40,7 @@ class ClickInstruction(val type: CreateInstructionView.Type) : Dialog<String>() 
             CreateInstructionView.Type.TEXT -> { resource = "/layout/instruction/instruction-text.fxml" }
             CreateInstructionView.Type.SWIPE -> { resource = "/layout/instruction/instruction-swipe.fxml" }
             CreateInstructionView.Type.SLEEP -> resource = "/layout/instruction/instruction-sleep.fxml"
+            CreateInstructionView.Type.OPENAPP -> resource = "/layout/instruction/instruction-openapp.fxml"
         }
 
         val loader = FXMLLoader(javaClass.getResource(resource))
@@ -108,6 +110,7 @@ class ClickInstruction(val type: CreateInstructionView.Type) : Dialog<String>() 
             CreateInstructionView.Type.KEY -> { return Gson().toJson(KeyModel(getSelectedButton())) }
             CreateInstructionView.Type.TEXT -> { return  Gson().toJson(TextModel(text.text)) }
             CreateInstructionView.Type.SLEEP -> return Gson().toJson(SleepModel(duration.text.toLong()))
+            CreateInstructionView.Type.OPENAPP -> return Gson().toJson(OpenAppModel(packageName.text))
         }
 
         return ""

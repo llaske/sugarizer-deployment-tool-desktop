@@ -11,6 +11,7 @@ import com.sugarizer.view.createinstruction.CreateInstructionView
 import com.sugarizer.view.device.DevicePresenter
 import com.sugarizer.view.device.DevicesView
 import com.sugarizer.view.device.type.SPK
+import com.sugarizer.view.devicedetails.view.devicedetails.CreateInstructionDialog
 import com.sugarizer.view.devicedetails.view.devicedetails.DeviceDetailsPresenter
 import view.main.MainView
 
@@ -42,6 +43,8 @@ interface AppComponent {
     fun inject(listItemInstruction: ListItemInstruction)
 
     fun inject(listItemChoosenInstruction: ListItemChoosenInstruction)
+
+    fun inject(createInstructionDialog: CreateInstructionDialog)
 
     companion object {
         fun init(application: javafx.application.Application) : AppComponent {

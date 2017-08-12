@@ -13,6 +13,7 @@ import com.sugarizer.utils.shared.*
 import com.sugarizer.view.createinstruction.CreateInstructionPresenter
 import com.sugarizer.view.createinstruction.CreateInstructionView
 import com.sugarizer.view.createinstruction.instructions.ClickInstruction
+import com.sugarizer.view.device.type.APK
 import io.reactivex.Observable
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
@@ -55,7 +56,7 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
     val map = HashMap<Node, Instruction>()
 
     init {
-        //Main.appComponent.inject(this)
+        Main.appComponent.inject(this)
         instructionModel.intructions = listInstructionTmp as List<Instruction>
 
         val loader = FXMLLoader(javaClass.getResource("/layout/dialog/dialog-create-instruction.fxml"))
@@ -73,6 +74,17 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
         try {
             loader.load<StackPane>()
             dialogPane.content = view
+
+            instructionList.items.add(ListItemInstruction("APK", CreateInstructionView.Type.APK, "ARCHIVE"))
+            instructionList.items.add(ListItemInstruction("Click", CreateInstructionView.Type.CLICK, "ARCHIVE"))
+            instructionList.items.add(ListItemInstruction("Long Click", CreateInstructionView.Type.LONGCLICK, "ARCHIVE"))
+            instructionList.items.add(ListItemInstruction("Key", CreateInstructionView.Type.KEY, "ARCHIVE"))
+            instructionList.items.add(ListItemInstruction("Swipe", CreateInstructionView.Type.SWIPE, "ARCHIVE"))
+            instructionList.items.add(ListItemInstruction("Text", CreateInstructionView.Type.TEXT, "ARCHIVE"))
+            instructionList.items.add(ListItemInstruction("Push File", CreateInstructionView.Type.PUSH, "ARCHIVE"))
+            instructionList.items.add(ListItemInstruction("Delete File", CreateInstructionView.Type.DELETE, "ARCHIVE"))
+            instructionList.items.add(ListItemInstruction("Sleep", CreateInstructionView.Type.SLEEP, "ARCHIVE"))
+            instructionList.items.add(ListItemInstruction("OpenApp", CreateInstructionView.Type.OPENAPP, "ARCHIVE"))
 
             instructionList.items.forEach { it.setAdd(this) }
 
@@ -143,12 +155,14 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
     }
 
     fun onInput(type: CreateInstructionView.Type): Instruction? {
+        println("Type: " + type)
         var click = ClickInstruction(type)
         var tmp = click.showAndWait()
 
         if (tmp.get().equals("RESULT_CANCEL")){
             return null
         }
+        println("RESULT not cancel")
 
         var instruction: Instruction = Instruction()
 
@@ -157,6 +171,7 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
         instruction.ordre = listInstructionTmp.size
 
         listInstructionTmp.add(instruction)
+        println("Size:" + listInstructionTmp.size)
 
         return instruction
     }
@@ -193,6 +208,7 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
                         else -> { BuildConfig.FILE_SEPARATOR_LINUX }
                     }
 
+                    println("Size: " + listInstructionTmp.size)
                     var zipIn = ZipInUtils(BuildConfig.SPK_LOCATION + separator + instructionName.text + ".spk", instructionModel, fileUtils)
 
                     zipIn.startZiping()

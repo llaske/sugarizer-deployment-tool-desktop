@@ -34,7 +34,7 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class ListItemInstruction() : StackPane() {
+class ListItemInstruction(name: String, newType: CreateInstructionView.Type, glyph: String) : StackPane() {
     @FXML lateinit var nameLabel: Label
     @FXML lateinit var icon: FontAwesomeIconView
     @FXML lateinit var add: JFXButton
@@ -55,6 +55,10 @@ class ListItemInstruction() : StackPane() {
             loader.load<StackPane>()
 
             add.onMouseClicked = EventHandler {}
+
+            icon.glyphName = glyph
+            nameLabel.text = name
+            type.set(newType)
         } catch (e: IOException) {
             e.printStackTrace()
         }

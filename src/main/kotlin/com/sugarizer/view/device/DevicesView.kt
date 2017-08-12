@@ -25,6 +25,7 @@ import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 import org.controlsfx.control.GridView
+import tornadofx.hide
 import tornadofx.onDoubleClick
 import view.main.MainView
 import java.io.File
@@ -144,6 +145,7 @@ class DevicesView : Initializable, DeviceContract.View {
     }
 
     override fun <T> showDialog(list: List<T>, type: DeviceContract.Dialog) {
+        println("Dialog ?")
         when (type) {
             DeviceContract.Dialog.APK -> {
                 var tmpList = (list as List<File>)

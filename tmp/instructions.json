@@ -1,1 +1,1 @@
-{"instructions":[{"type":"TEXT","ordre":0,"data":"{\"text\":\"text\"}"},{"type":"TEXT","ordre":1,"data":"{\"text\":\"zertyujik\"}"}]}
+{"instructions":[{"type":"OPENAPP","ordre":0,"data":"{\"package\":\"com.weezyu\"}"}]}

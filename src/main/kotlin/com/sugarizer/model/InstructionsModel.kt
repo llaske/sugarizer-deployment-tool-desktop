@@ -98,3 +98,8 @@ class SleepModel(sleep: Long = 3000) {
     @SerializedName("duration")
     var duration: Long = sleep
 }
+
+class OpenAppModel(text: String = "") {
+    @SerializedName("package")
+    var package_name: String = text
+}

@@ -54,7 +54,8 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
         KEY,
         PUSH,
         DELETE,
-        SLEEP
+        SLEEP,
+        OPENAPP
     }
 
     val presenter: CreateInstructionPresenter = CreateInstructionPresenter(this)

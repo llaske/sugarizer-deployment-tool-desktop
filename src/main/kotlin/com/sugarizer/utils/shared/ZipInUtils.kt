@@ -35,7 +35,8 @@ class ZipInUtils(val name: String, val instructionsModel: InstructionsModel, val
                 CreateInstructionView.Type.DELETE -> {  }
                 CreateInstructionView.Type.SWIPE, CreateInstructionView.Type.TEXT,
                 CreateInstructionView.Type.KEY, CreateInstructionView.Type.LONGCLICK,
-                CreateInstructionView.Type.CLICK, CreateInstructionView.Type.SLEEP
+                CreateInstructionView.Type.CLICK, CreateInstructionView.Type.SLEEP,
+                CreateInstructionView.Type.OPENAPP
                 -> { (instruction.intructions as MutableList).add(it) }
             }
         }

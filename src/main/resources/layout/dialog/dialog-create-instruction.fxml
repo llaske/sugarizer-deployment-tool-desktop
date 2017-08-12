@@ -28,15 +28,16 @@
         <children>
             <JFXListView fx:id="choosenInstruction" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
             <JFXListView fx:id="instructionList" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.columnSpan="2">
-                <ListItemInstruction name="APK's" icon="ARCHIVE" type="APK"/>
-                <ListItemInstruction name="Click" icon="ARCHIVE" type="CLICK"/>
-                <ListItemInstruction name="Long Click" icon="ARCHIVE" type="LONGCLICK"/>
-                <ListItemInstruction name="Key" icon="ARCHIVE" type="KEY"/>
-                <ListItemInstruction name="Swipe" icon="ARCHIVE" type="SWIPE"/>
-                <ListItemInstruction name="Text" icon="ARCHIVE" type="TEXT"/>
-                <ListItemInstruction name="Push File" icon="ARCHIVE" type="PUSH"/>
-                <ListItemInstruction name="Delete File" icon="ARCHIVE" type="DELETE"/>
-                <ListItemInstruction name="Sleep" icon="ARCHIVE" type="SLEEP"/>
+                <!--<ListItemInstruction name="APK's" icon="ARCHIVE" type="APK"/>-->
+                <!--<ListItemInstruction name="Click" icon="ARCHIVE" type="CLICK"/>-->
+                <!--<ListItemInstruction name="Long Click" icon="ARCHIVE" type="LONGCLICK"/>-->
+                <!--<ListItemInstruction name="Key" icon="ARCHIVE" type="KEY"/>-->
+                <!--<ListItemInstruction name="Swipe" icon="ARCHIVE" type="SWIPE"/>-->
+                <!--<ListItemInstruction name="Text" icon="ARCHIVE" type="TEXT"/>-->
+                <!--<ListItemInstruction name="Push File" icon="ARCHIVE" type="PUSH"/>-->
+                <!--<ListItemInstruction name="Delete File" icon="ARCHIVE" type="DELETE"/>-->
+                <!--<ListItemInstruction name="Sleep" icon="ARCHIVE" type="SLEEP"/>-->
+                <!--<ListItemInstruction name="OpenApp" icon="ARCHIVE" type="OPENAPP"/>-->
             </JFXListView>
 
             <JFXTextField fx:id="instructionName" promptText="Name" GridPane.rowIndex="1" GridPane.columnIndex="0" maxHeight="Infinity" maxWidth="Infinity"/>
