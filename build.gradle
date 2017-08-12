@@ -44,9 +44,9 @@ compileKotlin {
 jar {
     from configurations.runtime
     manifest {
-        attributes 'Implementation-Title': 'Gradle Jar File Example',
+        attributes 'Implementation-Title': 'Sugarizer Deployment Tool',
         'Implementation-Version': version,
-        'Main-Class': 'Main'
+        'Main-Class': 'com.sugarizer.Main'
     }
 
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
