@@ -9,8 +9,9 @@ import com.sugarizer.view.createinstruction.CreateInstructionView
 import java.io.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import javax.inject.Inject
 
-class ZipInUtils(val name: String, val instructionsModel: InstructionsModel) {
+class ZipInUtils(val name: String, val instructionsModel: InstructionsModel, val fileUtils: FileUtils) {
     var zipFile = File(name)
     var zipStream = FileOutputStream(zipFile)
     var zipInstruction = ZipEntry("instructions.json")
@@ -20,9 +21,9 @@ class ZipInUtils(val name: String, val instructionsModel: InstructionsModel) {
     init {
         instruction.intructions = mutableListOf()
 
-        zipOut.putNextEntry(ZipEntry("apks\\"))
+        zipOut.putNextEntry(ZipEntry("apks" + fileUtils.separator))
         zipOut.closeEntry()
-        zipOut.putNextEntry(ZipEntry("files\\"))
+        zipOut.putNextEntry(ZipEntry("files" + fileUtils.separator))
         zipOut.closeEntry()
     }
 
@@ -81,9 +82,9 @@ class ZipInUtils(val name: String, val instructionsModel: InstructionsModel) {
         model.apks?.forEach {
             var file = File(it)
 
-            zipOut.putNextEntry(ZipEntry("apks\\" + file.name))
+            zipOut.putNextEntry(ZipEntry("apks" + fileUtils.separator + file.name))
 
-            (installApk.apks as MutableList<String>)?.add("apks\\" + file.name)
+            (installApk.apks as MutableList<String>)?.add("apks" + fileUtils.separator + file.name)
 
             copy(file, zipOut)
             zipOut.closeEntry()

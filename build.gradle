@@ -132,4 +132,8 @@ buildConfig {
     buildConfigField 'String', 'OS_WINDOWS_PATH', "./adb/windows/platform-tools/adb.exe"
     buildConfigField 'String', 'OS_MAC_PATH', "./adb/MACOS/platform-tools/adb"
     buildConfigField 'String', 'OS_LINUX_PATH', "./adb/linux/platform-tools/adb"
+
+    buildConfigField 'String', 'FILE_SEPARATOR_WINDOWS',  "\\\\"
+    buildConfigField 'String', 'FILE_SEPARATOR_MAC',  "/"
+    buildConfigField 'String', 'FILE_SEPARATOR_LINUX',  "/"
 }

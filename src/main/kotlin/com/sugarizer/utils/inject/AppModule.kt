@@ -44,4 +44,10 @@ class AppModule() {
     fun providesAnitmationUtils(): AnimationUtils {
         return AnimationUtils()
     }
+
+    @Singleton
+    @Provides
+    fun providesFileUtils(): FileUtils {
+        return FileUtils()
+    }
 }
