@@ -81,8 +81,8 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
             instructionList.items.add(ListItemInstruction("Key", CreateInstructionView.Type.KEY, "ARCHIVE"))
             instructionList.items.add(ListItemInstruction("Swipe", CreateInstructionView.Type.SWIPE, "ARCHIVE"))
             instructionList.items.add(ListItemInstruction("Text", CreateInstructionView.Type.TEXT, "ARCHIVE"))
-            instructionList.items.add(ListItemInstruction("Push File", CreateInstructionView.Type.PUSH, "ARCHIVE"))
-            instructionList.items.add(ListItemInstruction("Delete File", CreateInstructionView.Type.DELETE, "ARCHIVE"))
+//            instructionList.items.add(ListItemInstruction("Push File", CreateInstructionView.Type.PUSH, "ARCHIVE"))
+//            instructionList.items.add(ListItemInstruction("Delete File", CreateInstructionView.Type.DELETE, "ARCHIVE"))
             instructionList.items.add(ListItemInstruction("Sleep", CreateInstructionView.Type.SLEEP, "ARCHIVE"))
             instructionList.items.add(ListItemInstruction("OpenApp", CreateInstructionView.Type.OPENAPP, "ARCHIVE"))
 

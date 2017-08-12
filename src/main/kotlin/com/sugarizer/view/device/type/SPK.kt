@@ -147,13 +147,13 @@ class SPK(private val view: DeviceContract.View) {
             CreateInstructionView.Type.APK -> doInstallApk(instruction, device)
             CreateInstructionView.Type.PUSH -> TODO()
             CreateInstructionView.Type.DELETE -> TODO()
-            CreateInstructionView.Type.KEY -> doKey(instruction, device)//doInput(instruction, CreateInstructionView.Type.KEY, device)
-            CreateInstructionView.Type.CLICK -> doClick(instruction, device)//doInput(instruction, CreateInstructionView.Type.CLICK, device)
-            CreateInstructionView.Type.LONGCLICK -> doLongClick(instruction, device)//doInput(instruction,CreateInstructionView.Type.LONGCLICK, device)
-            CreateInstructionView.Type.SWIPE -> doSwipe(instruction, device)//doInput(instruction, CreateInstructionView.Type.SWIPE, device)
-            CreateInstructionView.Type.TEXT -> doText(instruction, device)//doInput(instruction, CreateInstructionView.Type.TEXT, device)
-            CreateInstructionView.Type.SLEEP -> doSleep(instruction, device)//doInput(instruction, CreateInstructionView.Type.SLEEP, device)
-            CreateInstructionView.Type.OPENAPP -> doOpenApp(instruction, device)//doInput(instruction, CreateInstructionView.Type.OPENAPP, device)
+            CreateInstructionView.Type.KEY -> doKey(instruction, device)
+            CreateInstructionView.Type.CLICK -> doClick(instruction, device)
+            CreateInstructionView.Type.LONGCLICK -> doLongClick(instruction, device)
+            CreateInstructionView.Type.SWIPE -> doSwipe(instruction, device)
+            CreateInstructionView.Type.TEXT -> doText(instruction, device)
+            CreateInstructionView.Type.SLEEP -> doSleep(instruction, device)
+            CreateInstructionView.Type.OPENAPP -> doOpenApp(instruction, device)
         }
     }
 
@@ -165,18 +165,6 @@ class SPK(private val view: DeviceContract.View) {
                     .subscribeOn(Schedulers.computation())
                     .observeOn(JavaFxScheduler.platform())
                     .subscribe({},{},{})
-        }
-    }
-
-    fun doInput(instruction: Instruction, type: CreateInstructionView.Type, device: ListItemDevice){
-        when (type) {
-            CreateInstructionView.Type.CLICK -> doClick(instruction, device)
-            CreateInstructionView.Type.LONGCLICK -> doLongClick(instruction, device)
-            CreateInstructionView.Type.SWIPE -> doSwipe(instruction, device)
-            CreateInstructionView.Type.KEY -> doKey(instruction, device)
-            CreateInstructionView.Type.TEXT -> doText(instruction, device)
-            CreateInstructionView.Type.SLEEP -> doSleep(instruction, device)
-            CreateInstructionView.Type.OPENAPP -> doOpenApp(instruction, device)
         }
     }
 

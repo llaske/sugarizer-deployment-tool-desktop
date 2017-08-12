@@ -29,8 +29,12 @@
                 </StackPane>
                 <Label fx:id="nameLabel" maxHeight="Infinity" maxWidth="Infinity" text="Name" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.columnSpan="3" alignment="CENTER" ellipsisString="end"/>
 
-                <JFXButton fx:id="delete" GridPane.columnIndex="0" text="Delete" GridPane.columnSpan="2" GridPane.rowIndex="1" maxHeight="Infinity" maxWidth="Infinity" style="-fx-background-color: rgba(175,8,0,0.82); -fx-text-fill: #000000"/>
-                <JFXButton fx:id="edit" text="Edit" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1" maxHeight="Infinity" maxWidth="Infinity" style="-fx-background-color: rgba(0,3,175,0.81); -fx-text-fill: #000000"/>
+                <StackPane GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1" maxHeight="Infinity" maxWidth="Infinity" style="-fx-background-color: rgba(175,8,0,0.82)">
+                    <JFXButton fx:id="delete" text="Delete" style="-fx-background-color: rgba(0,0,0,0); -fx-text-fill: #000000" maxHeight="Infinity" maxWidth="Infinity"/>
+                </StackPane>
+                <StackPane GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1" style="-fx-background-color: rgba(0,3,175,0.81)">
+                    <JFXButton fx:id="edit" text="Edit" maxHeight="Infinity" maxWidth="Infinity" style="-fx-background-color: rgba(0,0,0,0); -fx-text-fill: #000000"/>
+                </StackPane>
             </children>
         </GridPane>
 
