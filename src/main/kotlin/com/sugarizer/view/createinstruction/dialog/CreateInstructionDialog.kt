@@ -1,8 +1,9 @@
 package com.sugarizer.view.devicedetails.view.devicedetails
 
-import com.jfoenix.controls.*
+import com.jfoenix.controls.JFXButton
+import com.jfoenix.controls.JFXListView
+import com.jfoenix.controls.JFXTextField
 import com.sugarizer.BuildConfig
-import com.sugarizer.model.DeviceModel
 import com.sugarizer.Main
 import com.sugarizer.listitem.ListItemChoosenInstruction
 import com.sugarizer.listitem.ListItemInstruction
@@ -10,10 +11,8 @@ import com.sugarizer.model.InstallApkModel
 import com.sugarizer.model.Instruction
 import com.sugarizer.model.InstructionsModel
 import com.sugarizer.utils.shared.*
-import com.sugarizer.view.createinstruction.CreateInstructionPresenter
 import com.sugarizer.view.createinstruction.CreateInstructionView
 import com.sugarizer.view.createinstruction.instructions.ClickInstruction
-import com.sugarizer.view.device.type.APK
 import io.reactivex.Observable
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
@@ -22,18 +21,10 @@ import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.Node
-import javafx.scene.control.*
-import javafx.scene.input.MouseEvent
-import javafx.scene.layout.ColumnConstraints
+import javafx.scene.control.Dialog
 import javafx.scene.layout.StackPane
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
-import javafx.util.Callback
-import org.controlsfx.control.GridView
-import se.vidstige.jadb.managers.PackageManager
-import tornadofx.add
-import tornadofx.hide
-import tornadofx.selectedItem
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
@@ -95,6 +86,7 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
                 var zipOut = ZipOutUtils(fileUtils)
 
                 instructionName.text = file.nameWithoutExtension
+                instructionCreate.text = "Modify"
 
                 zipOut.loadZip(it.absolutePath)
                         .subscribeOn(Schedulers.computation())
@@ -117,8 +109,10 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
                 .count()
 
         if (tmp > 0) {
+            listInstructionTmp.removeAt(tmp)
             choosenInstruction.items.removeAt(tmp)
             choosenInstruction.items.size
+            listInstructionTmp.add(tmp - 1, item.instruction)
             choosenInstruction.items.add(tmp - 1, item)
         }
     }
@@ -129,14 +123,19 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
                 .count()
 
         if (tmp < choosenInstruction.items.size - 1) {
+            listInstructionTmp.removeAt(tmp)
             choosenInstruction.items.removeAt(tmp)
             choosenInstruction.items.size
+            listInstructionTmp.add(tmp + 1, item.instruction)
             choosenInstruction.items.add(tmp + 1, item)
         }
     }
 
     fun onDeleteChoosenInstruction(item: ListItemChoosenInstruction) {
         listInstructionTmp.remove(item.instruction)
+        for ((i, tmp) in listInstructionTmp.withIndex()) {
+            tmp.ordre = i
+        }
         choosenInstruction.items.remove(item)
     }
 

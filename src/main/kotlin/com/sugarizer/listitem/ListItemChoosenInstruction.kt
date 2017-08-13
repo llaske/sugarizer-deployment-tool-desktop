@@ -1,13 +1,18 @@
 package com.sugarizer.listitem
 
+import com.google.gson.Gson
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXListView
 import com.jfoenix.controls.JFXRippler
 import com.jfoenix.effects.JFXDepthManager
 import com.sugarizer.Main
 import com.sugarizer.model.Instruction
+import com.sugarizer.model.KeyModel
+import com.sugarizer.model.OpenAppModel
+import com.sugarizer.model.SleepModel
 import com.sugarizer.utils.shared.JADB
 import com.sugarizer.view.createinstruction.CreateInstructionContract
+import com.sugarizer.view.createinstruction.CreateInstructionView
 import com.sugarizer.view.devicedetails.view.devicedetails.CreateInstructionDialog
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView
 import javafx.beans.binding.DoubleBinding
@@ -50,7 +55,11 @@ class ListItemChoosenInstruction(binding: DoubleBinding, val view: CreateInstruc
             arrowDown.onAction = EventHandler { view.onArrowDown(this) }
             delete.onAction = EventHandler { view.onDeleteChoosenInstruction(this) }
 
-            nameLabel.text = instruction.type.toString()
+            when (instruction.type) {
+                CreateInstructionView.Type.KEY -> nameLabel.text = "KEY: " + Gson().fromJson(instruction.data, KeyModel::class.java).idKey
+                CreateInstructionView.Type.SLEEP -> nameLabel.text = "SLEEP: " + Gson().fromJson(instruction.data, SleepModel::class.java).duration
+                else -> nameLabel.text = instruction.type.toString()
+            }
         } catch (e: IOException) {
             e.printStackTrace()
         }

@@ -51,6 +51,7 @@
                 <RadioButton fx:id="91" text="Mute" toggleGroup="$radioGroup"/>
                 <RadioButton fx:id="59" text="Shift Left" toggleGroup="$radioGroup"/>
                 <RadioButton fx:id="60" text="Shift Right" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="24" text="Volumn Up" toggleGroup="$radioGroup"/>
             </children>
         </VBox>
         <VBox fx:id="boxTwo" GridPane.columnIndex="2" GridPane.rowIndex="0" GridPane.columnSpan="2">
@@ -82,6 +83,7 @@
                 <RadioButton fx:id="262" text="Navigate In" toggleGroup="$radioGroup"/>
                 <RadioButton fx:id="261" text="Navigate Next" toggleGroup="$radioGroup"/>
                 <RadioButton fx:id="263" text="Navigate Out" toggleGroup="$radioGroup"/>
+                <RadioButton fx:id="25" text="Volumn Down" toggleGroup="$radioGroup"/>
             </children>
         </VBox>
         <VBox fx:id="boxThree" GridPane.rowIndex="0" GridPane.columnIndex="4" GridPane.columnSpan="2">

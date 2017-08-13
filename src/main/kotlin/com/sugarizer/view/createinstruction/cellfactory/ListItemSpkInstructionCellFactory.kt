@@ -1,6 +1,5 @@
 package com.sugarizer.view.device.cellfactory
 
-import com.sugarizer.listitem.ListItemSpk
 import com.sugarizer.listitem.ListItemSpkInstruction
 import javafx.util.Callback
 import org.controlsfx.control.GridCell

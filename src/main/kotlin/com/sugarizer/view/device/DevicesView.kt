@@ -148,6 +148,7 @@ class DevicesView : Initializable, DeviceContract.View {
         println("Dialog ?")
         when (type) {
             DeviceContract.Dialog.APK -> {
+                apkList.items.clear()
                 var tmpList = (list as List<File>)
                 tmpList.forEach { apkList.items.add(it.nameWithoutExtension) }
 

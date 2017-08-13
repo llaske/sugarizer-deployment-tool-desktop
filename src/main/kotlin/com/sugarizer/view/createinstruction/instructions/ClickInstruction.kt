@@ -1,7 +1,6 @@
 package com.sugarizer.view.createinstruction.instructions
 
 import com.google.gson.Gson
-import com.sugarizer.listitem.ListItemInstruction
 import com.sugarizer.model.*
 import com.sugarizer.view.createinstruction.CreateInstructionView
 import javafx.event.ActionEvent

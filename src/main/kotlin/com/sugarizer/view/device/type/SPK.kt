@@ -203,6 +203,8 @@ class SPK(private val view: DeviceContract.View) {
     fun doText(instruction: Instruction, device: ListItemDevice){
         val click = Gson().fromJson(instruction.data, TextModel::class.java)
 
+        Thread.sleep(1000)
+
         device.device.jadbDevice.executeShell("input text " + click.text, "")
 
         Thread.sleep(1000)
