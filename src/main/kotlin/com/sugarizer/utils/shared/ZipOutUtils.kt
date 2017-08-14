@@ -34,9 +34,10 @@ class ZipOutUtils(val fileUtils: FileUtils) {
             val turnsType = object : TypeToken<InstructionsModel>() {}.type
             instruction = Gson().fromJson(getStringFromFile("tmp" + fileUtils.separator + "instructions.json"), turnsType)
 
-            println(getStringFromFile("tmp" + fileUtils.separator + "instructions.json"))
-
             it.onNext(STATUS.COMPLETE)
+
+            Thread.sleep(1000)
+
             it.onComplete()
         }
     }
@@ -49,18 +50,12 @@ class ZipOutUtils(val fileUtils: FileUtils) {
         }
         val zipIn = ZipInputStream(FileInputStream(zipFilePath))
         var entry: ZipEntry? = zipIn.nextEntry
-        // iterates over entries in the zip file
         while (entry != null) {
             val filePath = destDirectory + File.separator + entry.name
-            println(filePath)
             if (entry.isDirectory || filePath[filePath.lastIndex].toString() == fileUtils.separator) {
-                println("Directory")
-                // if the entry is a directory, make the directory
                 val dir = File(filePath)
                 dir.mkdir()
             } else {
-                println("File")
-                // if the entry is a file, extracts it
                 extractFile(zipIn, filePath)
             }
             zipIn.closeEntry()
@@ -94,8 +89,6 @@ class ZipOutUtils(val fileUtils: FileUtils) {
         for (line in buf.readLines()) {
             sb.append(line).append("\n")
         }
-
-        System.out.println("Contents : " + sb.toString())
 
         return sb.toString()
     }

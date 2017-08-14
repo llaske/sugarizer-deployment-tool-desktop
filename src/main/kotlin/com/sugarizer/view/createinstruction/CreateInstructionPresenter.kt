@@ -28,6 +28,6 @@ class CreateInstructionPresenter(val view: CreateInstructionContract.View) : Cre
     init {
         Main.appComponent.inject(this)
 
-        instructionModel.intructions = listInstructionTmp as List<Instruction>
+        instructionModel.intructions = listInstructionTmp
     }
 }

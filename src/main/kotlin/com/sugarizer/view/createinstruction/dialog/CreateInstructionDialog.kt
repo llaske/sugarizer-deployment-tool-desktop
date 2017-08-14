@@ -41,14 +41,13 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
     @FXML lateinit var instructionCreate: JFXButton
     @FXML lateinit var instructionCancel: JFXButton
     @FXML lateinit var instructionName: JFXTextField
+    @FXML lateinit var progress: StackPane
 
-    var listInstructionTmp: MutableList<Instruction> = mutableListOf()
     var instructionModel: InstructionsModel = InstructionsModel()
     val map = HashMap<Node, Instruction>()
 
     init {
         Main.appComponent.inject(this)
-        instructionModel.intructions = listInstructionTmp as List<Instruction>
 
         val loader = FXMLLoader(javaClass.getResource("/layout/dialog/dialog-create-instruction.fxml"))
 
@@ -56,7 +55,6 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
         loader.setRoot(view)
         loader.setController(this)
 
-        //dialogPane.buttonTypes.add(ButtonType.CANCEL)
         dialogPane.scene.window.setOnCloseRequest {
         }
 
@@ -83,19 +81,21 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
             instructionCreate.onAction = onClickCreateInstruction()
 
             file?.let {
+                progress.isVisible = true
                 var zipOut = ZipOutUtils(fileUtils)
 
                 instructionName.text = file.nameWithoutExtension
                 instructionCreate.text = "Modify"
 
                 zipOut.loadZip(it.absolutePath)
-                        .subscribeOn(Schedulers.computation())
+                        .subscribeOn(Schedulers.newThread())
                         .observeOn(JavaFxScheduler.platform())
                         .subscribe({},{},{
                             zipOut.instruction?.intructions?.forEach {
-                                listInstructionTmp.add(it.ordre as Int, it)
                                 choosenInstruction.items.add(ListItemChoosenInstruction(choosenInstruction.widthProperty().subtract(40), this, it))
                             }
+
+                            progress.isVisible = false
                         })
             }
         } catch (e: IOException) {
@@ -109,11 +109,13 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
                 .count()
 
         if (tmp > 0) {
-            listInstructionTmp.removeAt(tmp)
             choosenInstruction.items.removeAt(tmp)
             choosenInstruction.items.size
-            listInstructionTmp.add(tmp - 1, item.instruction)
             choosenInstruction.items.add(tmp - 1, item)
+
+            choosenInstruction.items.forEachIndexed { index: Int, choosen: ListItemChoosenInstruction? ->
+                choosen?.instruction?.ordre = index
+            }
         }
     }
 
@@ -123,24 +125,24 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
                 .count()
 
         if (tmp < choosenInstruction.items.size - 1) {
-            listInstructionTmp.removeAt(tmp)
             choosenInstruction.items.removeAt(tmp)
             choosenInstruction.items.size
-            listInstructionTmp.add(tmp + 1, item.instruction)
             choosenInstruction.items.add(tmp + 1, item)
+
+            choosenInstruction.items.forEachIndexed { index: Int, choosen: ListItemChoosenInstruction? ->
+                choosen?.instruction?.ordre = index
+            }
         }
     }
 
     fun onDeleteChoosenInstruction(item: ListItemChoosenInstruction) {
-        listInstructionTmp.remove(item.instruction)
-        for ((i, tmp) in listInstructionTmp.withIndex()) {
-            tmp.ordre = i
-        }
         choosenInstruction.items.remove(item)
+        choosenInstruction.items.forEachIndexed { index: Int, choosen: ListItemChoosenInstruction? ->
+            choosen?.instruction?.ordre = index
+        }
     }
 
     fun addInstruction(type: CreateInstructionView.Type){
-        println("Type:" + type)
         var tmpInstruction: Instruction? = null
 
         when (type) {
@@ -154,23 +156,18 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
     }
 
     fun onInput(type: CreateInstructionView.Type): Instruction? {
-        println("Type: " + type)
         var click = ClickInstruction(type)
         var tmp = click.showAndWait()
 
         if (tmp.get().equals("RESULT_CANCEL")){
             return null
         }
-        println("RESULT not cancel")
 
         var instruction: Instruction = Instruction()
 
         instruction.type = type
         instruction.data = tmp.get()
-        instruction.ordre = listInstructionTmp.size
-
-        listInstructionTmp.add(instruction)
-        println("Size:" + listInstructionTmp.size)
+        instruction.ordre = choosenInstruction.items.size
 
         return instruction
     }
@@ -182,9 +179,7 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
 
         if (choosedDirectory != null) {
             var model: InstallApkModel = InstallApkModel()
-            var instruction = model.toInstruction(listInstructionTmp.size, choosedDirectory)
-
-            listInstructionTmp.add(instruction)
+            var instruction = model.toInstruction(choosenInstruction.items.size, choosedDirectory)
 
             return instruction
         } else {
@@ -194,12 +189,12 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
 
     fun onClickCreateInstruction(): EventHandler<ActionEvent> {
         return EventHandler {
-            if (instructionName.text.isNotEmpty() && listInstructionTmp.size > 0) {
+            if (instructionName.text.isNotEmpty() && choosenInstruction.items.size > 0) {
+                progress.isVisible = true
                 file?.let {
                     it.delete()
                 }
                 Observable.create<String> {
-
                     val separator = when (OsCheck.operatingSystemType) {
                         OsCheck.OSType.Windows -> { BuildConfig.FILE_SEPARATOR_WINDOWS }
                         OsCheck.OSType.Linux -> { BuildConfig.FILE_SEPARATOR_LINUX }
@@ -207,19 +202,20 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
                         else -> { BuildConfig.FILE_SEPARATOR_LINUX }
                     }
 
-                    println("Size: " + listInstructionTmp.size)
-                    var zipIn = ZipInUtils(BuildConfig.SPK_LOCATION + separator + instructionName.text + ".spk", instructionModel, fileUtils)
+                    var zipIn = ZipInUtils(BuildConfig.SPK_LOCATION + separator + instructionName.text + ".spk", instructionModel, fileUtils, choosenInstruction.items)
 
                     zipIn.startZiping()
                     zipIn.finishZip()
 
+                    Thread.sleep(1000)
+
                     it.onComplete()
                 }
-                        .subscribeOn(Schedulers.computation())
+                        .subscribeOn(Schedulers.newThread())
                         .observeOn(JavaFxScheduler.platform())
                         .subscribe({}, {}, {
-                            println("Closed ?")
-                            listInstructionTmp.clear()
+                            progress.isVisible = false
+                            choosenInstruction.items.clear()
                             (dialogPane.scene.window as Stage).close()
                         })
             }

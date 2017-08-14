@@ -1,6 +1,7 @@
 package com.sugarizer.utils.shared
 
 import com.google.gson.Gson
+import com.sugarizer.listitem.ListItemChoosenInstruction
 import com.sugarizer.listitem.ListItemInstruction
 import com.sugarizer.model.InstallApkModel
 import com.sugarizer.model.Instruction
@@ -11,7 +12,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import javax.inject.Inject
 
-class ZipInUtils(val name: String, val instructionsModel: InstructionsModel, val fileUtils: FileUtils) {
+class ZipInUtils(val name: String, val instructionsModel: InstructionsModel, val fileUtils: FileUtils, listInstruction: MutableList<ListItemChoosenInstruction>) {
     var zipFile = File(name)
     var zipStream = FileOutputStream(zipFile)
     var zipInstruction = ZipEntry("instructions.json")
@@ -20,6 +21,14 @@ class ZipInUtils(val name: String, val instructionsModel: InstructionsModel, val
 
     init {
         instruction.intructions = mutableListOf()
+        instruction.intructions?.clear()
+
+
+        println("Size Instr: " + instruction.intructions?.size)
+        listInstruction.forEach {
+            println("Do I go there ?")
+            instruction.intructions?.add(it.instruction)
+        }
 
         zipOut.putNextEntry(ZipEntry("apks" + fileUtils.separator))
         zipOut.closeEntry()

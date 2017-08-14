@@ -52,11 +52,11 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
 
         spkManager.toObservable()
                 .observeOn(JavaFxScheduler.platform())
-                .subscribe { file ->
-                    when (file.first) {
-                        SpkManager.State.CREATE -> onSpkAdded(file.second)
-                        SpkManager.State.MODIFY -> println("Modified")
-                        SpkManager.State.DELETE -> onSpkRemoved(file.second)
+                .subscribe { (first, second) ->
+                    when (first) {
+                        SpkManager.State.CREATE -> onSpkAdded(second)
+                        SpkManager.State.MODIFY -> onSpkModified(second)
+                        SpkManager.State.DELETE -> onSpkRemoved(second)
                     }
                 }
 
@@ -78,6 +78,14 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
             var fade = it.onItemRemoved()
             fade.setOnFinished { Platform.runLater { listSpk.items.remove(tmp) } }
             fade.play()
+        }
+    }
+
+    fun onSpkModified(file: File) {
+        val contains = listSpk.items.any { it.file.equals(file) }
+
+        if (!contains) {
+            listSpk.items.add(listSpk.items.lastIndex, ListItemSpkInstruction(file, presenter, false).onItemAdded())
         }
     }
 }

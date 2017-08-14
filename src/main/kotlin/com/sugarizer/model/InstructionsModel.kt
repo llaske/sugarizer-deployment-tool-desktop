@@ -8,7 +8,7 @@ import java.io.File
 
 class InstructionsModel {
     @SerializedName("instructions")
-    var intructions: List<Instruction>? = null
+    var intructions: MutableList<Instruction>? = null
 }
 
 class Instruction {

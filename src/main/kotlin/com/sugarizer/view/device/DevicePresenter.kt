@@ -89,8 +89,6 @@ class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: 
 
                 if (listSPK.size > 0) { copySPK(listSPK, 0) }
                 if (listAPK.size > 0) { view.showDialog(listAPK, DeviceContract.Dialog.APK) }
-                println("Size APK: " + listAPK.size)
-                println("Size SPK: " + listSPK.size)
             }
 
             it.isDropCompleted = success
@@ -101,8 +99,6 @@ class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: 
     private fun copySPK(list: List<File>, index: Int) {
         Observable.create<Any> {
             var path = Paths.get(BuildConfig.SPK_LOCATION, list[index].name)
-            //File(BuildConfig.SPK_LOCATION + list[index].name).toPath().toAbsolutePath()
-            println("CopyPath:" + path.toString())
             Files.copy(list[index].toPath(), path)
             it.onComplete()
         }
@@ -113,8 +109,6 @@ class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: 
 
                     if (index < list.size - 1) {
                         copySPK(list, index + 1)
-                    } else {
-                        println("Copy finish")
                     }
                 })
     }

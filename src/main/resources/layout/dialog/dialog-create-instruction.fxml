@@ -9,6 +9,8 @@
 
 <?import javafx.scene.control.TextField?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Spinner?>
+<?import com.jfoenix.controls.JFXSpinner?>
 <fx:root
         fx:id="root"
         type="StackPane"
@@ -45,4 +47,8 @@
             <JFXButton fx:id="instructionCancel" text="Cancel" GridPane.rowIndex="1" GridPane.columnIndex="2" maxWidth="Infinity" maxHeight="Infinity"/>
         </children>
     </GridPane>
+
+    <StackPane fx:id="progress" style="-fx-background-color: rgba(255,255,255,0.5)" visible="false">
+        <JFXSpinner/>
+    </StackPane>
 </fx:root>
