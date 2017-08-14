@@ -7,10 +7,7 @@ import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
-import javafx.scene.control.Button
-import javafx.scene.control.Dialog
-import javafx.scene.control.RadioButton
-import javafx.scene.control.TextField
+import javafx.scene.control.*
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.VBox
 import java.io.IOException
@@ -89,14 +86,14 @@ class ClickInstruction(val type: CreateInstructionView.Type) : Dialog<String>() 
         }
     }
 
-    fun getSelectedButton(): Int {
-        return checkBox(boxOne) ?: checkBox(boxTwo) ?: checkBox(boxThree) ?: return 0
+    fun getSelectedButton(): RadioButton {
+        return checkBox(boxOne) ?: checkBox(boxTwo) ?: checkBox(boxThree) ?: return RadioButton("0")
     }
 
-    fun checkBox(box: VBox): Int? {
+    fun checkBox(box: VBox): RadioButton? {
         box.children
                 .filter { (it as RadioButton).isSelected }
-                .forEach { return it.id.toInt() }
+                .forEach { return (it as RadioButton) }
 
         return null
     }
@@ -106,7 +103,7 @@ class ClickInstruction(val type: CreateInstructionView.Type) : Dialog<String>() 
             CreateInstructionView.Type.CLICK -> { return Gson().toJson(ClickModel(x.text.toInt(), y.text.toInt())) }
             CreateInstructionView.Type.LONGCLICK -> { return Gson().toJson(LongClickModel(x.text.toInt(), y.text.toInt(), duration.text.toInt())) }
             CreateInstructionView.Type.SWIPE -> { return Gson().toJson(SwipeModel(x.text.toInt(), y.text.toInt(), x2.text.toInt(), y2.text.toInt(), duration.text.toInt())) }
-            CreateInstructionView.Type.KEY -> { return Gson().toJson(KeyModel(getSelectedButton())) }
+            CreateInstructionView.Type.KEY -> { return Gson().toJson(KeyModel(getSelectedButton().id.toInt(), getSelectedButton().text)) }
             CreateInstructionView.Type.TEXT -> { return  Gson().toJson(TextModel(text.text)) }
             CreateInstructionView.Type.SLEEP -> return Gson().toJson(SleepModel(duration.text.toLong()))
             CreateInstructionView.Type.OPENAPP -> return Gson().toJson(OpenAppModel(packageName.text))

@@ -48,9 +48,12 @@ class InstallApkModel {
     }
 }
 
-class KeyModel(idKey: Int = 0) {
+class KeyModel(idKey: Int = 0, textKey: String) {
     @SerializedName("id_key")
     var idKey: Int = idKey
+
+    @SerializedName("text_ket")
+    var textKey: String = textKey
 }
 
 class ClickModel(x: Int = 0, y: Int = 0) {

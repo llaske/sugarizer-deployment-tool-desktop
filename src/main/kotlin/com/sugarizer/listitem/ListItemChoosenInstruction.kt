@@ -6,10 +6,7 @@ import com.jfoenix.controls.JFXListView
 import com.jfoenix.controls.JFXRippler
 import com.jfoenix.effects.JFXDepthManager
 import com.sugarizer.Main
-import com.sugarizer.model.Instruction
-import com.sugarizer.model.KeyModel
-import com.sugarizer.model.OpenAppModel
-import com.sugarizer.model.SleepModel
+import com.sugarizer.model.*
 import com.sugarizer.utils.shared.JADB
 import com.sugarizer.view.createinstruction.CreateInstructionContract
 import com.sugarizer.view.createinstruction.CreateInstructionView
@@ -56,8 +53,14 @@ class ListItemChoosenInstruction(binding: DoubleBinding, val view: CreateInstruc
             delete.onAction = EventHandler { view.onDeleteChoosenInstruction(this) }
 
             when (instruction.type) {
-                CreateInstructionView.Type.KEY -> nameLabel.text = "KEY: " + Gson().fromJson(instruction.data, KeyModel::class.java).idKey
-                CreateInstructionView.Type.SLEEP -> nameLabel.text = "SLEEP: " + Gson().fromJson(instruction.data, SleepModel::class.java).duration
+                CreateInstructionView.Type.KEY -> nameLabel.text = "Key: " + Gson().fromJson(instruction.data, KeyModel::class.java).textKey
+                CreateInstructionView.Type.SLEEP -> nameLabel.text = "Sleep: " + Gson().fromJson(instruction.data, SleepModel::class.java).duration + "ms"
+                CreateInstructionView.Type.CLICK -> nameLabel.text = "Click: X: " + Gson().fromJson(instruction.data, ClickModel::class.java).x + ", Y: " + Gson().fromJson(instruction.data, ClickModel::class.java).y
+                CreateInstructionView.Type.LONGCLICK -> nameLabel.text = "LClick: X: " + Gson().fromJson(instruction.data, LongClickModel::class.java).x + ", Y: " + Gson().fromJson(instruction.data, LongClickModel::class.java).y
+                CreateInstructionView.Type.SWIPE -> nameLabel.text = "S: (X:" + Gson().fromJson(instruction.data, SwipeModel::class.java).x1 + ",Y: " + Gson().fromJson(instruction.data, SwipeModel::class.java).y1 + ") -> (X:" + Gson().fromJson(instruction.data, SwipeModel::class.java).x2 + ",Y: " + Gson().fromJson(instruction.data, SwipeModel::class.java).y2 + ")"
+                CreateInstructionView.Type.TEXT -> nameLabel.text = "Text: " + Gson().fromJson(instruction.data, TextModel::class.java).text
+                CreateInstructionView.Type.APK -> nameLabel.text = Gson().fromJson(instruction.data, InstallApkModel::class.java)?.numberApk.toString() + " APK's"
+                CreateInstructionView.Type.OPENAPP -> nameLabel.text = "Package: " + Gson().fromJson(instruction.data, OpenAppModel::class.java).package_name
                 else -> nameLabel.text = instruction.type.toString()
             }
         } catch (e: IOException) {

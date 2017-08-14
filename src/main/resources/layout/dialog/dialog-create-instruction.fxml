@@ -16,7 +16,7 @@
         type="StackPane"
         xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
-        prefHeight="400.0" prefWidth="600.0">
+        prefHeight="400.0" prefWidth="800.0">
     <GridPane maxWidth="Infinity" maxHeight="Infinity">
         <rowConstraints>
             <RowConstraints percentHeight="90"/>

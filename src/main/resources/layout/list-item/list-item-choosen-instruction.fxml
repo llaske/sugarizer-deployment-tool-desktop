@@ -33,7 +33,7 @@
                         <ColumnConstraints percentWidth="30"/>
                     </columnConstraints>
                     <children>
-                        <Label fx:id="nameLabel" text="Testttt" GridPane.columnIndex="0" GridPane.rowIndex="0" alignment="CENTER_LEFT" maxHeight="Infinity" maxWidth="Infinity" ellipsisString="..."/>
+                        <Label fx:id="nameLabel" text="Testttt" GridPane.columnIndex="0" GridPane.rowIndex="0" alignment="CENTER_LEFT" maxHeight="Infinity" maxWidth="Infinity" ellipsisString="..." style="-fx-text-fill: #ffffff"/>
 
                         <StackPane GridPane.rowIndex="0" GridPane.columnIndex="1"  pickOnBounds="true" maxHeight="Infinity" maxWidth="Infinity" GridPane.vgrow="ALWAYS" GridPane.hgrow="ALWAYS">
                             <FontAwesomeIconView glyphName="TRASH" size="1.5em"/>
