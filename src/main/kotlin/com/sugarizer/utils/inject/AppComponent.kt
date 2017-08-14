@@ -10,6 +10,7 @@ import com.sugarizer.view.createinstruction.CreateInstructionPresenter
 import com.sugarizer.view.createinstruction.CreateInstructionView
 import com.sugarizer.view.device.DevicePresenter
 import com.sugarizer.view.device.DevicesView
+import com.sugarizer.view.device.type.APK
 import com.sugarizer.view.device.type.SPK
 import com.sugarizer.view.devicedetails.view.devicedetails.CreateInstructionDialog
 import com.sugarizer.view.devicedetails.view.devicedetails.DeviceDetailsPresenter
@@ -37,6 +38,8 @@ interface AppComponent {
     fun inject(devicePresenter: DevicePresenter)
 
     fun inject(spk: SPK)
+
+    fun inject(apk: APK)
 
     fun inject(createInstructionView: CreateInstructionView)
 

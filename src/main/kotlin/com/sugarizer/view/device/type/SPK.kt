@@ -219,7 +219,6 @@ class SPK(private val view: DeviceContract.View) {
     fun doOpenApp(instruction: Instruction, device: ListItemDevice){
         val click = Gson().fromJson(instruction.data, OpenAppModel::class.java)
 
-        println("OpenApp")
         jadb.convertStreamToString(device.device.jadbDevice.executeShell("monkey -p " + click.package_name + " -c android.intent.category.LAUNCHER 1"))
 
         Thread.sleep(1000)

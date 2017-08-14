@@ -23,7 +23,10 @@ class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: 
     @Inject lateinit var notifBus: NotificationBus
 
     val spk = SPK(view)
-    val apk = APK()
+    val apk = APK(view)
+
+    var listAPK = mutableListOf<File>()
+    var listSPK = mutableListOf<File>()
 
     init {
         Main.appComponent.inject(this)
@@ -77,9 +80,6 @@ class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: 
             var success = false
 
             if (db.hasFiles()) {
-                var listAPK = mutableListOf<File>()
-                var listSPK = mutableListOf<File>()
-
                 db.files.forEach {
                     when (it.extension) {
                         "spk" -> listSPK.add(it)
@@ -121,22 +121,20 @@ class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: 
 
     override fun onLaunchApk(): EventHandler<ActionEvent> {
         return EventHandler {
-            try {
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+            view.closeDialog(DeviceContract.Dialog.APK)
+            apk.start(listAPK, view.getDevices()) }
     }
 
     override fun onCancelApk(): EventHandler<ActionEvent> {
         return EventHandler {
+            listAPK.clear()
             view.closeDialog(DeviceContract.Dialog.APK)
         }
     }
 
     override fun onApkDialogClosed(): EventHandler<JFXDialogEvent> {
         return EventHandler {
+            listAPK.clear()
             view.closeDialog(DeviceContract.Dialog.APK)
         }
     }
