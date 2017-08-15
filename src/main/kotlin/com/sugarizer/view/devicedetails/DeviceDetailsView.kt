@@ -47,7 +47,12 @@ class DeviceDetailsPresenter(val device: DeviceModel) : Dialog<String>() {
             dialogPane.content = view
 
             PackageManager(device.jadbDevice).packages.forEach {
-                listPackage.items.add(it.toString())
+                var tmp = it.toString()
+                var lastI = tmp.lastIndexOf(".")
+                if (lastI > 0)
+                    listPackage.items.add(tmp.substring(lastI + 1, tmp.length))
+                else
+                    listPackage.items.add(tmp)
             }
 
             name.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.product.name", ""))
@@ -55,7 +60,10 @@ class DeviceDetailsPresenter(val device: DeviceModel) : Dialog<String>() {
             macAddress.text = "Mac Address"
 
             ping.onMouseClicked = onClickPing()
-//            model.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.product.model", ""))
+            println(jadb.convertStreamToString(device.jadbDevice.executeShell("settings get secure android_id", "")))
+            println(jadb.convertStreamToString(device.jadbDevice.executeShell("adb shell settings get secure bluetooth_address", "")))
+            deviceID.text = jadb.convertStreamToString(device.jadbDevice.executeShell("settings get secure android_id", ""))
+            macAddress.text = jadb.convertStreamToString(device.jadbDevice.executeShell("settings get secure bluetooth_address", ""))
 //            romName.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.cm.releasetype", ""))
 //            romVersion.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.modversion", ""))
 //            apiVersion.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.build.version.sdk", ""))
