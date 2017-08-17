@@ -24,6 +24,7 @@ import javafx.scene.Node
 import javafx.scene.control.Dialog
 import javafx.scene.layout.StackPane
 import javafx.stage.DirectoryChooser
+import javafx.stage.FileChooser
 import javafx.stage.Stage
 import java.io.File
 import java.io.IOException
@@ -65,15 +66,15 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
             dialogPane.content = view
 
             instructionList.items.add(ListItemInstruction("APK", CreateInstructionView.Type.APK, "ARCHIVE"))
-            instructionList.items.add(ListItemInstruction("Click", CreateInstructionView.Type.CLICK, "ARCHIVE"))
-            instructionList.items.add(ListItemInstruction("Long Click", CreateInstructionView.Type.LONGCLICK, "ARCHIVE"))
-            instructionList.items.add(ListItemInstruction("Key", CreateInstructionView.Type.KEY, "ARCHIVE"))
-            instructionList.items.add(ListItemInstruction("Swipe", CreateInstructionView.Type.SWIPE, "ARCHIVE"))
-            instructionList.items.add(ListItemInstruction("Text", CreateInstructionView.Type.TEXT, "ARCHIVE"))
+            instructionList.items.add(ListItemInstruction("Click", CreateInstructionView.Type.CLICK, "HAND_ALT_UP"))
+            instructionList.items.add(ListItemInstruction("Long Click", CreateInstructionView.Type.LONGCLICK, "HAND_ALT_DOWN"))
+            instructionList.items.add(ListItemInstruction("Key", CreateInstructionView.Type.KEY, "KEYBOARD_ALT"))
+            instructionList.items.add(ListItemInstruction("Swipe", CreateInstructionView.Type.SWIPE, "HAND_ALT_LEFT"))
+            instructionList.items.add(ListItemInstruction("Text", CreateInstructionView.Type.TEXT, "I_CURSOR"))
 //            instructionList.items.add(ListItemInstruction("Push File", CreateInstructionView.Type.PUSH, "ARCHIVE"))
 //            instructionList.items.add(ListItemInstruction("Delete File", CreateInstructionView.Type.DELETE, "ARCHIVE"))
-            instructionList.items.add(ListItemInstruction("Sleep", CreateInstructionView.Type.SLEEP, "ARCHIVE"))
-            instructionList.items.add(ListItemInstruction("OpenApp", CreateInstructionView.Type.OPENAPP, "ARCHIVE"))
+            instructionList.items.add(ListItemInstruction("Sleep", CreateInstructionView.Type.SLEEP, "BED"))
+            instructionList.items.add(ListItemInstruction("OpenApp", CreateInstructionView.Type.OPENAPP, "ANDROID"))
 
             instructionList.items.forEach { it.setAdd(this) }
 
@@ -173,13 +174,15 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
     }
 
     fun onIntallApk(): Instruction? {
-        var directory = DirectoryChooser()
-        directory.title = "Choose the apk directory"
-        var choosedDirectory = directory.showDialog(Main.primaryStage)
+        var fileChooser = FileChooser()
+        fileChooser.title = "Choose APK's"
+        fileChooser.selectedExtensionFilter = FileChooser.ExtensionFilter("apk", "apk")
+        var list = fileChooser.showOpenMultipleDialog(Main.primaryStage)
+        println("Size: " + list.size)
 
-        if (choosedDirectory != null) {
+        if (list != null && list.size > 0) {
             var model: InstallApkModel = InstallApkModel()
-            var instruction = model.toInstruction(choosenInstruction.items.size, choosedDirectory)
+            var instruction = model.toInstruction(choosenInstruction.items.size, list)
 
             return instruction
         } else {

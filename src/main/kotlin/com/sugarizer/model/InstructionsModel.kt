@@ -29,13 +29,11 @@ class InstallApkModel {
     @SerializedName("apks")
     var apks: List<String>? = null
 
-    fun toInstruction(order: Int, choosedDirectory: File): Instruction {
+    fun toInstruction(order: Int, choosedDirectory: List<File>): Instruction {
         var instructionModel: Instruction = Instruction()
         var listApk: MutableList<String> = mutableListOf()
 
-        choosedDirectory.listFiles()
-                .filter { it.isFile && it.extension.equals("apk") }
-                .mapTo(listApk) { it.absolutePath }
+        choosedDirectory.mapTo(listApk) { it.absolutePath }
 
         this.numberApk = listApk.size
         this.apks = listApk
