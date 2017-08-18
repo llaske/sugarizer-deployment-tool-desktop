@@ -103,8 +103,11 @@ class DevicesView : Initializable, DeviceContract.View {
     }
 
     override fun onDeviceAdded(deviceEventModel: DeviceEventModel) {
-        val isIn = devices.items.any { it.device.serial.get() == deviceEventModel.device.serial.get() }
-        if (!isIn) Platform.runLater { devices.items.add(ListItemDevice(deviceEventModel.device).onItemAdded()) }
+        val isIn = devices.items.any { it.device.jadbDevice.serial == deviceEventModel.device.jadbDevice.serial }
+        println("isIn:" + isIn)
+        if (!isIn) {
+            Platform.runLater { devices.items.add(ListItemDevice(deviceEventModel.device).onItemAdded()) }
+        }
     }
 
     override fun onDeviceChanged(deviceEventModel: DeviceEventModel) {
@@ -120,18 +123,19 @@ class DevicesView : Initializable, DeviceContract.View {
 
     override fun onDeviceUnauthorized(deviceEvent: DeviceEventModel) {
         devices.items
-                .filter { it.device.serial.get() == deviceEvent.device.serial.get() }
+                .filter { it.device.jadbDevice.serial == deviceEvent.device.jadbDevice.serial }
                 .forEach { Platform.runLater { it.changeState(ListItemDevice.State.UNAUTHORIZED) } }
     }
 
     override fun onDeviceIdle(deviceEvent: DeviceEventModel) {
         devices.items
-                .filter { it.device.serial.get() == deviceEvent.device.serial.get() }
+                .filter { it.device.jadbDevice.serial == deviceEvent.device.jadbDevice.serial }
                 .forEach { Platform.runLater { it.changeState(ListItemDevice.State.IDLE) } }
     }
 
     override fun onDeviceRemoved(deviceEventModel: DeviceEventModel) {
-        devices.items.filter { it.device.serial.get() == deviceEventModel.device.jadbDevice.serial }
+        println("Device Removed: " + deviceEventModel.device.jadbDevice.serial)
+        devices.items.filter { (it.device.jadbDevice.serial == deviceEventModel.device.jadbDevice.serial)}
                 .forEach { device -> run {
                     Platform.runLater {
                         var tmp = device.onItemRemoved()

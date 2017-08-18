@@ -3,6 +3,7 @@ package com.sugarizer.model
 import com.sugarizer.utils.shared.JADB
 import com.sugarizer.utils.shared.StringUtils
 import com.sugarizer.Main
+import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
 import se.vidstige.jadb.JadbDevice
 import se.vidstige.jadb.JadbException
@@ -61,16 +62,18 @@ class DeviceModel(device: JadbDevice) {
     fun pingProperty(): SimpleStringProperty { return ping }
 
     fun reload(){
-        try {
-            serial.set(jadbDevice.serial)
-            name.set(jadb.convertStreamToString(jadbDevice.executeShell("getprop ro.product.name", "")))
-            model.set(jadb.convertStreamToString(jadbDevice.executeShell("getprop ro.product.model", "")))
-            version.set(jadb.convertStreamToString(jadbDevice.executeShell("getprop ro.build.version.sdk", "")))
-            udid.set(jadb.convertStreamToString(jadbDevice.executeShell("settings get secure android_id")))
+        Platform.runLater {
+            try {
+                serial.set(jadbDevice.serial)
+                name.set(jadb.convertStreamToString(jadbDevice.executeShell("getprop ro.product.name", "")))
+                model.set(jadb.convertStreamToString(jadbDevice.executeShell("getprop ro.product.model", "")))
+                version.set(jadb.convertStreamToString(jadbDevice.executeShell("getprop ro.build.version.sdk", "")))
+                udid.set(jadb.convertStreamToString(jadbDevice.executeShell("settings get secure android_id")))
 
-            println("UDID: " + udid.get())
-        } catch (e: JadbException) {
-            e.printStackTrace()
+                println("UDID: " + udid.get())
+            } catch (e: JadbException) {
+                e.printStackTrace()
+            }
         }
     }
 }

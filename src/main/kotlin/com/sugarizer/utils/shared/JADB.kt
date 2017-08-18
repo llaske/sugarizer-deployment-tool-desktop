@@ -109,7 +109,7 @@ class JADB {
                                     .forEach { onRemoveDevice(it, subscriber) }
 
                             devices.filter { !listJadb.contains(it) }
-                                    .forEach { onNewDevice(it, subscriber)
+                                    .forEach { onNewDevice(it)
                                             .subscribeOn(Schedulers.newThread())
                                             .subscribe() }
                         }
@@ -286,41 +286,49 @@ class JADB {
         }
     }
 
-    fun checkAuthorization(device: JadbDevice): Observable<String> {
+    fun checkAuthorization(device: DeviceModel): Observable<String> {
         return Observable.create<String> { subscriber ->
-            var process: Process? = null
+            try {
+                var process: Process? = null
 
-            when (OsCheck.operatingSystemType) {
-                OsCheck.OSType.Windows -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_WINDOWS_PATH, "devices")) }
-                OsCheck.OSType.Linux -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_LINUX_PATH, "devices")) }
-                OsCheck.OSType.MacOS -> { process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_MAC_PATH, "devices")) }
-                OsCheck.OSType.Other -> { println("OS invalid") }
-            }
+                when (OsCheck.operatingSystemType) {
+                    OsCheck.OSType.Windows -> process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_WINDOWS_PATH, "devices"))
+                    OsCheck.OSType.Linux -> process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_LINUX_PATH, "devices"))
+                    OsCheck.OSType.MacOS -> process = Runtime.getRuntime().exec(arrayOf(BuildConfig.OS_MAC_PATH, "devices"))
+                    OsCheck.OSType.Other -> println("OS invalid")
+                }
 
-            process?.let {
-                var tmp = convertStreamToString(it.inputStream)
+                process?.let {
+                    var tmp = convertStreamToString(it.inputStream)
 
-                println(tmp)
+                    println(tmp)
 
-                var indexOfDevice = tmp.indexOf(device.serial)
-                var indexOfN = tmp.indexOf("\n", indexOfDevice)
-                var line = tmp.substring(indexOfDevice, indexOfN)
-                var status = line.substring(line.indexOf("\t") + 1, line.length)
-                status = status.substring(0, status.length - 1)
+                    var indexOfDevice = tmp.indexOf(device.jadbDevice.serial)
+                    if (indexOfDevice == -1) {
+                        bus.send(DeviceEventModel(DeviceEventModel.Status.REMOVED, device))
+                    } else {
+                        var indexOfN = tmp.indexOf("\n", indexOfDevice)
+                        println("Device find: " + indexOfDevice)
+                        println("Device n: " + indexOfN)
+                        var line = tmp.substring(indexOfDevice, if (indexOfN == -1) tmp.length else indexOfN)
+                        var status = line.substring(line.indexOf("\t") + 1, line.length)
+                        status = status.substring(0, status.length - 1)
 
 //                println("Device Serial: " + device.serial)
-//                println("Device find: " + indexOfDevice)
-//                println("Device n: " + indexOfN)
 //                println("Line: " + line)
-                println("Status: " + status)
+                        println("Status: " + status)
 
-                subscriber.onNext(status)
-                subscriber.onComplete()
+                        subscriber.onNext(status)
+                    }
+                    subscriber.onComplete()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
 
-    private fun onNewDevice(device: JadbDevice, subscriber: ObservableEmitter<DeviceEventModel>): Observable<Any> {
+    private fun onNewDevice(device: JadbDevice): Observable<Any> {
         return Observable.create {
             var deviceModel = DeviceModel(device)
 
@@ -328,7 +336,6 @@ class JADB {
 
             listenAuth(deviceModel)
                     .subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.computation())
                     .subscribe({},{},{
                         hasPackage(deviceModel.jadbDevice, BuildConfig.APP_PACKAGE).subscribe({
                             Thread.sleep(1000)
@@ -364,7 +371,7 @@ class JADB {
     }
 
     private fun checkAuthAndRetryWhenNot(device: DeviceModel, subscriber: ObservableEmitter<JadbDevice>){
-        checkAuthorization(device.jadbDevice)
+        checkAuthorization(device)
                 .subscribeOn(Schedulers.newThread())
                 .subscribe {
                     Thread.sleep(1000)
