@@ -68,10 +68,6 @@ class DeviceModel(device: JadbDevice) {
             version.set(jadb.convertStreamToString(jadbDevice.executeShell("getprop ro.build.version.sdk", "")))
             udid.set(jadb.convertStreamToString(jadbDevice.executeShell("settings get secure android_id")))
 
-            jadb.convertStreamToString(jadbDevice.executeShell("mkdir /sdcard/music-sugar"))
-            jadb.convertStreamToString(jadbDevice.executeShell("mkdir /sdcard/video-sugar"))
-            jadb.convertStreamToString(jadbDevice.executeShell("mkdir /sdcard/document-sugar"))
-
             println("UDID: " + udid.get())
         } catch (e: JadbException) {
             e.printStackTrace()

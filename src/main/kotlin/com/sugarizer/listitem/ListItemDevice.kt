@@ -7,6 +7,7 @@ import com.sugarizer.model.DeviceModel
 import com.sugarizer.utils.shared.JADB
 import com.sugarizer.Main
 import com.sugarizer.view.devicedetails.view.devicedetails.DeviceDetailsPresenter
+import com.sun.xml.internal.bind.v2.model.core.ID
 import io.reactivex.Observable
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.animation.FadeTransition
@@ -59,8 +60,8 @@ class ListItemDevice(val device: DeviceModel) : JFXRippler() {
 
             JFXDepthManager.setDepth(this, 8)
 
-            nameLabel.text = device.name.get()
-            modelLabel.text = device.model.get()
+            nameLabel.textProperty().bind(device.name)
+            modelLabel.textProperty().bind(device.model)
 
             state.text = currentState.toString()
 
@@ -137,13 +138,15 @@ class ListItemDevice(val device: DeviceModel) : JFXRippler() {
             currentState = state
             Platform.runLater { this.state.text = state.toString() }
 
-            if (state == State.FINISH) {
-                Observable.timer(10, TimeUnit.SECONDS)
-                        .observeOn(JavaFxScheduler.platform())
-                        .subscribe {
-                            currentState = State.IDLE
-                            Platform.runLater { this.state.text = State.IDLE.toString() }
-                        }
+            when (state) {
+                State.FINISH ->
+                    Observable.timer(10, TimeUnit.SECONDS)
+                            .observeOn(JavaFxScheduler.platform())
+                            .subscribe {
+                                currentState = State.IDLE
+                                Platform.runLater { this.state.text = State.IDLE.toString() }
+                            }
+                State.IDLE -> device.reload()
             }
         }
 

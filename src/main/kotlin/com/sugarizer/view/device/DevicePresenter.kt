@@ -31,21 +31,14 @@ class DevicePresenter(val view: DeviceContract.View, val jadb: JADB, val rxBus: 
     init {
         Main.appComponent.inject(this)
 
-        jadb.watcher()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(Schedulers.io())
-                .subscribe { deviceEvent ->
-                    run {
-                        when (deviceEvent.status) {
-                            DeviceEventModel.Status.ADDED -> { view.onDeviceAdded(deviceEvent) }
-                            DeviceEventModel.Status.REMOVED -> { view.onDeviceRemoved(deviceEvent) }
-                            DeviceEventModel.Status.UNAUTHORIZED -> { view.onDeviceUnauthorized(deviceEvent) }
-                            else -> { }
-                        }
-                    }
-                }
-
-        rxBus.toObservable().subscribe { deviceEvent -> run { view.onDeviceChanged(deviceEvent) } }
+        rxBus.toObservable().subscribe {
+            when (it.status) {
+                DeviceEventModel.Status.ADDED -> view.onDeviceAdded(it)
+                DeviceEventModel.Status.REMOVED -> view.onDeviceRemoved(it)
+                DeviceEventModel.Status.UNAUTHORIZED -> view.onDeviceUnauthorized(it)
+                DeviceEventModel.Status.IDLE -> view.onDeviceIdle(it)
+            }
+        }
     }
 
     override fun onPingClick(device: DeviceModel): EventHandler<ActionEvent> {

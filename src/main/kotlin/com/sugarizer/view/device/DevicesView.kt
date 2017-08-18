@@ -98,12 +98,13 @@ class DevicesView : Initializable, DeviceContract.View {
                         SpkManager.State.DELETE -> onSpkRemoved(file.second)
                     }
                 }
+
+        jadb.startWatching()
     }
 
     override fun onDeviceAdded(deviceEventModel: DeviceEventModel) {
-        Platform.runLater {
-            devices.items.add(ListItemDevice(deviceEventModel.device).onItemAdded())
-        }
+        val isIn = devices.items.any { it.device.serial.get() == deviceEventModel.device.serial.get() }
+        if (!isIn) Platform.runLater { devices.items.add(ListItemDevice(deviceEventModel.device).onItemAdded()) }
     }
 
     override fun onDeviceChanged(deviceEventModel: DeviceEventModel) {
@@ -118,17 +119,19 @@ class DevicesView : Initializable, DeviceContract.View {
     }
 
     override fun onDeviceUnauthorized(deviceEvent: DeviceEventModel) {
-        devices.items.filter { it.device.serial.get().equals(deviceEvent.device.jadbDevice.serial) }
-                .forEach { device -> run {
-                    Platform.runLater {
-                        device.changeState(ListItemDevice.State.UNAUTHORIZED)
-                    }
-                }
-                }
+        devices.items
+                .filter { it.device.serial.get() == deviceEvent.device.serial.get() }
+                .forEach { Platform.runLater { it.changeState(ListItemDevice.State.UNAUTHORIZED) } }
+    }
+
+    override fun onDeviceIdle(deviceEvent: DeviceEventModel) {
+        devices.items
+                .filter { it.device.serial.get() == deviceEvent.device.serial.get() }
+                .forEach { Platform.runLater { it.changeState(ListItemDevice.State.IDLE) } }
     }
 
     override fun onDeviceRemoved(deviceEventModel: DeviceEventModel) {
-        devices.items.filter { it.device.serial.get().equals(deviceEventModel.device.jadbDevice.serial) }
+        devices.items.filter { it.device.serial.get() == deviceEventModel.device.jadbDevice.serial }
                 .forEach { device -> run {
                     Platform.runLater {
                         var tmp = device.onItemRemoved()
@@ -145,7 +148,6 @@ class DevicesView : Initializable, DeviceContract.View {
     }
 
     override fun <T> showDialog(list: List<T>, type: DeviceContract.Dialog) {
-        println("Dialog ?")
         when (type) {
             DeviceContract.Dialog.APK -> {
                 apkList.items.clear()

@@ -24,6 +24,10 @@ interface DeviceContract {
 
         fun onDeviceRemoved(deviceEventModel: DeviceEventModel)
 
+        fun onDeviceUnauthorized(deviceEvent: DeviceEventModel)
+
+        fun onDeviceIdle(deviceEvent: DeviceEventModel)
+
         fun showProgressFlash(message: String)
 
         fun hideProgressFlash()
@@ -39,8 +43,6 @@ interface DeviceContract {
         fun get(): Stage
 
         fun closeDrawer()
-
-        fun onDeviceUnauthorized(deviceEvent: DeviceEventModel)
     }
 
     interface Presenter {

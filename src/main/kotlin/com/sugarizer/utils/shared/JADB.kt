@@ -5,8 +5,10 @@ import com.sugarizer.model.DeviceEventModel
 import com.sugarizer.model.DeviceModel
 import com.sugarizer.Main
 import io.reactivex.Observable
+import io.reactivex.ObservableEmitter
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import javafx.collections.FXCollections
 import javafx.scene.control.Alert
 import net.dongliu.apk.parser.ApkFile
@@ -18,7 +20,6 @@ import java.net.ConnectException
 import javax.inject.Inject
 
 class JADB {
-
     @Inject lateinit var bus: RxBus
     @Inject lateinit var stringUtils: StringUtils
 
@@ -45,9 +46,7 @@ class JADB {
                 OsCheck.OSType.Other -> { println("OS invalid") }
             }
 
-            process?.let {
-                println(convertStreamToString(it.inputStream))
-            }
+            process?.let { println(convertStreamToString(it.inputStream)) }
         } catch (e: Exception) {
             e.printStackTrace()
             var alert = Alert(Alert.AlertType.ERROR)
@@ -77,6 +76,13 @@ class JADB {
         }
     }
 
+    fun startWatching() {
+        watcher()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(JavaFxScheduler.platform())
+                .subscribe()
+    }
+
     fun numberDevice(): Int {
         try {
             return connection.devices.size
@@ -93,109 +99,28 @@ class JADB {
         bus.send(DeviceEventModel(DeviceEventModel.Status.CHANGED, device))
     }
 
-    fun changeAction(name: String, action: String) {
-//        for ((value, view.device) in list.withIndex()) {
-//            if (view.device.name.get().equals(name)) {
-//                //changeAction(list[value], action)
-//            }
-//        }
-    }
-
-    fun changeAction(index: Int, action: String) {
-        if (connection.devices.size > index) {
-            changeAction(connection.devices[index], action)
-        }
-    }
-
-    fun watcher(): io.reactivex.Observable<DeviceEventModel> {
-        return io.reactivex.Observable.create {
-            subscriber -> run {
-
+    private fun watcher(): io.reactivex.Observable<DeviceEventModel> {
+        return io.reactivex.Observable.create { subscriber -> run {
             try {
                 watcher = connection.createDeviceWatcher(object : DeviceDetectionListener {
                     override fun onDetect(devices: MutableList<se.vidstige.jadb.JadbDevice>?) {
-                        println("onDetect")
-
                         if (devices != null) {
                             listJadb.filter { !devices.contains(it) }
-                                    .forEach {
-                                        listJadb.remove(it)
-
-                                        listDevice.filter {
-                                            it.name.get().equals(it.name.get()) }
-                                                .forEach { listDevice.remove(it) }
-
-                                        println("Serial Device Removed: " + it.serial)
-
-                                        subscriber.onNext(DeviceEventModel(DeviceEventModel.Status.REMOVED, DeviceModel(it)))
-                                    }
+                                    .forEach { onRemoveDevice(it, subscriber) }
 
                             devices.filter { !listJadb.contains(it) }
-                                    .forEach {
-                                        var deviceModel: DeviceModel = DeviceModel(it)
-
-                                        Observable.create<String> {
-                                            while (isDeviceOffline(deviceModel.jadbDevice)) {
-                                                println("Device Offline")
-                                                checkAuthorization(deviceModel.jadbDevice)
-                                                        .subscribeOn(Schedulers.computation())
-                                                        .observeOn(JavaFxScheduler.platform())
-                                                        .subscribe {
-                                                            println("Check Status: " + it)
-                                                            subscriber.onNext(DeviceEventModel(DeviceEventModel.Status.UNAUTHORIZED, deviceModel))
-                                                        }
-                                                Thread.sleep(1000)
-                                            }
-
-                                            it.onComplete()
-                                        }
-                                                .subscribeOn(Schedulers.computation())
-                                                .observeOn(Schedulers.io())
-                                                .doOnComplete {
-                                                    println("On Complete")
-                                                    hasPackage(deviceModel.jadbDevice, BuildConfig.APP_PACKAGE).subscribe {
-                                                        if (it) {
-                                                            startApp(deviceModel.jadbDevice).doOnComplete {
-                                                                sendLog(deviceModel.jadbDevice, "Connected to Sugarizer Deployment Tool")
-                                                            }.subscribe()
-                                                        } else {
-                                                            changeAction(deviceModel.jadbDevice, "Installing Application...")
-                                                            installAPK(deviceModel.jadbDevice, File(BuildConfig.APK_LOCATION), false)
-                                                                    .doOnComplete {
-                                                                        startApp(deviceModel.jadbDevice)
-                                                                                .doOnComplete {
-                                                                                    sendLog(deviceModel.jadbDevice, "Connected to Sugarizer Deployment Tool")
-                                                                                    changeAction(deviceModel.jadbDevice, "Application installed")
-                                                                                }.subscribe()
-                                                                    }
-                                                                    .doOnError {  }
-                                                                    .subscribe()
-                                                        }
-                                                    }
-                                                }.subscribe()
-
-                                        listJadb.add(it)
-                                        listDevice.add(DeviceModel(it))
-
-                                        Thread.sleep(1000)
-
-                                        deviceModel.reload()
-
-                                        subscriber.onNext(DeviceEventModel(DeviceEventModel.Status.ADDED, deviceModel))
-                                    }
+                                    .forEach { onNewDevice(it, subscriber)
+                                            .subscribeOn(Schedulers.newThread())
+                                            .subscribe() }
                         }
                     }
 
                     override fun onException(e: Exception?) {
-                        if (e != null) {
-                            println("onException: " + e.printStackTrace())
-                        }
+                        e?.let { println("onException: " + it.printStackTrace()) }
                     }
                 })
 
-                watcher?.let {
-                    it.watch()
-                }
+                watcher?.let { it.watch() }
             } catch (e: java.net.ConnectException) {
                 println("Error: Connection refused (adb is started ?)")
             }
@@ -279,14 +204,18 @@ class JADB {
 
     fun getListPackage(jadbDevice: JadbDevice) : Observable<List<String>> {
         return Observable.create {
-            var list: MutableList<String> = mutableListOf()
-            var returnCMD: String = stringUtils.convertStreamToString(jadbDevice.executeShell(BuildConfig.CMD_LIST_PACKAGE))
+            try {
+                var list: MutableList<String> = mutableListOf()
+                var returnCMD: String = stringUtils.convertStreamToString(jadbDevice.executeShell(BuildConfig.CMD_LIST_PACKAGE))
 
-            returnCMD.split("\n").forEach {
-                list.add(it.removePrefix("package:"))
+                returnCMD.split("\n").forEach {
+                    list.add(it.removePrefix("package:"))
+                }
+
+                it.onNext(list)
+            } catch (e: JadbException) {
+                e.printStackTrace()
             }
-
-            it.onNext(list)
         }
     }
 
@@ -333,7 +262,6 @@ class JADB {
     }
 
     fun uninstallApp(jadbDevice: JadbDevice, name: String): Observable<String> {
-        println("Test 1")
         return Observable.create {
             sendLog(jadbDevice, "Uninstalling " + name)
             PackageManager(jadbDevice).uninstall(Package(name))
@@ -374,22 +302,79 @@ class JADB {
 
                 println(tmp)
 
-                println("########################")
-
                 var indexOfDevice = tmp.indexOf(device.serial)
                 var indexOfN = tmp.indexOf("\n", indexOfDevice)
                 var line = tmp.substring(indexOfDevice, indexOfN)
                 var status = line.substring(line.indexOf("\t") + 1, line.length)
+                status = status.substring(0, status.length - 1)
 
-                println("Device Serial: " + device.serial)
-                println("Device find: " + indexOfDevice)
-                println("Device n: " + indexOfN)
-                println("Line: " + line)
+//                println("Device Serial: " + device.serial)
+//                println("Device find: " + indexOfDevice)
+//                println("Device n: " + indexOfN)
+//                println("Line: " + line)
                 println("Status: " + status)
 
                 subscriber.onNext(status)
                 subscriber.onComplete()
             }
         }
+    }
+
+    private fun onNewDevice(device: JadbDevice, subscriber: ObservableEmitter<DeviceEventModel>): Observable<Any> {
+        return Observable.create {
+            var deviceModel = DeviceModel(device)
+
+            bus.send(DeviceEventModel(DeviceEventModel.Status.ADDED, deviceModel))
+
+            listenAuth(deviceModel)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(Schedulers.computation())
+                    .subscribe({},{},{
+                        hasPackage(deviceModel.jadbDevice, BuildConfig.APP_PACKAGE).subscribe({
+                            Thread.sleep(1000)
+
+                            if (it) {
+                                startApp(deviceModel.jadbDevice).doOnComplete { sendLog(deviceModel.jadbDevice, "Connected to Sugarizer Deployment Tool") }.subscribe()
+                            } else {
+                                installAPK(deviceModel.jadbDevice, File(BuildConfig.APK_LOCATION), false)
+                                        .subscribe({},{},{ startApp(deviceModel.jadbDevice).subscribe({},{},{}) })
+                            }
+
+                            listJadb.add(device)
+                            listDevice.add(DeviceModel(device))
+
+                            deviceModel.reload()
+                        },{},{})
+                    })
+        }
+    }
+
+    private fun onRemoveDevice(it: JadbDevice, subscriber: ObservableEmitter<DeviceEventModel>) {
+        listJadb.remove(it)
+
+        listDevice.filter {
+            it.name.get() == it.name.get()
+        }.forEach { listDevice.remove(it) }
+
+        subscriber.onNext(DeviceEventModel(DeviceEventModel.Status.REMOVED, DeviceModel(it)))
+    }
+
+    private fun listenAuth(device: DeviceModel): Observable<JadbDevice> {
+        return Observable.create { checkAuthAndRetryWhenNot(device, it) }
+    }
+
+    private fun checkAuthAndRetryWhenNot(device: DeviceModel, subscriber: ObservableEmitter<JadbDevice>){
+        checkAuthorization(device.jadbDevice)
+                .subscribeOn(Schedulers.newThread())
+                .subscribe {
+                    Thread.sleep(1000)
+                    if (it == "unauthorized") {
+                        bus.send(DeviceEventModel(DeviceEventModel.Status.UNAUTHORIZED, device))
+                        checkAuthAndRetryWhenNot(device, subscriber);
+                    } else {
+                        bus.send(DeviceEventModel(DeviceEventModel.Status.IDLE, device))
+                        subscriber.onComplete()
+                    }
+                }
     }
 }

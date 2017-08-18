@@ -8,6 +8,7 @@ class DeviceEventModel(status: DeviceEventModel.Status, device: DeviceModel) {
         REMOVED,
         ADDED,
         CHANGED,
-        UNAUTHORIZED
+        UNAUTHORIZED,
+        IDLE
     }
 }

@@ -2,6 +2,7 @@ package com.sugarizer
 
 import com.sugarizer.utils.shared.JADB
 import com.sugarizer.utils.inject.AppComponent
+import javafx.scene.image.Image
 import javafx.stage.Stage
 import tornadofx.App
 import tornadofx.UIComponent
@@ -33,6 +34,7 @@ class Main : App(MainView::class) {
         stage.width = 800.0
         stage.minHeight = 480.0
         stage.minWidth = 800.0
+        stage.icons.add(Image("/image/icon.png"))
 
         Companion.primaryView = primaryView
     }
