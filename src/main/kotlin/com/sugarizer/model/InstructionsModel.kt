@@ -8,7 +8,7 @@ import java.io.File
 
 class InstructionsModel {
     @SerializedName("instructions")
-    var intructions: MutableList<Instruction>? = null
+    var intructions: MutableList<Instruction> = mutableListOf()
 }
 
 class Instruction {
@@ -103,4 +103,9 @@ class SleepModel(sleep: Long = 3000) {
 class OpenAppModel(text: String = "") {
     @SerializedName("package")
     var package_name: String = text
+}
+
+class DeleteFileModel(file: String = "") {
+    @SerializedName("file_name")
+    var file_name: String = file
 }

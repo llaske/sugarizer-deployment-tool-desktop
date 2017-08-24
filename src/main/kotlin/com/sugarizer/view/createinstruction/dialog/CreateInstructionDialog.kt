@@ -72,7 +72,7 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
             instructionList.items.add(ListItemInstruction("Swipe", CreateInstructionView.Type.SWIPE, "HAND_ALT_LEFT"))
             instructionList.items.add(ListItemInstruction("Text", CreateInstructionView.Type.TEXT, "I_CURSOR"))
 //            instructionList.items.add(ListItemInstruction("Push File", CreateInstructionView.Type.PUSH, "ARCHIVE"))
-//            instructionList.items.add(ListItemInstruction("Delete File", CreateInstructionView.Type.DELETE, "ARCHIVE"))
+            instructionList.items.add(ListItemInstruction("Delete File", CreateInstructionView.Type.DELETE, "TRASH"))
             instructionList.items.add(ListItemInstruction("Sleep", CreateInstructionView.Type.SLEEP, "BED"))
             instructionList.items.add(ListItemInstruction("OpenApp", CreateInstructionView.Type.OPENAPP, "ANDROID"))
 
@@ -205,18 +205,26 @@ class CreateInstructionDialog(val file: File?) : Dialog<String>() {
                         else -> { BuildConfig.FILE_SEPARATOR_LINUX }
                     }
 
-                    var zipIn = ZipInUtils(BuildConfig.SPK_LOCATION + separator + instructionName.text + ".spk", instructionModel, fileUtils, choosenInstruction.items)
+                    var zipIn = ZipInUtils(BuildConfig.SPK_LOCATION + separator + instructionName.text + ".spk", fileUtils, choosenInstruction.items)
 
                     zipIn.startZiping()
-                    zipIn.finishZip()
+                            .subscribeOn(Schedulers.newThread())
+                            .subscribe({},{
+                                println("Error ZIPPING:" + it.message)
+                                it.printStackTrace()
+                            },{
+                                zipIn.finishZip()
 
-                    Thread.sleep(1000)
+                                Thread.sleep(1000)
 
-                    it.onComplete()
+                                it.onComplete()
+                            })
                 }
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(JavaFxScheduler.platform())
-                        .subscribe({}, {}, {
+                        .subscribe({}, {
+                            println("Error:" + it.message)
+                        }, {
                             progress.isVisible = false
                             choosenInstruction.items.clear()
                             (dialogPane.scene.window as Stage).close()

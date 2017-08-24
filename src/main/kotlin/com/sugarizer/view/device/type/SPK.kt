@@ -75,9 +75,9 @@ class SPK(private val view: DeviceContract.View) {
             view.showProgressFlash("Flash: 0 %")
             view.closeDialog(DeviceContract.Dialog.SPK)
             executeOnDevice()
-                        .subscribeOn(Schedulers.computation())
+                        .subscribeOn(Schedulers.newThread())
                         .observeOn(JavaFxScheduler.platform())
-                        .subscribe({}, {}, {
+                        .subscribe({}, { it.printStackTrace() }, {
                             view.hideProgressFlash()
                             notifBus.send("Flash completed")
                         })
@@ -115,6 +115,7 @@ class SPK(private val view: DeviceContract.View) {
                                 ++numberInstruc
                                 view.showProgressFlash("Flash: " + Math.round((numberInstruc / maxIntstruc) * 100) + " %")
                             }, { it.printStackTrace() }, {
+                                println("Device finish")
                                 ++numberEnded
 
                                 if (numberEnded == listDevice.size) {
@@ -143,10 +144,11 @@ class SPK(private val view: DeviceContract.View) {
     }
 
     fun executeOneInstruction(instruction: Instruction, device: ListItemDevice) {
+        println("Type: " + instruction.type)
         when (instruction.type) {
             CreateInstructionView.Type.APK -> doInstallApk(instruction, device)
             CreateInstructionView.Type.PUSH -> TODO()
-            CreateInstructionView.Type.DELETE -> TODO()
+            CreateInstructionView.Type.DELETE -> doDelete(instruction, device)
             CreateInstructionView.Type.KEY -> doKey(instruction, device)
             CreateInstructionView.Type.CLICK -> doClick(instruction, device)
             CreateInstructionView.Type.LONGCLICK -> doLongClick(instruction, device)
@@ -160,11 +162,16 @@ class SPK(private val view: DeviceContract.View) {
     fun doInstallApk(instruction: Instruction, device: ListItemDevice){
         val install = Gson().fromJson(instruction.data, InstallApkModel::class.java)
 
+        println("Size APK: " + install.apks?.size)
+
         install.apks?.forEach { apk ->
+            println("APK: " + apk)
             jadb.installAPK(device.device.jadbDevice, File("tmp" + fileUtils.separator + apk), false)
-                    .subscribeOn(Schedulers.computation())
-                    .observeOn(JavaFxScheduler.platform())
-                    .subscribe({},{},{})
+                    //.subscribeOn(Schedulers.newThread())
+                    //.observeOn(JavaFxScheduler.platform())
+                    .subscribe({},{
+                        it.printStackTrace()
+                    },{})
         }
     }
 
@@ -219,7 +226,16 @@ class SPK(private val view: DeviceContract.View) {
     fun doOpenApp(instruction: Instruction, device: ListItemDevice){
         val click = Gson().fromJson(instruction.data, OpenAppModel::class.java)
 
-        jadb.convertStreamToString(device.device.jadbDevice.executeShell("monkey -p " + click.package_name + " -c android.intent.category.LAUNCHER 1"))
+        jadb.convertStreamToString(device.device.jadbDevice.executeShell("monkey -p " + click.package_name + " -c android.intent.category.LAUNCHER 1", ""))
+
+        Thread.sleep(1000)
+    }
+
+    fun doDelete(instruction: Instruction, device: ListItemDevice){
+        val click = Gson().fromJson(instruction.data, DeleteFileModel::class.java)
+        println("DELETE: " + click.file_name)
+
+        jadb.convertStreamToString(device.device.jadbDevice.executeShell("rm " + click.file_name, ""))
 
         Thread.sleep(1000)
     }

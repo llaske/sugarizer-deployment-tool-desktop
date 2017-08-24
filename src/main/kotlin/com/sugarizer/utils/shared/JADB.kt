@@ -225,11 +225,11 @@ class JADB {
                 getListPackage(jadbDevice).subscribeOn(Schedulers.computation())
                         .observeOn(Schedulers.io())
                         .doOnComplete { has.onComplete() }
-                        .subscribe {
+                        .subscribe ({
                             has.onNext(it.contains(name))
 
                             has.onComplete()
-                        }
+                        },{},{})
             }
         }
     }
@@ -248,9 +248,11 @@ class JADB {
             it.onNext(stringUtils.convertStreamToString(jadbDevice.executeShell(BuildConfig.CMD_LOG + " --es extra_log \"" + send + "\"")))
         }
                 .subscribeOn(Schedulers.computation())
-                .subscribe {
+                .subscribe ({
                     println(it)
-                }
+                },{
+                    println("" + it.message)
+                },{})
     }
 
     fun startApp(jadbDevice: JadbDevice): Observable<Boolean> {

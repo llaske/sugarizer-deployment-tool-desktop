@@ -1,1 +1,1 @@
-{"instructions":[{"type":"SLEEP","ordre":0,"data":"{\"duration\":3000}"},{"type":"SLEEP","ordre":1,"data":"{\"duration\":2000}"},{"type":"SLEEP","ordre":2,"data":"{\"duration\":1000}"}]}
+{"instructions":[{"type":"DELETE","ordre":0,"data":"{\"file_name\":\"/sdcard/test.mp4\"}"}]}

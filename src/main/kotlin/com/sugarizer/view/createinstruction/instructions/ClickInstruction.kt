@@ -37,6 +37,7 @@ class ClickInstruction(val type: CreateInstructionView.Type) : Dialog<String>() 
             CreateInstructionView.Type.SWIPE -> { resource = "/layout/instruction/instruction-swipe.fxml" }
             CreateInstructionView.Type.SLEEP -> resource = "/layout/instruction/instruction-sleep.fxml"
             CreateInstructionView.Type.OPENAPP -> resource = "/layout/instruction/instruction-openapp.fxml"
+            CreateInstructionView.Type.DELETE -> resource = "/layout/instruction/instruction-delete.fxml"
         }
 
         val loader = FXMLLoader(javaClass.getResource(resource))
@@ -107,6 +108,7 @@ class ClickInstruction(val type: CreateInstructionView.Type) : Dialog<String>() 
             CreateInstructionView.Type.TEXT -> { return  Gson().toJson(TextModel(text.text)) }
             CreateInstructionView.Type.SLEEP -> return Gson().toJson(SleepModel(duration.text.toLong()))
             CreateInstructionView.Type.OPENAPP -> return Gson().toJson(OpenAppModel(packageName.text))
+            CreateInstructionView.Type.DELETE -> return Gson().toJson(DeleteFileModel(text.text))
         }
 
         return ""
