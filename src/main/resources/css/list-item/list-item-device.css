@@ -17,11 +17,33 @@
     -fx-fill: #FFFFFF;
 }
 
-#state {
+#backgroundState {
     -fx-background-color: #03A9F4;
+}
+
+#state {
+    -fx-background-color: rgba(0, 0, 0, 0);
     -fx-text-fill: #000000;
+}
+
+.progress {
+    -fx-background-color: rgba(0, 0, 0,0);
+    -fx-progress-color: #00c112;
 }
 
 #nameLabel {
     -fx-font-size: 24px;
+}
+
+.jfx-progress-bar > .track, .jfx-progress-bar > .bar {
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+}
+
+.jfx-progress-bar > .track {
+    -fx-background-color: rgba(0, 0, 0,0);
+}
+
+.jfx-progress-bar > .bar {
+    -fx-background-color: #00bbff;
 }

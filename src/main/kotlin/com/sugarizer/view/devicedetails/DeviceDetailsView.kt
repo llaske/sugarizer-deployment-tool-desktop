@@ -5,6 +5,7 @@ import com.jfoenix.controls.JFXRippler
 import com.sugarizer.model.DeviceModel
 import com.sugarizer.utils.shared.JADB
 import com.sugarizer.Main
+import com.sugarizer.listitem.ListItemDevice
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import io.reactivex.schedulers.Schedulers
 import javafx.event.EventHandler
@@ -14,12 +15,13 @@ import javafx.scene.control.Dialog
 import javafx.scene.control.Label
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.StackPane
+import se.vidstige.jadb.JadbDevice
 import se.vidstige.jadb.managers.PackageManager
 import java.io.IOException
 import javax.inject.Inject
 
 
-class DeviceDetailsPresenter(val device: DeviceModel) : Dialog<String>() {
+class DeviceDetailsPresenter(val device: ListItemDevice) : Dialog<String>() {
 
     @Inject lateinit var jadb: JADB
 
@@ -40,13 +42,13 @@ class DeviceDetailsPresenter(val device: DeviceModel) : Dialog<String>() {
 
         dialogPane.scene.window.setOnCloseRequest { close() }
 
-        title = "Details of " + device.name.get()
+        title = "Details of " + device.nameLabel.text
 
         try {
             loader.load<StackPane>()
             dialogPane.content = view
 
-            PackageManager(device.jadbDevice).packages.forEach {
+            PackageManager(device.device).packages.forEach {
                 var tmp = it.toString()
                 var lastI = tmp.lastIndexOf(".")
                 if (lastI > 0)
@@ -55,20 +57,20 @@ class DeviceDetailsPresenter(val device: DeviceModel) : Dialog<String>() {
                     listPackage.items.add(tmp)
             }
 
-            name.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.product.name", ""))
+            name.text = jadb.convertStreamToString(device.device.executeShell("getprop ro.product.name", ""))
             deviceID.text = " Device ID"
             macAddress.text = "Mac Address"
 
             ping.onMouseClicked = onClickPing()
-            println(jadb.convertStreamToString(device.jadbDevice.executeShell("settings get secure android_id", "")))
-            println(jadb.convertStreamToString(device.jadbDevice.executeShell("adb shell settings get secure bluetooth_address", "")))
-            deviceID.text = jadb.convertStreamToString(device.jadbDevice.executeShell("settings get secure android_id", ""))
-            macAddress.text = jadb.convertStreamToString(device.jadbDevice.executeShell("settings get secure bluetooth_address", ""))
+            println(jadb.convertStreamToString(device.device.executeShell("settings get secure android_id", "")))
+            println(jadb.convertStreamToString(device.device.executeShell("adb shell settings get secure bluetooth_address", "")))
+            deviceID.text = jadb.convertStreamToString(device.device.executeShell("settings get secure android_id", ""))
+            macAddress.text = jadb.convertStreamToString(device.device.executeShell("settings get secure bluetooth_address", ""))
 //            romName.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.cm.releasetype", ""))
 //            romVersion.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.modversion", ""))
 //            apiVersion.text = jadb.convertStreamToString(device.jadbDevice.executeShell("getprop ro.build.version.sdk", ""))
 
-            println(jadb.convertStreamToString(device.jadbDevice.executeShell("netcfg", "")))
+            println(jadb.convertStreamToString(device.device.executeShell("netcfg", "")))
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -76,7 +78,7 @@ class DeviceDetailsPresenter(val device: DeviceModel) : Dialog<String>() {
 
     fun onClickPing(): EventHandler<MouseEvent> {
         return EventHandler {
-            jadb.ping(device.jadbDevice)
+            jadb.ping(device.device)
                     .subscribeOn(Schedulers.computation())
                     .observeOn(JavaFxScheduler.platform())
                     .subscribe()

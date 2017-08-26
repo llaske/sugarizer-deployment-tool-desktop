@@ -1,8 +1,10 @@
 package com.sugarizer.model
 
-class DeviceEventModel(status: DeviceEventModel.Status, device: DeviceModel) {
+import se.vidstige.jadb.JadbDevice
+
+class DeviceEventModel(status: DeviceEventModel.Status, device: JadbDevice) {
     val status: DeviceEventModel.Status = status
-    val device: DeviceModel = device
+    val device: JadbDevice = device
 
     enum class Status {
         REMOVED,

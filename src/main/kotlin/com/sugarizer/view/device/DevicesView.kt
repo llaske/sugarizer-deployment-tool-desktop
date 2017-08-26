@@ -103,7 +103,7 @@ class DevicesView : Initializable, DeviceContract.View {
     }
 
     override fun onDeviceAdded(deviceEventModel: DeviceEventModel) {
-        val isIn = devices.items.any { it.device.jadbDevice.serial == deviceEventModel.device.jadbDevice.serial }
+        val isIn = devices.items.any { it.device.serial == deviceEventModel.device.serial }
         println("isIn:" + isIn)
         if (!isIn) {
             Platform.runLater { devices.items.add(ListItemDevice(deviceEventModel.device).onItemAdded()) }
@@ -123,19 +123,19 @@ class DevicesView : Initializable, DeviceContract.View {
 
     override fun onDeviceUnauthorized(deviceEvent: DeviceEventModel) {
         devices.items
-                .filter { it.device.jadbDevice.serial == deviceEvent.device.jadbDevice.serial }
+                .filter { it.device.serial == deviceEvent.device.serial }
                 .forEach { Platform.runLater { it.changeState(ListItemDevice.State.UNAUTHORIZED) } }
     }
 
     override fun onDeviceIdle(deviceEvent: DeviceEventModel) {
         devices.items
-                .filter { it.device.jadbDevice.serial == deviceEvent.device.jadbDevice.serial }
+                .filter { it.device.serial == deviceEvent.device.serial }
                 .forEach { Platform.runLater { it.changeState(ListItemDevice.State.IDLE) } }
     }
 
     override fun onDeviceRemoved(deviceEventModel: DeviceEventModel) {
-        println("Device Removed: " + deviceEventModel.device.jadbDevice.serial)
-        devices.items.filter { (it.device.jadbDevice.serial == deviceEventModel.device.jadbDevice.serial)}
+        println("Device Removed: " + deviceEventModel.device.serial)
+        devices.items.filter { (it.device.serial == deviceEventModel.device.serial)}
                 .forEach { device -> run {
                     Platform.runLater {
                         var tmp = device.onItemRemoved()
@@ -202,6 +202,7 @@ class DevicesView : Initializable, DeviceContract.View {
     }
 
     override fun hideProgressFlash() {
+        println("hide progress ############")
         animUtils.fadeOut(flashProgressLayout).play()
     }
 

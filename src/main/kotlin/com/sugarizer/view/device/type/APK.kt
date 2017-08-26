@@ -43,7 +43,7 @@ class APK(val view: DeviceContract.View) {
     }
 
     fun install(device: ListItemDevice, listAPK: List<File>, index: Int, subscriber: ObservableEmitter<Any>){
-        jadb.installAPK(device.device.jadbDevice, listAPK[index], false)
+        jadb.installAPK(device.device, listAPK[index], false)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(JavaFxScheduler.platform())
                 .subscribe({}, {}, {

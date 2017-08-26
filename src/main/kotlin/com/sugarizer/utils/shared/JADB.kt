@@ -4,6 +4,7 @@ import com.sugarizer.BuildConfig
 import com.sugarizer.model.DeviceEventModel
 import com.sugarizer.model.DeviceModel
 import com.sugarizer.Main
+import com.sugarizer.listitem.ListItemDevice
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
@@ -91,27 +92,32 @@ class JADB {
         }
     }
 
-    fun changeAction(device: JadbDevice, action: String) {
-        var device = DeviceModel(device)
-
-        device.setAction(action)
-
-        bus.send(DeviceEventModel(DeviceEventModel.Status.CHANGED, device))
-    }
-
     private fun watcher(): io.reactivex.Observable<DeviceEventModel> {
         return io.reactivex.Observable.create { subscriber -> run {
             try {
                 watcher = connection.createDeviceWatcher(object : DeviceDetectionListener {
                     override fun onDetect(devices: MutableList<se.vidstige.jadb.JadbDevice>?) {
                         if (devices != null) {
-                            listJadb.filter { !devices.contains(it) }
-                                    .forEach { onRemoveDevice(it, subscriber) }
 
-                            devices.filter { !listJadb.contains(it) }
-                                    .forEach { onNewDevice(it)
-                                            .subscribeOn(Schedulers.newThread())
-                                            .subscribe() }
+                            var iterator = listJadb.iterator()
+                            while(iterator.hasNext()) {
+                                var it = iterator.next()
+                                if (!devices.contains(it)) {
+                                    println("Device Removed: " + it.serial)
+                                    iterator.remove()
+                                    onRemoveDevice(it)
+                                }
+                            }
+
+                            iterator = devices.iterator()
+                            while (iterator.hasNext()) {
+                                var it = iterator.next()
+                                if (!listJadb.contains(it)) {
+                                    println("Device Added: " + it.serial)
+                                    listJadb.add(it)
+                                    onNewDevice(it).subscribeOn(Schedulers.newThread()).subscribe({},{it.printStackTrace()})
+                                }
+                            }
                         }
                     }
 
@@ -156,17 +162,15 @@ class JADB {
                     throw Throwable("File not found: " + file.name)
                 }
 
-                changeAction(jadbDevice, "Installing: " + file.name)
                 sendLog(jadbDevice, "Installing: " + file.name)
 
                 try {
                     PackageManager(jadbDevice).install(file)
-                    changeAction(jadbDevice, file.name + " installed")
                     sendLog(jadbDevice, file.name + " installed")
+                    jadbDevice.state
 
                     subscriber.onComplete()
                 } catch (e: JadbException) {
-                    changeAction(jadbDevice, file.name + " already installed")
                     sendLog(jadbDevice, file.name + " already installed")
 
                     if (force) {
@@ -202,7 +206,7 @@ class JADB {
         }
     }
 
-    fun getListPackage(jadbDevice: JadbDevice) : Observable<List<String>> {
+    private fun getListPackage(jadbDevice: JadbDevice) : Observable<List<String>> {
         return Observable.create {
             try {
                 var list: MutableList<String> = mutableListOf()
@@ -221,16 +225,14 @@ class JADB {
 
     fun hasPackage(jadbDevice: JadbDevice, name: String) : Observable<Boolean> {
         return Observable.create { has ->
-            run {
-                getListPackage(jadbDevice).subscribeOn(Schedulers.computation())
-                        .observeOn(Schedulers.io())
-                        .doOnComplete { has.onComplete() }
-                        .subscribe ({
-                            has.onNext(it.contains(name))
+            getListPackage(jadbDevice)
+                    .subscribe ({
+                        has.onNext(it.contains(name))
 
-                            has.onComplete()
-                        },{},{})
-            }
+                        has.onComplete()
+                    },{ it.printStackTrace() },{
+                        has.onComplete()
+                    })
         }
     }
 
@@ -288,7 +290,7 @@ class JADB {
         }
     }
 
-    fun checkAuthorization(device: DeviceModel): Observable<String> {
+    fun checkAuthorization(device: JadbDevice): Observable<String> {
         return Observable.create<String> { subscriber ->
             try {
                 var process: Process? = null
@@ -303,9 +305,7 @@ class JADB {
                 process?.let {
                     var tmp = convertStreamToString(it.inputStream)
 
-                    println(tmp)
-
-                    var indexOfDevice = tmp.indexOf(device.jadbDevice.serial)
+                    var indexOfDevice = tmp.indexOf(device.serial)
                     if (indexOfDevice == -1) {
                         bus.send(DeviceEventModel(DeviceEventModel.Status.REMOVED, device))
                     } else {
@@ -317,7 +317,7 @@ class JADB {
                         status = status.substring(0, status.length - 1)
 
 //                println("Device Serial: " + device.serial)
-//                println("Line: " + line)
+                        println("Line: " + line)
                         println("Status: " + status)
 
                         subscriber.onNext(status)
@@ -332,47 +332,36 @@ class JADB {
 
     private fun onNewDevice(device: JadbDevice): Observable<Any> {
         return Observable.create {
-            var deviceModel = DeviceModel(device)
+            bus.send(DeviceEventModel(DeviceEventModel.Status.ADDED, device))
 
-            bus.send(DeviceEventModel(DeviceEventModel.Status.ADDED, deviceModel))
-
-            listenAuth(deviceModel)
+            listenAuth(device)
                     .subscribeOn(Schedulers.newThread())
                     .subscribe({},{},{
-                        hasPackage(deviceModel.jadbDevice, BuildConfig.APP_PACKAGE).subscribe({
+                        hasPackage(device, BuildConfig.APP_PACKAGE).subscribe({
                             Thread.sleep(1000)
 
                             if (it) {
-                                startApp(deviceModel.jadbDevice).doOnComplete { sendLog(deviceModel.jadbDevice, "Connected to Sugarizer Deployment Tool") }.subscribe()
+                                startApp(device).subscribe({},{it.printStackTrace()},{sendLog(device, "Connected to Sugarizer Deployment Tool")})
                             } else {
-                                installAPK(deviceModel.jadbDevice, File(BuildConfig.APK_LOCATION), false)
-                                        .subscribe({},{},{ startApp(deviceModel.jadbDevice).subscribe({},{},{}) })
+                                installAPK(device, File(BuildConfig.APK_LOCATION), false)
+                                        .subscribe({},{},{ startApp(device).subscribe({},{},{}) })
                             }
 
-                            listJadb.add(device)
-                            listDevice.add(DeviceModel(device))
-
-                            deviceModel.reload()
+                            bus.send(DeviceEventModel(DeviceEventModel.Status.IDLE, device))
                         },{},{})
                     })
         }
     }
 
-    private fun onRemoveDevice(it: JadbDevice, subscriber: ObservableEmitter<DeviceEventModel>) {
-        listJadb.remove(it)
-
-        listDevice.filter {
-            it.name.get() == it.name.get()
-        }.forEach { listDevice.remove(it) }
-
-        subscriber.onNext(DeviceEventModel(DeviceEventModel.Status.REMOVED, DeviceModel(it)))
+    private fun onRemoveDevice(it: JadbDevice) {
+        bus.send(DeviceEventModel(DeviceEventModel.Status.REMOVED, it))
     }
 
-    private fun listenAuth(device: DeviceModel): Observable<JadbDevice> {
+    private fun listenAuth(device: JadbDevice): Observable<JadbDevice> {
         return Observable.create { checkAuthAndRetryWhenNot(device, it) }
     }
 
-    private fun checkAuthAndRetryWhenNot(device: DeviceModel, subscriber: ObservableEmitter<JadbDevice>){
+    private fun checkAuthAndRetryWhenNot(device: JadbDevice, subscriber: ObservableEmitter<JadbDevice>){
         checkAuthorization(device)
                 .subscribeOn(Schedulers.newThread())
                 .subscribe {

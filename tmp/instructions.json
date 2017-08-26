@@ -1,1 +1,1 @@
-{"instructions":[{"type":"DELETE","ordre":0,"data":"{\"file_name\":\"/sdcard/test.mp4\"}"}]}
+{"instructions":[{"type":"KEY","ordre":0,"data":"{\"id_key\":26,\"text_ket\":\"Power\"}"},{"type":"SLEEP","ordre":1,"data":"{\"duration\":500}"},{"type":"KEY","ordre":2,"data":"{\"id_key\":26,\"text_ket\":\"Power\"}"},{"type":"SLEEP","ordre":3,"data":"{\"duration\":500}"},{"type":"KEY","ordre":4,"data":"{\"id_key\":26,\"text_ket\":\"Power\"}"},{"type":"SLEEP","ordre":5,"data":"{\"duration\":500}"},{"type":"KEY","ordre":6,"data":"{\"id_key\":26,\"text_ket\":\"Power\"}"}]}

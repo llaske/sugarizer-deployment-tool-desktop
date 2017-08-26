@@ -6,6 +6,8 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
+<?import com.jfoenix.controls.JFXProgressBar?>
+<?import javafx.scene.control.ProgressBar?>
 <fx:root
         type="com.jfoenix.controls.JFXRippler"
         stylesheets="@../../css/list-item/list-item-device.css"
@@ -31,8 +33,9 @@
                 <Label fx:id="modelLabel" maxHeight="Infinity" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1" alignment="CENTER" ellipsisString="end"/>
 
                 <StackPane GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                    <Label fx:id="backgroundState" maxWidth="Infinity" maxHeight="Infinity"/>
+                    <JFXProgressBar fx:id="progress" progress="50" maxWidth="Infinity" maxHeight="Infinity" styleClass="jfx-progress-bar"/>
                     <Label fx:id="state" maxHeight="Infinity" maxWidth="Infinity" text="State" alignment="CENTER"/>
-                    <!--<JFXProgressBar progress="50" maxWidth="Infinity"/>-->
                 </StackPane>
             </children>
         </GridPane>
