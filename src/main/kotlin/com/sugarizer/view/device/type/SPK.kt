@@ -97,13 +97,10 @@ class SPK(private val view: DeviceContract.View) {
             var maxIntstruc = getNumberInstruction().toDouble()
             var numberInstruc = 0.0
 
-            println("SPK - 1")
             Observable.create<Any> { mainSub ->
-                println("SPK - 2")
                 val iterate = map.iterator()
                 while (iterate.hasNext()) {
                     val tmp = iterate.next()
-                    println("SPK - 3")
                     changeState(tmp.key, ListItemDevice.State.WORKING)
                     Observable.create<Any> { deviceSubscriber ->
                         var list = mutableListOf<Instruction>()
@@ -118,7 +115,6 @@ class SPK(private val view: DeviceContract.View) {
                                 Observable.create<Any> {
                                     executeOneInstruction(instruction, tmp.key)
                                     mainSub.onNext("")
-                                    println("Update Device: " + ++i / max)
                                     updateDevice(tmp.key, i / max)
                                 }.subscribe({}, {
                                     it.printStackTrace()
@@ -135,7 +131,6 @@ class SPK(private val view: DeviceContract.View) {
                     }
                             .subscribeOn(Schedulers.newThread())
                             .subscribe({},{it.printStackTrace()},{
-                                println("Device ENDED")
                                 numberEnded++
                                 changeState(tmp.key, ListItemDevice.State.FINISH)
                                 removeFromMap(tmp.key)
@@ -154,11 +149,7 @@ class SPK(private val view: DeviceContract.View) {
 //                            })
                 }
 
-                println("SPK - 6")
-
                 while (map.isNotEmpty()) { Thread.sleep(1000) }
-
-                println("SPK - 7")
 
                 mainSub.onComplete()
             }
@@ -167,7 +158,6 @@ class SPK(private val view: DeviceContract.View) {
                     .subscribe({
                         view.showProgressFlash("Flash: " + Math.round((++numberInstruc / maxIntstruc) * 100) + " %")
                     },{it.printStackTrace()},{
-                        println("ENDED ?")
                         view.hideProgressFlash()
                         notifBus.send("Flash completed")
                     })
@@ -237,7 +227,6 @@ class SPK(private val view: DeviceContract.View) {
                                 ++numberInstruc
                                 view.showProgressFlash("Flash: " + Math.round((numberInstruc / maxIntstruc) * 100) + " %")
                             }, { it.printStackTrace() }, {
-                                println("Device finish")
                                 ++numberEnded
 
                                 if (numberEnded == listDevice.size) {
@@ -266,7 +255,6 @@ class SPK(private val view: DeviceContract.View) {
     }
 
     fun executeOneInstruction(instruction: Instruction, device: JadbDevice) {
-        println("Type: " + instruction.type)
         when (instruction.type) {
             CreateInstructionView.Type.APK -> doInstallApk(instruction, device)
             CreateInstructionView.Type.PUSH -> TODO()
@@ -284,10 +272,7 @@ class SPK(private val view: DeviceContract.View) {
     fun doInstallApk(instruction: Instruction, device: JadbDevice){
         val install = Gson().fromJson(instruction.data, InstallApkModel::class.java)
 
-        println("Size APK: " + install.apks?.size)
-
         install.apks?.forEach { apk ->
-            println("APK: " + apk)
             jadb.installAPK(device, File("tmp" + fileUtils.separator + apk), false)
                     //.subscribeOn(Schedulers.newThread())
                     //.observeOn(JavaFxScheduler.platform())
@@ -355,7 +340,6 @@ class SPK(private val view: DeviceContract.View) {
 
     fun doDelete(instruction: Instruction, device: JadbDevice){
         val click = Gson().fromJson(instruction.data, DeleteFileModel::class.java)
-        println("DELETE: " + click.file_name)
 
         jadb.convertStreamToString(device.executeShell("rm " + click.file_name, ""))
 

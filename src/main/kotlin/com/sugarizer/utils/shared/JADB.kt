@@ -310,15 +310,15 @@ class JADB {
                         bus.send(DeviceEventModel(DeviceEventModel.Status.REMOVED, device))
                     } else {
                         var indexOfN = tmp.indexOf("\n", indexOfDevice)
-                        println("Device find: " + indexOfDevice)
-                        println("Device n: " + indexOfN)
+//                        println("Device find: " + indexOfDevice)
+//                        println("Device n: " + indexOfN)
                         var line = tmp.substring(indexOfDevice, if (indexOfN == -1) tmp.length else indexOfN)
                         var status = line.substring(line.indexOf("\t") + 1, line.length)
                         status = status.substring(0, status.length - 1)
 
 //                println("Device Serial: " + device.serial)
-                        println("Line: " + line)
-                        println("Status: " + status)
+//                        println("Line: " + line)
+//                        println("Status: " + status)
 
                         subscriber.onNext(status)
                     }
