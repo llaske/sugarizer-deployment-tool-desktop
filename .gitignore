@@ -41,3 +41,5 @@ captures/
 tmp/apks/
 
 spks/
+
+*.apk

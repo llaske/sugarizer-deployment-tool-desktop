@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 import com.sugarizer.listitem.ListItemInstruction
 import com.sugarizer.view.createinstruction.CreateInstructionView
 import java.io.File
+import java.text.Normalizer
 
 class InstructionsModel {
     @SerializedName("instructions")
@@ -33,7 +34,11 @@ class InstallApkModel {
         var instructionModel: Instruction = Instruction()
         var listApk: MutableList<String> = mutableListOf()
 
-        choosedDirectory.mapTo(listApk) { it.absolutePath }
+        choosedDirectory.forEach {
+            var file = File(Normalizer.normalize(it.name, Normalizer.Form.NFC))
+            it.renameTo(file)
+            listApk.add(file.absolutePath)
+        }
 
         this.numberApk = listApk.size
         this.apks = listApk
