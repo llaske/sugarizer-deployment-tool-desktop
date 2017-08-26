@@ -2,7 +2,7 @@
 
 ### Details
 
-Sugarizer Deployment Tool is a tool for Sugarizer. He is for deploying Sugarizer on multiple device a keep it updated. Make the installation and updated easy for the user.
+Sugarizer Deployment Tool is a tool for Sugarizer. It is intended for deploying Sugarizer on multiple device and keeping it updated by making the installation and updating easy for the user.
 
 Sugarizer is a way to use Sugar on any device using web technologies. Sugarizer can be deployed on many devices including Android phones and tablets. The goal of this specific project is to create the "Sugarizer Deployment and Management Tool for Android".
 
