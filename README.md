@@ -1,5 +1,11 @@
 # Sugarizer deployment tool for Desktop
 
+### Contributors
+
+##### Raphael Teyssandier | GSOC - 2017
+
+I have built the project from the start, so every details from the section "Details", have been done be me.
+
 ### Details
 
 Sugarizer Deployment Tool is a tool for Sugarizer. It is intended for deploying Sugarizer on multiple device and keeping it updated by making the installation and updating easy for the user.
