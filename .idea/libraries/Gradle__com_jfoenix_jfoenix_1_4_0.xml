@@ -2,10 +2,12 @@
   <library name="Gradle: com.jfoenix:jfoenix:1.4.0">
     <CLASSES>
       <root url="jar://D:/Android/gradle/caches/modules-2/files-2.1/com.jfoenix/jfoenix/1.4.0/9d81a47feb301f88655480c2cb0b2d35da9685cf/jfoenix-1.4.0.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jfoenix/jfoenix/1.4.0/9d81a47feb301f88655480c2cb0b2d35da9685cf/jfoenix-1.4.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://D:/Android/gradle/caches/modules-2/files-2.1/com.jfoenix/jfoenix/1.4.0/407fec189996fd8bbead9b887e6cceb35fe19954/jfoenix-1.4.0-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.jfoenix/jfoenix/1.4.0/407fec189996fd8bbead9b887e6cceb35fe19954/jfoenix-1.4.0-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

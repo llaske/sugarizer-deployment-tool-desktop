@@ -23,6 +23,7 @@ import se.vidstige.jadb.JadbDevice
 import se.vidstige.jadb.JadbException
 import se.vidstige.jadb.managers.PackageManager
 import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 
 class SPK(private val view: DeviceContract.View) {
@@ -260,14 +261,20 @@ class SPK(private val view: DeviceContract.View) {
 
     private fun doSingleApk(instruction: Instruction, device: JadbDevice) {
         val install = Gson().fromJson(instruction.data, SingleApk::class.java)
-        val apk = ApkFile(File(BuildConfig.TMP_DIRECTORY + fileUtils.separator + install.apk))
+        var name = install.apk
+        try {
+            val apk = ApkFile(File(BuildConfig.TMP_DIRECTORY + fileUtils.separator + install.apk))
+            name= apk.apkMeta.name
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
 
         try {
-            device.executeShell(BuildConfig.CMD_LOG + " --es extra_log \"" + "Installing: " + apk.apkMeta.name + "\"")
+            device.executeShell(BuildConfig.CMD_LOG + " --es extra_log \"" + "Installing: " + name + "\"")
             PackageManager(device).install(File(BuildConfig.TMP_DIRECTORY + fileUtils.separator + install.apk))
-            device.executeShell(BuildConfig.CMD_LOG + " --es extra_log \"" + apk.apkMeta.name + " installed" + "\"")
+            device.executeShell(BuildConfig.CMD_LOG + " --es extra_log \"" + name + " installed" + "\"")
         } catch (e: JadbException) {
-            device.executeShell(BuildConfig.CMD_LOG + " --es extra_log \"" + apk.apkMeta.name + " already installed" + "\"")
+            device.executeShell(BuildConfig.CMD_LOG + " --es extra_log \"" + name + " already installed" + "\"")
         }
     }
 

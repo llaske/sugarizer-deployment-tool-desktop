@@ -2,10 +2,12 @@
   <library name="Gradle: de.jensd:fontawesomefx-materialicons:2.2.0-5">
     <CLASSES>
       <root url="jar://D:/Android/gradle/caches/modules-2/files-2.1/de.jensd/fontawesomefx-materialicons/2.2.0-5/c38811f8deb37b9d4fe0be0525461a61dfd2a9a7/fontawesomefx-materialicons-2.2.0-5.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/de.jensd/fontawesomefx-materialicons/2.2.0-5/c38811f8deb37b9d4fe0be0525461a61dfd2a9a7/fontawesomefx-materialicons-2.2.0-5.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://D:/Android/gradle/caches/modules-2/files-2.1/de.jensd/fontawesomefx-materialicons/2.2.0-5/51d45ee37aa463802212d1ec2c4fd534ba43c8f0/fontawesomefx-materialicons-2.2.0-5-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/de.jensd/fontawesomefx-materialicons/2.2.0-5/51d45ee37aa463802212d1ec2c4fd534ba43c8f0/fontawesomefx-materialicons-2.2.0-5-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
