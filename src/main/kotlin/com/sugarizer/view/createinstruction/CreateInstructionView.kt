@@ -32,7 +32,8 @@ class CreateInstructionView : Initializable, CreateInstructionContract.View {
         PUSH,
         DELETE,
         SLEEP,
-        OPENAPP
+        OPENAPP,
+        SINGLE_APK
     }
 
     val presenter: CreateInstructionPresenter = CreateInstructionPresenter(this)

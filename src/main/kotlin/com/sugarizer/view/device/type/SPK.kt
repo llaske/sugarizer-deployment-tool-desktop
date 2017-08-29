@@ -1,26 +1,29 @@
 package com.sugarizer.view.device.type
 
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import com.jfoenix.controls.events.JFXDialogEvent
+import com.sugarizer.BuildConfig
 import com.sugarizer.Main
 import com.sugarizer.listitem.ListItemDevice
-import com.sugarizer.listitem.ListItemInstruction
 import com.sugarizer.model.*
 import com.sugarizer.utils.shared.*
 import com.sugarizer.view.createinstruction.CreateInstructionView
-import com.sugarizer.view.createinstruction.instructions.ClickInstruction
 import com.sugarizer.view.device.DeviceContract
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
-import io.reactivex.rxkotlin.toSingle
 import io.reactivex.schedulers.Schedulers
 import javafx.application.Platform
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.scene.control.Alert
+import net.dongliu.apk.parser.ApkFile
 import se.vidstige.jadb.JadbDevice
+import se.vidstige.jadb.JadbException
+import se.vidstige.jadb.managers.PackageManager
 import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 
 class SPK(private val view: DeviceContract.View) {
@@ -54,10 +57,37 @@ class SPK(private val view: DeviceContract.View) {
                     },{
                         var listInstructions = mutableListOf<String>()
                         println("Size: " + zipOut.instruction?.intructions?.size)
+                        var allInstructions = mutableListOf<Instruction>()
+
+                        zipOut.instruction?.let {
+                            var ordre = 0
+                            var iterator = it.intructions.iterator()
+                            while (iterator.hasNext()) {
+                                var tmp = iterator.next()
+                                if (tmp.type == CreateInstructionView.Type.APK) {
+                                    Gson().fromJson(tmp.data, InstallApkModel::class.java).apks?.let {
+                                        it.forEach {
+                                            var singleApk = SingleApk(it)
+                                            var instruction = Instruction()
+                                            instruction.type = CreateInstructionView.Type.SINGLE_APK
+                                            instruction.ordre = ordre
+                                            instruction.data = Gson().toJson(singleApk, SingleApk::class.java)
+                                            allInstructions.add(ordre, instruction)
+                                        }
+                                    }
+                                } else {
+                                    tmp.ordre = ordre
+                                    allInstructions.add(ordre, tmp)
+                                }
+                                ++ordre
+                            }
+                        }
+
+                        println("Size all: " + allInstructions.size)
 
                         zipOut.instruction?.let {
                             for (tmp in listDevice) {
-                                map.put(tmp.device, it.intructions)
+                                map.put(tmp.device, allInstructions)
                             }
                         }
                         zipOut.instruction?.intructions?.forEach {
@@ -78,7 +108,9 @@ class SPK(private val view: DeviceContract.View) {
         }
     }
 
-    fun changeState(device: JadbDevice, state: ListItemDevice.State){
+
+
+    private fun changeState(device: JadbDevice, state: ListItemDevice.State){
         for (tmp in listDevice) {
             if (tmp.device.serial == device.serial) {
                 Platform.runLater {
@@ -97,6 +129,8 @@ class SPK(private val view: DeviceContract.View) {
             var maxIntstruc = getNumberInstruction().toDouble()
             var numberInstruc = 0.0
 
+            println("MaxInstruc: " + maxIntstruc)
+
             Observable.create<Any> { mainSub ->
                 val iterate = map.iterator()
                 while (iterate.hasNext()) {
@@ -113,18 +147,19 @@ class SPK(private val view: DeviceContract.View) {
                             while (tmpInstruction.hasNext()) {
                                 var instruction = tmpInstruction.next()
                                 Observable.create<Any> {
-                                    executeOneInstruction(instruction, tmp.key)
+                                    executeOneInstruction(instruction, tmp.key, it)
                                     mainSub.onNext("")
-                                    updateDevice(tmp.key, i / max)
+                                    updateDevice(tmp.key, ++i / max)
                                 }.subscribe({}, {
                                     it.printStackTrace()
                                     list.add(instruction)
-                                }, {
-                                    iterate.remove()
-                                })
+                                }, {})
                             }
 
-                            tmp.value.addAll(list)
+                            println("List Size: " + tmp.value.size)
+                            println("List : " + list.size)
+
+                            map.put(tmp.key, list)
                         } while (list.isNotEmpty())
 
                         deviceSubscriber.onComplete()
@@ -135,18 +170,6 @@ class SPK(private val view: DeviceContract.View) {
                                 changeState(tmp.key, ListItemDevice.State.FINISH)
                                 removeFromMap(tmp.key)
                             })
-//                    Observable.fromIterable(tmp.value)
-//                            .subscribeOn(Schedulers.newThread())
-//                            .subscribe({
-//                                println("SPK - 4")
-//                                executeOneInstruction(it, tmp.key)
-//                                mainSub.onNext("")
-//                            },{},{
-//                                println("SPK - 5")
-//                                numberEnded++
-//                                changeState(tmp.key, ListItemDevice.State.FINISH)
-//                                removeFromMap(tmp.key)
-//                            })
                 }
 
                 while (map.isNotEmpty()) { Thread.sleep(1000) }
@@ -160,16 +183,12 @@ class SPK(private val view: DeviceContract.View) {
                     },{it.printStackTrace()},{
                         view.hideProgressFlash()
                         notifBus.send("Flash completed")
+                        deleteTmp()
                     })
-//            executeOnDevice()
-//                        .subscribeOn(Schedulers.newThread())
-//                        .observeOn(JavaFxScheduler.platform())
-//                        .subscribe({}, { it.printStackTrace() }, {
-//                        })
         }
     }
 
-    fun removeFromMap(device: JadbDevice){
+    private fun removeFromMap(device: JadbDevice){
         val iterate = map.iterator()
         while (iterate.hasNext()) {
             val tmp = iterate.next()
@@ -179,7 +198,7 @@ class SPK(private val view: DeviceContract.View) {
         }
     }
 
-    fun updateDevice(device: JadbDevice, double: Double){
+    private fun updateDevice(device: JadbDevice, double: Double){
         for (tmp in listDevice) {
             if (tmp.device.serial == device.serial) {
                 tmp.progress.progress = double
@@ -187,10 +206,14 @@ class SPK(private val view: DeviceContract.View) {
         }
     }
 
-    fun getNumberInstruction(): Int {
+    private fun getNumberInstruction(): Int {
         var nb = 0
 
         map.forEach {
+            it.value.filter { it.type == CreateInstructionView.Type.APK }
+                    .forEach { Gson().fromJson(it.data, InstallApkModel::class.java).apks?.let {
+                            nb += it.size + 1
+                        } }
             nb += it.value.size
         }
 
@@ -199,64 +222,31 @@ class SPK(private val view: DeviceContract.View) {
 
     fun cancelInstruction(): EventHandler<ActionEvent> {
         return EventHandler {
-            zipOut.deleteTmp()
             view.closeDialog(DeviceContract.Dialog.SPK)
+            view.hideProgressFlash()
+            deleteTmp()
         }
     }
 
     fun onInstructionDialogClosed(): EventHandler<JFXDialogEvent> {
         return EventHandler {
-            zipOut.deleteTmp()
             view.closeDialog(DeviceContract.Dialog.SPK)
         }
     }
 
-    fun executeOnDevice(): Observable<Any> {
-        return Observable.create { subscriber ->
-            var numberEnded = 0
-
-            zipOut.instruction?.intructions?.let {
-                var maxIntstruc = (it.size * listDevice.size).toDouble()
-                var numberInstruc = 0.0
-
-                listDevice.forEach {
-                    newExecute(it)
-                            .subscribeOn(Schedulers.newThread())
-                            .observeOn(JavaFxScheduler.platform())
-                            .subscribe({
-                                ++numberInstruc
-                                view.showProgressFlash("Flash: " + Math.round((numberInstruc / maxIntstruc) * 100) + " %")
-                            }, { it.printStackTrace() }, {
-                                ++numberEnded
-
-                                if (numberEnded == listDevice.size) {
-                                    subscriber.onComplete()
-                                }
-                            })
-                }
-            }
+    private fun deleteTmp(){
+        Observable.create<Any> {
+            org.apache.commons.io.FileUtils.deleteDirectory(File(BuildConfig.TMP_DIRECTORY))
+            it.onComplete()
         }
+                .subscribeOn(Schedulers.newThread())
+                .subscribe({},{it.printStackTrace()},{})
     }
 
-    fun newExecute(device: ListItemDevice): Observable<String> {
-        return Observable.create { deviceSubscriber ->
-            device.changeState(ListItemDevice.State.WORKING)
-
-//            zipOut.instruction?.let {
-//                Observable.fromIterable(it.intructions).subscribe({
-//                    executeOneInstruction(it, device)
-//                    deviceSubscriber.onNext("")
-//                },{},{
-//                    deviceSubscriber.onComplete()
-//                    device.changeState(ListItemDevice.State.FINISH)
-//                })
-//            }
-        }
-    }
-
-    fun executeOneInstruction(instruction: Instruction, device: JadbDevice) {
+    private fun executeOneInstruction(instruction: Instruction, device: JadbDevice, it: ObservableEmitter<Any>) {
         when (instruction.type) {
-            CreateInstructionView.Type.APK -> doInstallApk(instruction, device)
+            CreateInstructionView.Type.SINGLE_APK -> doSingleApk(instruction, device)
+            CreateInstructionView.Type.APK -> doInstallApk(instruction, device, it)
             CreateInstructionView.Type.PUSH -> TODO()
             CreateInstructionView.Type.DELETE -> doDelete(instruction, device)
             CreateInstructionView.Type.KEY -> doKey(instruction, device)
@@ -269,20 +259,39 @@ class SPK(private val view: DeviceContract.View) {
         }
     }
 
-    fun doInstallApk(instruction: Instruction, device: JadbDevice){
-        val install = Gson().fromJson(instruction.data, InstallApkModel::class.java)
+    private fun doSingleApk(instruction: Instruction, device: JadbDevice) {
+        val install = Gson().fromJson(instruction.data, SingleApk::class.java)
+        var name = install.apk
+        try {
+            val apk = ApkFile(File(BuildConfig.TMP_DIRECTORY + fileUtils.separator + install.apk))
+            name= apk.apkMeta.name
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
 
-        install.apks?.forEach { apk ->
-            jadb.installAPK(device, File("tmp" + fileUtils.separator + apk), false)
-                    //.subscribeOn(Schedulers.newThread())
-                    //.observeOn(JavaFxScheduler.platform())
-                    .subscribe({},{
-                        it.printStackTrace()
-                    },{})
+        try {
+            device.executeShell(BuildConfig.CMD_LOG + " --es extra_log \"" + "Installing: " + name + "\"")
+            PackageManager(device).install(File(BuildConfig.TMP_DIRECTORY + fileUtils.separator + install.apk))
+            device.executeShell(BuildConfig.CMD_LOG + " --es extra_log \"" + name + " installed" + "\"")
+        } catch (e: JadbException) {
+            device.executeShell(BuildConfig.CMD_LOG + " --es extra_log \"" + name + " already installed" + "\"")
         }
     }
 
-    fun doClick(instruction: Instruction, device: JadbDevice){
+    private fun doInstallApk(instruction: Instruction, device: JadbDevice, it: ObservableEmitter<Any>){
+        val install = Gson().fromJson(instruction.data, InstallApkModel::class.java)
+
+        install.apks?.forEach { apk ->
+            jadb.installAPK(device, File(BuildConfig.TMP_DIRECTORY + fileUtils.separator + apk), false)
+                    .subscribe({},{
+                        it.printStackTrace()
+                    },{
+
+                    })
+        }
+    }
+
+    private fun doClick(instruction: Instruction, device: JadbDevice){
         val click = Gson().fromJson(instruction.data, ClickModel::class.java)
 
         device.executeShell("input tap " + click.x + " " + click.y, "")
@@ -290,7 +299,7 @@ class SPK(private val view: DeviceContract.View) {
         Thread.sleep(1000)
     }
 
-    fun doLongClick(instruction: Instruction, device: JadbDevice){
+    private fun doLongClick(instruction: Instruction, device: JadbDevice){
         val click = Gson().fromJson(instruction.data, LongClickModel::class.java)
 
         device.executeShell("input swipe " + click.x + " " + click.y + " " + click.x + " " + click.y + " " + click.duration, "")
@@ -298,7 +307,7 @@ class SPK(private val view: DeviceContract.View) {
         Thread.sleep(click.duration.toLong())
     }
 
-    fun doSwipe(instruction: Instruction, device: JadbDevice){
+    private fun doSwipe(instruction: Instruction, device: JadbDevice){
         val click = Gson().fromJson(instruction.data, SwipeModel::class.java)
 
         device.executeShell("input swipe " + click.x1 + " " + click.y1 + " " + click.x2 + " " + click.y2 + " " + click.duration, "")
@@ -306,7 +315,7 @@ class SPK(private val view: DeviceContract.View) {
         Thread.sleep(click.duration.toLong())
     }
 
-    fun doKey(instruction: Instruction, device: JadbDevice){
+    private fun doKey(instruction: Instruction, device: JadbDevice){
         val click = Gson().fromJson(instruction.data, KeyModel::class.java)
 
         device.executeShell("input keyevent " + click.idKey, "")
@@ -314,7 +323,7 @@ class SPK(private val view: DeviceContract.View) {
         Thread.sleep(1000)
     }
 
-    fun doText(instruction: Instruction, device: JadbDevice){
+    private fun doText(instruction: Instruction, device: JadbDevice){
         val click = Gson().fromJson(instruction.data, TextModel::class.java)
 
         Thread.sleep(1000)
@@ -324,13 +333,13 @@ class SPK(private val view: DeviceContract.View) {
         Thread.sleep(1000)
     }
 
-    fun doSleep(instruction: Instruction, device: JadbDevice){
+    private fun doSleep(instruction: Instruction, device: JadbDevice){
         val click = Gson().fromJson(instruction.data, SleepModel::class.java)
 
         Thread.sleep(click.duration)
     }
 
-    fun doOpenApp(instruction: Instruction, device: JadbDevice){
+    private fun doOpenApp(instruction: Instruction, device: JadbDevice){
         val click = Gson().fromJson(instruction.data, OpenAppModel::class.java)
 
         jadb.convertStreamToString(device.executeShell("monkey -p " + click.package_name + " -c android.intent.category.LAUNCHER 1", ""))
@@ -338,11 +347,17 @@ class SPK(private val view: DeviceContract.View) {
         Thread.sleep(1000)
     }
 
-    fun doDelete(instruction: Instruction, device: JadbDevice){
+    private fun doDelete(instruction: Instruction, device: JadbDevice){
         val click = Gson().fromJson(instruction.data, DeleteFileModel::class.java)
 
         jadb.convertStreamToString(device.executeShell("rm " + click.file_name, ""))
 
         Thread.sleep(1000)
+    }
+
+    private class SingleApk(apk: String) {
+
+        @SerializedName("apk")
+        var apk: String = apk
     }
 }

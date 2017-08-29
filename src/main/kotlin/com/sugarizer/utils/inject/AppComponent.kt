@@ -6,6 +6,7 @@ import com.sugarizer.Main
 import com.sugarizer.listitem.ListItemChoosenInstruction
 import com.sugarizer.listitem.ListItemDevice
 import com.sugarizer.listitem.ListItemInstruction
+import com.sugarizer.model.InstallApkModel
 import com.sugarizer.view.createinstruction.CreateInstructionPresenter
 import com.sugarizer.view.createinstruction.CreateInstructionView
 import com.sugarizer.view.device.DevicePresenter
@@ -48,6 +49,8 @@ interface AppComponent {
     fun inject(listItemChoosenInstruction: ListItemChoosenInstruction)
 
     fun inject(createInstructionDialog: CreateInstructionDialog)
+
+    fun inject(installApkModel: InstallApkModel)
 
     companion object {
         fun init(application: javafx.application.Application) : AppComponent {
