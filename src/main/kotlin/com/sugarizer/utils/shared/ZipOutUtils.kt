@@ -2,9 +2,11 @@ package com.sugarizer.utils.shared
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.sugarizer.BuildConfig
 import com.sugarizer.model.InstructionsModel
 import io.reactivex.Observable
 import java.io.*
+import java.nio.file.Files
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
@@ -25,14 +27,23 @@ class ZipOutUtils(val fileUtils: FileUtils) {
 
     fun loadZip(path: String): Observable<STATUS> {
         status = STATUS.NOT_COMPLETE
+//
+        println("TMP_DIRECTORY: " + BuildConfig.TMP_DIRECTORY)
+//        var tmp = File(BuildConfig.TMP_DIRECTORY)
+//        tmp.delete()
+////        println("CanWrite: " + tmp.canWrite())
+////        println("Mkdirs: " + tmp.mkdirs())
+//        Files.createDirectory(tmp.toPath())
+//        org.apache.commons.io.FileUtils.forceMkdir(File(BuildConfig.TMP_DIRECTORY))
+//        tmp.mkdir()
 
         return Observable.create {
             it.onNext(STATUS.IN_PROGRESS)
 
-            unzip(path, "tmp")
+            unzip(path, BuildConfig.TMP_DIRECTORY + fileUtils.separator)
 
             val turnsType = object : TypeToken<InstructionsModel>() {}.type
-            instruction = Gson().fromJson(getStringFromFile("tmp" + fileUtils.separator + "instructions.json"), turnsType)
+            instruction = Gson().fromJson(getStringFromFile(BuildConfig.TMP_DIRECTORY + fileUtils.separator + "instructions.json"), turnsType)
 
             it.onNext(STATUS.COMPLETE)
 
@@ -45,13 +56,13 @@ class ZipOutUtils(val fileUtils: FileUtils) {
     @Throws(IOException::class)
     fun unzip(zipFilePath: String, destDirectory: String) {
         val destDir = File(destDirectory)
-        if (!destDir.exists()) {
+        if (!Files.exists(destDir.toPath())) {
             destDir.mkdir()
         }
         val zipIn = ZipInputStream(FileInputStream(zipFilePath))
         var entry: ZipEntry? = zipIn.nextEntry
         while (entry != null) {
-            val filePath = destDirectory + File.separator + entry.name
+            val filePath = destDirectory + entry.name
             if (entry.isDirectory || filePath[filePath.lastIndex].toString() == fileUtils.separator) {
                 val dir = File(filePath)
                 dir.mkdir()
@@ -81,7 +92,7 @@ class ZipOutUtils(val fileUtils: FileUtils) {
         bos.close()
     }
 
-    fun getStringFromFile(file: String): String {
+    private fun getStringFromFile(file: String): String {
         var input: InputStream = FileInputStream(file)
         var buf: BufferedReader = BufferedReader(InputStreamReader(input))
         var sb: java.lang.StringBuilder = StringBuilder()

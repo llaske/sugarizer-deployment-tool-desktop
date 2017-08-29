@@ -35,6 +35,7 @@ repositories {
     maven { url 'https://mvnrepository.com/artifact/oracle/ojdbc6' }
     maven { url 'https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc'}
     maven { url 'https://mvnrepository.com/artifact/org.apache.commons/commons-text'}
+    maven { url 'https://mvnrepository.com/artifact/commons-io/commons-io'}
 }
 
 compileKotlin {
@@ -85,6 +86,7 @@ dependencies {
     compile 'org.controlsfx:controlsfx:8.40.12'
 
     compile 'org.apache.commons:commons-text:1.1'
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
 
     compile 'com.oracle:ojdbc6:11.2.0.3'
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.19.3'
@@ -124,6 +126,8 @@ buildConfig {
     buildConfigField 'String', 'APK_LOCATION', "apk/app-debug.apk"
 
     buildConfigField 'String', 'SPK_LOCATION', "spks/"
+
+    buildConfigField 'String', 'TMP_DIRECTORY', "tmp-spk"
 
     buildConfigField 'String', 'CMD_LIST_PACKAGE',  "pm list packages"
     buildConfigField 'String', 'CMD_PING',  "am broadcast -a com.sugarizer.sugarizerdeploymentoolapp.Broadcast.ACTION_PING"

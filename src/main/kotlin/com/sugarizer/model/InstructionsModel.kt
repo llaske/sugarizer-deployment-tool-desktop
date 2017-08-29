@@ -2,10 +2,14 @@ package com.sugarizer.model
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import com.sugarizer.Main
 import com.sugarizer.listitem.ListItemInstruction
+import com.sugarizer.utils.shared.FileUtils
 import com.sugarizer.view.createinstruction.CreateInstructionView
+import org.apache.commons.lang3.StringUtils
 import java.io.File
 import java.text.Normalizer
+import javax.inject.Inject
 
 class InstructionsModel {
     @SerializedName("instructions")
@@ -24,6 +28,8 @@ class Instruction {
 }
 
 class InstallApkModel {
+    @Inject lateinit var fileUtils: FileUtils
+
     @SerializedName("number_apk")
     var numberApk: Int? = 0
 
@@ -31,11 +37,13 @@ class InstallApkModel {
     var apks: List<String>? = null
 
     fun toInstruction(order: Int, choosedDirectory: List<File>): Instruction {
+        Main.appComponent.inject(this)
         var instructionModel: Instruction = Instruction()
         var listApk: MutableList<String> = mutableListOf()
 
         choosedDirectory.forEach {
-            var file = File(Normalizer.normalize(it.name, Normalizer.Form.NFC))
+            println("Path: " + it.absolutePath.substring(0, it.absolutePath.lastIndexOf(fileUtils.separator)) + fileUtils.separator + StringUtils.stripAccents(it.name))
+            var file = File(it.absolutePath.substring(0, it.absolutePath.lastIndexOf(fileUtils.separator)) + fileUtils.separator + StringUtils.stripAccents(it.name))
             it.renameTo(file)
             listApk.add(file.absolutePath)
         }
