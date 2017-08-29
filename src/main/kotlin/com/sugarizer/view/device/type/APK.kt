@@ -29,7 +29,7 @@ class APK(val view: DeviceContract.View) {
                 install(it, listAPK, 0, subscriber)
             }
         }
-                .subscribeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(JavaFxScheduler.platform())
                 .subscribe({
                     ++num
@@ -39,14 +39,16 @@ class APK(val view: DeviceContract.View) {
                         view.hideProgressFlash()
                         listAPK.clear()
                     }
-                }, {}, {})
+                }, {it.printStackTrace()}, {})
     }
 
     fun install(device: ListItemDevice, listAPK: List<File>, index: Int, subscriber: ObservableEmitter<Any>){
         jadb.installAPK(device.device, listAPK[index], false)
-                .subscribeOn(Schedulers.computation())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(JavaFxScheduler.platform())
-                .subscribe({}, {}, {
+                .subscribe({}, {
+                    it.printStackTrace()
+                }, {
                     subscriber.onNext("")
                     if (index < listAPK.size - 1) {
                         install(device, listAPK, index + 1, subscriber)
