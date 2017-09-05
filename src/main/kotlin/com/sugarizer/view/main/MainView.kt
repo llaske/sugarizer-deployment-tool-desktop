@@ -51,7 +51,7 @@ class MainView : View() {
     }
 
     init {
-        title = "Sugarizer Deloyment Tool - " + BuildConfig.VERSION
+        title = "Sugarizer Deployment Tool - " + BuildConfig.VERSION
 
         Main.appComponent.inject(this)
 
